@@ -1,0 +1,44 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "declaration": true,
+    "removeComments": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "allowSyntheticDefaultImports": true,
+    "target": "es2017",
+    "sourceMap": true,
+    "outDir": "./dist",
+    "baseUrl": "./",
+    "incremental": true,
+    "skipLibCheck": true,
+    "strictNullChecks": false,
+    "noImplicitAny": false,
+    "strictBindCallApply": false,
+    "forceConsistentCasingInFileNames": false,
+    "noFallthroughCasesInSwitch": false,
+    "paths": {
+      "@api/*": [
+        "apps/api/src/*"
+      ],
+      "@shares/*": [
+        "libs/shares/src/*"
+      ],
+      "@database/*": [
+        "libs/queries/src/database/*"
+      ],
+      "@entities/*": [
+        "libs/queries/src/entities/*"
+      ],
+      "@seeds/*": [
+        "libs/queries/src/seeds/*"
+      ],
+      "@dtos/*": [
+        "libs/queries/src/dtos/*"
+      ],
+      "@repositories/*": [
+        "libs/queries/src/repositories/*"
+      ]
+    }
+  }
+}

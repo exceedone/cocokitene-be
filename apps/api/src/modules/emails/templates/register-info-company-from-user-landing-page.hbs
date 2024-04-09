@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Registration Information</title>
+</head>
+<body>
+
+<h3>登録情報を送信していただき、ありがとうございます。
+  </br>ご登録いただいた内容は以下の通りです：</h3>
+
+<ul>
+  <li><strong>ユーザー名:</strong> {{username}}</li>
+  <li><strong>Eメール:</strong> {{email}}</li>
+  <li><strong>会社:</strong> {{companyName}}</li>
+  <li><strong>電話番号:</strong> {{phone}}</li>
+  {{#if note}}
+    <li><strong>備考:</strong> {{note}}</li>
+  {{/if}}
+</ul>
+
+<h3>お客様サポートセンターから後ほどご連絡させていただきます。
+  </br>私たちとともに旅することを選んでくれてありがとう。</h3>
+<h3>お問い合わせ: {{numberPhoneService}}</h3>
+<h3>よろしくお願いします。</h3>
+
+<h3 style="font-weight: bold;">これは自動返信メールです。返信しないでください</h3>
+</body>
+</html>

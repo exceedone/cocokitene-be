@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json.schemastore.org/nest-cli",
+  "collection": "@nestjs/schematics",
+  "sourceRoot": "apps/api/src",
+  "monorepo": true,
+  "root": "apps/api",
+  "compilerOptions": {
+    "webpack": true,
+    "tsConfigPath": "apps/api/tsconfig.app.json",
+    "assets": [
+      "modules/emails/templates/**"
+    ],
+    "watchAssets": true
+  },
+  "projects": {
+    "api": {
+      "type": "application",
+      "root": "apps/api",
+      "entryFile": "main",
+      "sourceRoot": "apps/api/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/api/tsconfig.app.json"
+      }
+    },
+    "queries": {
+      "type": "library",
+      "root": "libs/queries",
+      "entryFile": "index",
+      "sourceRoot": "libs/queries/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/queries/tsconfig.lib.json"
+      }
+    },
+    "shares": {
+      "type": "library",
+      "root": "libs/shares",
+      "entryFile": "index",
+      "sourceRoot": "libs/shares/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/shares/tsconfig.lib.json"
+      }
+    },
+    "cronjob": {
+      "type": "application",
+      "root": "apps/cronjob",
+      "entryFile": "main",
+      "sourceRoot": "apps/cronjob/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/cronjob/tsconfig.app.json"
+      }
+    }
+  }
+}

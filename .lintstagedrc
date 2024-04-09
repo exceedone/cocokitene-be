@@ -1,0 +1,7 @@
+{
+  "{src,apps,libs,test}/**/*.ts": [
+    "eslint --max-warnings=0",
+    "prettier --write"
+  ],
+  "{src,apps,libs,test}/**/*.json": ["prettier --write"]
+}

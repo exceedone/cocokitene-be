@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        p { font-size: 14px; line-height: 17px; } a { font-size: 14px;}
+    </style>
+</head>
+
+  <body>
+
+  <h3>平素は格別のご高配を賜り、厚く御礼申し上げます。</h3>
+  <h3>この度、下記の通りミーティングを開催する運びとなりました:</h3>
+
+  <ul>
+    <li><strong>この総会は{{title}}についてです。</strong></li>
+    <li><strong>開始時間:</strong> {{startTime}}</li>
+    <li><strong>終了予定時刻:</strong> {{endTime}}</li>
+    <li><strong>投票終了時刻 (もしあれば):</strong> {{endVotingTime}}</li>
+    <li><strong>総会は <a href= {{link}}>こちらURL</a>で行われます。</strong></li>
+    <h3>添付ファイルをご確認ください。</h3>
+    {{#if files.length}}
+      <ul>
+        {{#each files}}
+          <li style="margin-left: 10px;"><a href="{{this}}">{{this}}</a></li>
+        {{/each}}
+      </ul>
+
+    {{/if}}
+  </ul>
+  <h3>詳細はこちらをご覧ください: <a href={{detailMeeting}}>ここをクリック</a></h3>
+
+  <h3>皆様のご参加とご意見は、議論と意思決定プロセスに大いに貢献するものと確信しております。</h3>
+
+  <h3>
+    参加ご希望の方は、開始日の3日前までにご連絡ください。</h3>
+
+  <h3>ご不明な点などございましたら、ホットライン{{numberPhoneService}} までお気軽にお問い合わせください。</h3>
+
+  <h3>この度はご招待をご検討いただき、誠にありがとうございます。皆様のご出席をお待ちしております。</h3>
+
+  <h3>よろしくお願いいたします、</h3>
+
+
+
+
+
+  </body>
+  </html>
+
