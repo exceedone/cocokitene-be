@@ -131,12 +131,19 @@ export class AuthService {
             const permissionKeys =
                 await this.roleService.getPermissionsByRoleId(roleIds)
 
+            const company = await this.companyRepository.findOne({
+                where: {
+                    id: user.companyId,
+                },
+            })
+
             userData = {
                 id: user.id,
                 walletAddress: user.walletAddress,
                 username: user.username,
                 email: user.email,
                 companyId: user.companyId,
+                companyName: company.companyName,
                 avatar: user.avatar,
                 permissionKeys,
                 status: user.userStatus,

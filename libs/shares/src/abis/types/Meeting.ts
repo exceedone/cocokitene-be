@@ -2,445 +2,457 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import type BN from "bn.js";
-import type { ContractOptions } from "web3-eth-contract";
-import type { EventLog } from "web3-core";
-import type { EventEmitter } from "events";
+import type BN from 'bn.js'
+import type { ContractOptions } from 'web3-eth-contract'
+import type { EventLog } from 'web3-core'
+import type { EventEmitter } from 'events'
 import type {
-  Callback,
-  PayableTransactionObject,
-  NonPayableTransactionObject,
-  BlockType,
-  ContractEventLog,
-  BaseContract,
-} from "./types";
+    Callback,
+    PayableTransactionObject,
+    NonPayableTransactionObject,
+    BlockType,
+    ContractEventLog,
+    BaseContract,
+} from './types'
 
 export interface EventOptions {
-  filter?: object;
-  fromBlock?: BlockType;
-  topics?: string[];
+    filter?: object
+    fromBlock?: BlockType
+    topics?: string[]
 }
 
 export type CreateMeeting = ContractEventLog<{
-  id_meeting: string;
-  numberInBlockchain: string;
-  0: string;
-  1: string;
-}>;
-export type EIP712DomainChanged = ContractEventLog<{}>;
+    id_meeting: string
+    numberInBlockchain: string
+    0: string
+    1: string
+}>
+export type EIP712DomainChanged = ContractEventLog<{}>
 export type Initialized = ContractEventLog<{
-  version: string;
-  0: string;
-}>;
+    version: string
+    0: string
+}>
 export type LogAddValidator = ContractEventLog<{
-  _validator: string;
-  0: string;
-}>;
+    _validator: string
+    0: string
+}>
 export type LogRemoveValidator = ContractEventLog<{
-  _validator: string;
-  0: string;
-}>;
+    _validator: string
+    0: string
+}>
 export type OwnershipTransferred = ContractEventLog<{
-  previousOwner: string;
-  newOwner: string;
-  0: string;
-  1: string;
-}>;
+    previousOwner: string
+    newOwner: string
+    0: string
+    1: string
+}>
 export type Paused = ContractEventLog<{
-  account: string;
-  0: string;
-}>;
+    account: string
+    0: string
+}>
 export type Unpaused = ContractEventLog<{
-  account: string;
-  0: string;
-}>;
+    account: string
+    0: string
+}>
 export type UpdateFileOfMeeting = ContractEventLog<{
-  id_meeting: string;
-  step: string;
-  0: string;
-  1: string;
-}>;
+    id_meeting: string
+    step: string
+    0: string
+    1: string
+}>
 export type UpdateFileOfProposalMeeting = ContractEventLog<{
-  id_meeting: string;
-  step: string;
-  0: string;
-  1: string;
-}>;
+    id_meeting: string
+    step: string
+    0: string
+    1: string
+}>
 export type UpdateMeeting = ContractEventLog<{
-  id_meeting: string;
-  0: string;
-}>;
+    id_meeting: string
+    0: string
+}>
 export type UpdateParticipantMeeting = ContractEventLog<{
-  id_meeting: string;
-  step: string;
-  0: string;
-  1: string;
-}>;
+    id_meeting: string
+    step: string
+    0: string
+    1: string
+}>
 export type UpdateParticipantProposal = ContractEventLog<{
-  id_proposal: string;
-  step: string;
-  0: string;
-  1: string;
-}>;
+    id_proposal: string
+    step: string
+    0: string
+    1: string
+}>
 export type UpdateProposalMeeting = ContractEventLog<{
-  id_meeting: string;
-  step: string;
-  0: string;
-  1: string;
-}>;
+    id_meeting: string
+    step: string
+    0: string
+    1: string
+}>
 
 export interface Meeting extends BaseContract {
-  constructor(
-    jsonInterface: any[],
-    address?: string,
-    options?: ContractOptions
-  ): Meeting;
-  clone(): Meeting;
-  methods: {
-    CREATE_MEETING_TYPEHASH(): NonPayableTransactionObject<string>;
+    constructor(
+        jsonInterface: any[],
+        address?: string,
+        options?: ContractOptions,
+    ): Meeting
+    clone(): Meeting
+    methods: {
+        CREATE_MEETING_TYPEHASH(): NonPayableTransactionObject<string>
 
-    UPDATE_MEETING_TYPEHASH(): NonPayableTransactionObject<string>;
+        UPDATE_MEETING_TYPEHASH(): NonPayableTransactionObject<string>
 
-    addFileMeetingNoSign(
-      _meeting_id: number | string | BN,
-      _newFileMeetings: [number | string | BN, string][],
-      _step: number | string | BN
-    ): NonPayableTransactionObject<void>;
+        addFileMeetingNoSign(
+            _meeting_id: number | string | BN,
+            _newFileMeetings: [number | string | BN, string][],
+            _step: number | string | BN,
+        ): NonPayableTransactionObject<void>
 
-    addFileProposalNoSign(
-      _meeting_id: number | string | BN,
-      _newFileProposals: [number | string | BN, string][],
-      _step: number | string | BN
-    ): NonPayableTransactionObject<void>;
+        addFileProposalNoSign(
+            _meeting_id: number | string | BN,
+            _newFileProposals: [number | string | BN, string][],
+            _step: number | string | BN,
+        ): NonPayableTransactionObject<void>
 
-    addProposalsNoSign(
-      _meeting_id: number | string | BN,
-      _newProposals: [
-        number | string | BN,
-        string,
-        number | string | BN,
-        number | string | BN,
-        number | string | BN
-      ][],
-      _step: number | string | BN
-    ): NonPayableTransactionObject<void>;
+        addProposalsNoSign(
+            _meeting_id: number | string | BN,
+            _newProposals: [
+                number | string | BN,
+                string,
+                number | string | BN,
+                number | string | BN,
+                number | string | BN,
+            ][],
+            _step: number | string | BN,
+        ): NonPayableTransactionObject<void>
 
-    addUserNoSign(
-      _meeting_id: number | string | BN,
-      _newParticipantMeetings: [number | string | BN, string, string, string][],
-      _step: number | string | BN
-    ): NonPayableTransactionObject<void>;
+        addUserNoSign(
+            _meeting_id: number | string | BN,
+            _newParticipantMeetings: [
+                number | string | BN,
+                string,
+                string,
+                string,
+            ][],
+            _step: number | string | BN,
+        ): NonPayableTransactionObject<void>
 
-    addUserProposalNoSign(
-      _proposal_id: number | string | BN,
-      _newParticipantProposals: [number | string | BN, string][],
-      _step: number | string | BN
-    ): NonPayableTransactionObject<void>;
+        addUserProposalNoSign(
+            _proposal_id: number | string | BN,
+            _newParticipantProposals: [number | string | BN, string][],
+            _step: number | string | BN,
+        ): NonPayableTransactionObject<void>
 
-    addValidator(_newValidator: string): NonPayableTransactionObject<void>;
+        addValidator(_newValidator: string): NonPayableTransactionObject<void>
 
-    checkIsCreated(
-      _meetind_id: number | string | BN
-    ): NonPayableTransactionObject<{
-      0: boolean;
-      1: string;
-    }>;
+        checkIsCreated(
+            _meetind_id: number | string | BN,
+        ): NonPayableTransactionObject<{
+            0: boolean
+            1: string
+        }>
 
-    createNoSign(
-      _meeting_id: number | string | BN,
-      _title: string,
-      _start_time: number | string | BN,
-      _end_time: number | string | BN,
-      _meeting_link: string,
-      _company_id: number | string | BN,
-      _shareholders_totals: number | string | BN,
-      _shareholders_joined: number | string | BN,
-      _total_meeting_shares: number | string | BN,
-      _joined_meeting_shares: number | string | BN
-    ): NonPayableTransactionObject<void>;
+        createNoSign(
+            _meeting_id: number | string | BN,
+            _title: string,
+            _start_time: number | string | BN,
+            _end_time: number | string | BN,
+            _meeting_link: string,
+            _company_id: number | string | BN,
+            _shareholders_totals: number | string | BN,
+            _shareholders_joined: number | string | BN,
+            _total_meeting_shares: number | string | BN,
+            _joined_meeting_shares: number | string | BN,
+        ): NonPayableTransactionObject<void>
 
-    eip712Domain(): NonPayableTransactionObject<{
-      fields: string;
-      name: string;
-      version: string;
-      chainId: string;
-      verifyingContract: string;
-      salt: string;
-      extensions: string[];
-      0: string;
-      1: string;
-      2: string;
-      3: string;
-      4: string;
-      5: string;
-      6: string[];
-    }>;
+        eip712Domain(): NonPayableTransactionObject<{
+            fields: string
+            name: string
+            version: string
+            chainId: string
+            verifyingContract: string
+            salt: string
+            extensions: string[]
+            0: string
+            1: string
+            2: string
+            3: string
+            4: string
+            5: string
+            6: string[]
+        }>
 
-    getFileMeetingData(
-      _meeting_id: number | string | BN
-    ): NonPayableTransactionObject<[string, string][]>;
+        getFileMeetingData(
+            _meeting_id: number | string | BN,
+        ): NonPayableTransactionObject<[string, string][]>
 
-    getFileProposalData(
-      _meeting_id: number | string | BN
-    ): NonPayableTransactionObject<[string, string][]>;
+        getFileProposalData(
+            _meeting_id: number | string | BN,
+        ): NonPayableTransactionObject<[string, string][]>
 
-    getMeetingData(
-      _meeting_id: number | string | BN
-    ): NonPayableTransactionObject<
-      [
-        string,
-        string,
-        string,
-        string,
-        string,
-        string,
-        string[],
-        boolean,
-        string,
-        string,
-        string,
-        string,
-        [string, string, string, string, string][],
-        string,
-        [string, string, string, string][],
-        string,
-        [string, string][],
-        string,
-        [string, string][],
-        string
-      ]
-    >;
+        getMeetingData(
+            _meeting_id: number | string | BN,
+        ): NonPayableTransactionObject<
+            [
+                string,
+                string,
+                string,
+                string,
+                string,
+                string,
+                string[],
+                boolean,
+                string,
+                string,
+                string,
+                string,
+                [string, string, string, string, string][],
+                string,
+                [string, string, string, string][],
+                string,
+                [string, string][],
+                string,
+                [string, string][],
+                string,
+            ]
+        >
 
-    getProposalMeetingData(
-      _meeting_id: number | string | BN
-    ): NonPayableTransactionObject<[string, string, string, string, string][]>;
+        getProposalMeetingData(
+            _meeting_id: number | string | BN,
+        ): NonPayableTransactionObject<
+            [string, string, string, string, string][]
+        >
 
-    getUserInfoData(
-      _meeting_id: number | string | BN
-    ): NonPayableTransactionObject<[string, string, string, string][]>;
+        getUserInfoData(
+            _meeting_id: number | string | BN,
+        ): NonPayableTransactionObject<[string, string, string, string][]>
 
-    getValidators(): NonPayableTransactionObject<string[]>;
+        getValidators(): NonPayableTransactionObject<string[]>
 
-    initialize(_validator: string[]): NonPayableTransactionObject<void>;
+        initialize(_validator: string[]): NonPayableTransactionObject<void>
 
-    owner(): NonPayableTransactionObject<string>;
+        owner(): NonPayableTransactionObject<string>
 
-    pause(): NonPayableTransactionObject<void>;
+        pause(): NonPayableTransactionObject<void>
 
-    paused(): NonPayableTransactionObject<boolean>;
+        paused(): NonPayableTransactionObject<boolean>
 
-    removeValidator(_validator: string): NonPayableTransactionObject<void>;
+        removeValidator(_validator: string): NonPayableTransactionObject<void>
 
-    renounceOwnership(): NonPayableTransactionObject<void>;
+        renounceOwnership(): NonPayableTransactionObject<void>
 
-    totalMeeting(): NonPayableTransactionObject<string>;
+        totalMeeting(): NonPayableTransactionObject<string>
 
-    totalProposal(): NonPayableTransactionObject<string>;
+        totalProposal(): NonPayableTransactionObject<string>
 
-    transferOwnership(newOwner: string): NonPayableTransactionObject<void>;
+        transferOwnership(newOwner: string): NonPayableTransactionObject<void>
 
-    unpause(): NonPayableTransactionObject<void>;
+        unpause(): NonPayableTransactionObject<void>
 
-    updateNoSign(
-      _meeting_id: number | string | BN,
-      _title: string,
-      _start_time: number | string | BN,
-      _end_time: number | string | BN,
-      _meeting_link: string,
-      _company_id: number | string | BN,
-      _shareholders_totals: number | string | BN,
-      _shareholders_joined: number | string | BN,
-      _total_meeting_shares: number | string | BN,
-      _joined_meeting_shares: number | string | BN
-    ): NonPayableTransactionObject<void>;
-  };
-  events: {
-    CreateMeeting(cb?: Callback<CreateMeeting>): EventEmitter;
-    CreateMeeting(
-      options?: EventOptions,
-      cb?: Callback<CreateMeeting>
-    ): EventEmitter;
+        updateNoSign(
+            _meeting_id: number | string | BN,
+            _title: string,
+            _start_time: number | string | BN,
+            _end_time: number | string | BN,
+            _meeting_link: string,
+            _company_id: number | string | BN,
+            _shareholders_totals: number | string | BN,
+            _shareholders_joined: number | string | BN,
+            _total_meeting_shares: number | string | BN,
+            _joined_meeting_shares: number | string | BN,
+        ): NonPayableTransactionObject<void>
+    }
+    events: {
+        CreateMeeting(cb?: Callback<CreateMeeting>): EventEmitter
+        CreateMeeting(
+            options?: EventOptions,
+            cb?: Callback<CreateMeeting>,
+        ): EventEmitter
 
-    EIP712DomainChanged(cb?: Callback<EIP712DomainChanged>): EventEmitter;
-    EIP712DomainChanged(
-      options?: EventOptions,
-      cb?: Callback<EIP712DomainChanged>
-    ): EventEmitter;
+        EIP712DomainChanged(cb?: Callback<EIP712DomainChanged>): EventEmitter
+        EIP712DomainChanged(
+            options?: EventOptions,
+            cb?: Callback<EIP712DomainChanged>,
+        ): EventEmitter
 
-    Initialized(cb?: Callback<Initialized>): EventEmitter;
-    Initialized(
-      options?: EventOptions,
-      cb?: Callback<Initialized>
-    ): EventEmitter;
+        Initialized(cb?: Callback<Initialized>): EventEmitter
+        Initialized(
+            options?: EventOptions,
+            cb?: Callback<Initialized>,
+        ): EventEmitter
 
-    LogAddValidator(cb?: Callback<LogAddValidator>): EventEmitter;
-    LogAddValidator(
-      options?: EventOptions,
-      cb?: Callback<LogAddValidator>
-    ): EventEmitter;
+        LogAddValidator(cb?: Callback<LogAddValidator>): EventEmitter
+        LogAddValidator(
+            options?: EventOptions,
+            cb?: Callback<LogAddValidator>,
+        ): EventEmitter
 
-    LogRemoveValidator(cb?: Callback<LogRemoveValidator>): EventEmitter;
-    LogRemoveValidator(
-      options?: EventOptions,
-      cb?: Callback<LogRemoveValidator>
-    ): EventEmitter;
+        LogRemoveValidator(cb?: Callback<LogRemoveValidator>): EventEmitter
+        LogRemoveValidator(
+            options?: EventOptions,
+            cb?: Callback<LogRemoveValidator>,
+        ): EventEmitter
 
-    OwnershipTransferred(cb?: Callback<OwnershipTransferred>): EventEmitter;
-    OwnershipTransferred(
-      options?: EventOptions,
-      cb?: Callback<OwnershipTransferred>
-    ): EventEmitter;
+        OwnershipTransferred(cb?: Callback<OwnershipTransferred>): EventEmitter
+        OwnershipTransferred(
+            options?: EventOptions,
+            cb?: Callback<OwnershipTransferred>,
+        ): EventEmitter
 
-    Paused(cb?: Callback<Paused>): EventEmitter;
-    Paused(options?: EventOptions, cb?: Callback<Paused>): EventEmitter;
+        Paused(cb?: Callback<Paused>): EventEmitter
+        Paused(options?: EventOptions, cb?: Callback<Paused>): EventEmitter
 
-    Unpaused(cb?: Callback<Unpaused>): EventEmitter;
-    Unpaused(options?: EventOptions, cb?: Callback<Unpaused>): EventEmitter;
+        Unpaused(cb?: Callback<Unpaused>): EventEmitter
+        Unpaused(options?: EventOptions, cb?: Callback<Unpaused>): EventEmitter
 
-    UpdateFileOfMeeting(cb?: Callback<UpdateFileOfMeeting>): EventEmitter;
-    UpdateFileOfMeeting(
-      options?: EventOptions,
-      cb?: Callback<UpdateFileOfMeeting>
-    ): EventEmitter;
+        UpdateFileOfMeeting(cb?: Callback<UpdateFileOfMeeting>): EventEmitter
+        UpdateFileOfMeeting(
+            options?: EventOptions,
+            cb?: Callback<UpdateFileOfMeeting>,
+        ): EventEmitter
 
-    UpdateFileOfProposalMeeting(
-      cb?: Callback<UpdateFileOfProposalMeeting>
-    ): EventEmitter;
-    UpdateFileOfProposalMeeting(
-      options?: EventOptions,
-      cb?: Callback<UpdateFileOfProposalMeeting>
-    ): EventEmitter;
+        UpdateFileOfProposalMeeting(
+            cb?: Callback<UpdateFileOfProposalMeeting>,
+        ): EventEmitter
+        UpdateFileOfProposalMeeting(
+            options?: EventOptions,
+            cb?: Callback<UpdateFileOfProposalMeeting>,
+        ): EventEmitter
 
-    UpdateMeeting(cb?: Callback<UpdateMeeting>): EventEmitter;
-    UpdateMeeting(
-      options?: EventOptions,
-      cb?: Callback<UpdateMeeting>
-    ): EventEmitter;
+        UpdateMeeting(cb?: Callback<UpdateMeeting>): EventEmitter
+        UpdateMeeting(
+            options?: EventOptions,
+            cb?: Callback<UpdateMeeting>,
+        ): EventEmitter
 
-    UpdateParticipantMeeting(
-      cb?: Callback<UpdateParticipantMeeting>
-    ): EventEmitter;
-    UpdateParticipantMeeting(
-      options?: EventOptions,
-      cb?: Callback<UpdateParticipantMeeting>
-    ): EventEmitter;
+        UpdateParticipantMeeting(
+            cb?: Callback<UpdateParticipantMeeting>,
+        ): EventEmitter
+        UpdateParticipantMeeting(
+            options?: EventOptions,
+            cb?: Callback<UpdateParticipantMeeting>,
+        ): EventEmitter
 
-    UpdateParticipantProposal(
-      cb?: Callback<UpdateParticipantProposal>
-    ): EventEmitter;
-    UpdateParticipantProposal(
-      options?: EventOptions,
-      cb?: Callback<UpdateParticipantProposal>
-    ): EventEmitter;
+        UpdateParticipantProposal(
+            cb?: Callback<UpdateParticipantProposal>,
+        ): EventEmitter
+        UpdateParticipantProposal(
+            options?: EventOptions,
+            cb?: Callback<UpdateParticipantProposal>,
+        ): EventEmitter
 
-    UpdateProposalMeeting(cb?: Callback<UpdateProposalMeeting>): EventEmitter;
-    UpdateProposalMeeting(
-      options?: EventOptions,
-      cb?: Callback<UpdateProposalMeeting>
-    ): EventEmitter;
+        UpdateProposalMeeting(
+            cb?: Callback<UpdateProposalMeeting>,
+        ): EventEmitter
+        UpdateProposalMeeting(
+            options?: EventOptions,
+            cb?: Callback<UpdateProposalMeeting>,
+        ): EventEmitter
 
-    allEvents(options?: EventOptions, cb?: Callback<EventLog>): EventEmitter;
-  };
+        allEvents(options?: EventOptions, cb?: Callback<EventLog>): EventEmitter
+    }
 
-  once(event: "CreateMeeting", cb: Callback<CreateMeeting>): void;
-  once(
-    event: "CreateMeeting",
-    options: EventOptions,
-    cb: Callback<CreateMeeting>
-  ): void;
+    once(event: 'CreateMeeting', cb: Callback<CreateMeeting>): void
+    once(
+        event: 'CreateMeeting',
+        options: EventOptions,
+        cb: Callback<CreateMeeting>,
+    ): void
 
-  once(event: "EIP712DomainChanged", cb: Callback<EIP712DomainChanged>): void;
-  once(
-    event: "EIP712DomainChanged",
-    options: EventOptions,
-    cb: Callback<EIP712DomainChanged>
-  ): void;
+    once(event: 'EIP712DomainChanged', cb: Callback<EIP712DomainChanged>): void
+    once(
+        event: 'EIP712DomainChanged',
+        options: EventOptions,
+        cb: Callback<EIP712DomainChanged>,
+    ): void
 
-  once(event: "Initialized", cb: Callback<Initialized>): void;
-  once(
-    event: "Initialized",
-    options: EventOptions,
-    cb: Callback<Initialized>
-  ): void;
+    once(event: 'Initialized', cb: Callback<Initialized>): void
+    once(
+        event: 'Initialized',
+        options: EventOptions,
+        cb: Callback<Initialized>,
+    ): void
 
-  once(event: "LogAddValidator", cb: Callback<LogAddValidator>): void;
-  once(
-    event: "LogAddValidator",
-    options: EventOptions,
-    cb: Callback<LogAddValidator>
-  ): void;
+    once(event: 'LogAddValidator', cb: Callback<LogAddValidator>): void
+    once(
+        event: 'LogAddValidator',
+        options: EventOptions,
+        cb: Callback<LogAddValidator>,
+    ): void
 
-  once(event: "LogRemoveValidator", cb: Callback<LogRemoveValidator>): void;
-  once(
-    event: "LogRemoveValidator",
-    options: EventOptions,
-    cb: Callback<LogRemoveValidator>
-  ): void;
+    once(event: 'LogRemoveValidator', cb: Callback<LogRemoveValidator>): void
+    once(
+        event: 'LogRemoveValidator',
+        options: EventOptions,
+        cb: Callback<LogRemoveValidator>,
+    ): void
 
-  once(event: "OwnershipTransferred", cb: Callback<OwnershipTransferred>): void;
-  once(
-    event: "OwnershipTransferred",
-    options: EventOptions,
-    cb: Callback<OwnershipTransferred>
-  ): void;
+    once(
+        event: 'OwnershipTransferred',
+        cb: Callback<OwnershipTransferred>,
+    ): void
+    once(
+        event: 'OwnershipTransferred',
+        options: EventOptions,
+        cb: Callback<OwnershipTransferred>,
+    ): void
 
-  once(event: "Paused", cb: Callback<Paused>): void;
-  once(event: "Paused", options: EventOptions, cb: Callback<Paused>): void;
+    once(event: 'Paused', cb: Callback<Paused>): void
+    once(event: 'Paused', options: EventOptions, cb: Callback<Paused>): void
 
-  once(event: "Unpaused", cb: Callback<Unpaused>): void;
-  once(event: "Unpaused", options: EventOptions, cb: Callback<Unpaused>): void;
+    once(event: 'Unpaused', cb: Callback<Unpaused>): void
+    once(event: 'Unpaused', options: EventOptions, cb: Callback<Unpaused>): void
 
-  once(event: "UpdateFileOfMeeting", cb: Callback<UpdateFileOfMeeting>): void;
-  once(
-    event: "UpdateFileOfMeeting",
-    options: EventOptions,
-    cb: Callback<UpdateFileOfMeeting>
-  ): void;
+    once(event: 'UpdateFileOfMeeting', cb: Callback<UpdateFileOfMeeting>): void
+    once(
+        event: 'UpdateFileOfMeeting',
+        options: EventOptions,
+        cb: Callback<UpdateFileOfMeeting>,
+    ): void
 
-  once(
-    event: "UpdateFileOfProposalMeeting",
-    cb: Callback<UpdateFileOfProposalMeeting>
-  ): void;
-  once(
-    event: "UpdateFileOfProposalMeeting",
-    options: EventOptions,
-    cb: Callback<UpdateFileOfProposalMeeting>
-  ): void;
+    once(
+        event: 'UpdateFileOfProposalMeeting',
+        cb: Callback<UpdateFileOfProposalMeeting>,
+    ): void
+    once(
+        event: 'UpdateFileOfProposalMeeting',
+        options: EventOptions,
+        cb: Callback<UpdateFileOfProposalMeeting>,
+    ): void
 
-  once(event: "UpdateMeeting", cb: Callback<UpdateMeeting>): void;
-  once(
-    event: "UpdateMeeting",
-    options: EventOptions,
-    cb: Callback<UpdateMeeting>
-  ): void;
+    once(event: 'UpdateMeeting', cb: Callback<UpdateMeeting>): void
+    once(
+        event: 'UpdateMeeting',
+        options: EventOptions,
+        cb: Callback<UpdateMeeting>,
+    ): void
 
-  once(
-    event: "UpdateParticipantMeeting",
-    cb: Callback<UpdateParticipantMeeting>
-  ): void;
-  once(
-    event: "UpdateParticipantMeeting",
-    options: EventOptions,
-    cb: Callback<UpdateParticipantMeeting>
-  ): void;
+    once(
+        event: 'UpdateParticipantMeeting',
+        cb: Callback<UpdateParticipantMeeting>,
+    ): void
+    once(
+        event: 'UpdateParticipantMeeting',
+        options: EventOptions,
+        cb: Callback<UpdateParticipantMeeting>,
+    ): void
 
-  once(
-    event: "UpdateParticipantProposal",
-    cb: Callback<UpdateParticipantProposal>
-  ): void;
-  once(
-    event: "UpdateParticipantProposal",
-    options: EventOptions,
-    cb: Callback<UpdateParticipantProposal>
-  ): void;
+    once(
+        event: 'UpdateParticipantProposal',
+        cb: Callback<UpdateParticipantProposal>,
+    ): void
+    once(
+        event: 'UpdateParticipantProposal',
+        options: EventOptions,
+        cb: Callback<UpdateParticipantProposal>,
+    ): void
 
-  once(
-    event: "UpdateProposalMeeting",
-    cb: Callback<UpdateProposalMeeting>
-  ): void;
-  once(
-    event: "UpdateProposalMeeting",
-    options: EventOptions,
-    cb: Callback<UpdateProposalMeeting>
-  ): void;
+    once(
+        event: 'UpdateProposalMeeting',
+        cb: Callback<UpdateProposalMeeting>,
+    ): void
+    once(
+        event: 'UpdateProposalMeeting',
+        options: EventOptions,
+        cb: Callback<UpdateProposalMeeting>,
+    ): void
 }

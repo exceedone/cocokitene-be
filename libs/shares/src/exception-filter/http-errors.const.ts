@@ -113,6 +113,11 @@ export const httpErrors = {
         message: 'Company_role create failed. Please try again',
         code: 'COMPANY_00000',
     },
+    // company-role-mtg
+    COMPANY_ROLE_MTG_CREATE_FAILED: {
+        message: 'Company_role_mtg created failed. Please try again.',
+        code: 'ROLE_MTG_00001',
+    },
 
     // meeting file error
     MEETING_FILE_CREATE_FAILED: {

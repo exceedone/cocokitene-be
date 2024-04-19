@@ -15,11 +15,10 @@ import { Proposal } from '@entities/proposal.entity'
 import { UserService } from '@api/modules/users/user.service'
 import { MeetingService } from '@api/modules/meetings/meeting.service'
 import { UserMeetingService } from '@api/modules/user-meetings/user-meeting.service'
-import {
-    MeetingRole,
-    UserMeetingStatusEnum,
-} from '@shares/constants/meeting.const'
+import { UserMeetingStatusEnum } from '@shares/constants/meeting.const'
 import { Logger } from 'winston'
+import { RoleMtgEnum } from '@shares/constants'
+import { RoleMtgService } from '@api/modules/role-mtgs/role-mtg.service'
 
 @Injectable()
 export class VotingService {
@@ -31,6 +30,7 @@ export class VotingService {
         private readonly userMeetingService: UserMeetingService,
         @Inject(forwardRef(() => MeetingService))
         private readonly meetingService: MeetingService,
+        private readonly roleMtgService: RoleMtgService,
         @Inject('winston')
         private readonly logger: Logger,
     ) {}
@@ -55,7 +55,11 @@ export class VotingService {
         voteProposalDto: VoteProposalDto,
     ): Promise<Proposal> {
         const { result } = voteProposalDto
-
+        const roleMtgShareholder =
+            await this.roleMtgService.getRoleMtgByNameAndCompanyId(
+                RoleMtgEnum.SHAREHOLDER,
+                companyId,
+            )
         const proposal = await this.proposalRepository.getProposalById(
             proposalId,
         )
@@ -84,7 +88,7 @@ export class VotingService {
         const listIdsShareholders =
             await this.userMeetingService.getListUserIdPaticipantsByMeetingIdAndMeetingRole(
                 proposal.meetingId,
-                MeetingRole.SHAREHOLDER,
+                roleMtgShareholder.id,
             )
         if (!listIdsShareholders.includes(userId)) {
             throw new HttpException(

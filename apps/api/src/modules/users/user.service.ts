@@ -84,7 +84,9 @@ export class UserService {
         ])
 
         const totalShares = users.reduce((accumulator, currentValue) => {
-            accumulator = accumulator + Number(currentValue.shareQuantity)
+            if (currentValue.shareQuantity) {
+                accumulator = accumulator + Number(currentValue.shareQuantity)
+            }
             return accumulator
         }, 0)
 

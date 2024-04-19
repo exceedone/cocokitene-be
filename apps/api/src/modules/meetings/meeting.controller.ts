@@ -28,6 +28,7 @@ import { UserScope } from '@shares/decorators/user.decorator'
 import { Permission } from '@shares/decorators/permission.decorator'
 import { PermissionEnum } from '@shares/constants/permission.const'
 import { GetAllDto } from '@dtos/base.dto'
+import { MeetingRoleMtgService } from '@api/modules/meeting-role-mtgs/meeting-role-mtg.service'
 
 @Controller('meetings')
 @ApiTags('meetings')
@@ -36,6 +37,7 @@ export class MeetingController {
         private readonly meetingService: MeetingService,
         @Inject(forwardRef(() => EmailService))
         private readonly emailService: EmailService,
+        private readonly meetingRoleMtgService: MeetingRoleMtgService,
     ) {}
 
     @Get('')
@@ -62,8 +64,12 @@ export class MeetingController {
     @HttpCode(HttpStatus.OK)
     @ApiBearerAuth()
     @Permission(PermissionEnum.SEND_MAIL_TO_SHAREHOLDER)
-    async sendEmailToShareHolder(@Param('id') meetingId: number) {
-        await this.emailService.sendEmailMeeting(meetingId)
+    async sendEmailToShareHolder(
+        @Param('id') meetingId: number,
+        @UserScope() user: User,
+    ) {
+        const companyId = user.companyId
+        await this.emailService.sendEmailMeeting(meetingId, companyId)
         return 'Emails sent successfully'
     }
 
@@ -158,5 +164,21 @@ export class MeetingController {
             companyId,
         )
         return meeting
+    }
+
+    @Get('/:id/roleMtgs')
+    @UseGuards(JwtAuthGuard)
+    @ApiBearerAuth()
+    @HttpCode(HttpStatus.OK)
+    async getRoleMtgByMeetingId(@Param('id') meetingId: number) {
+        try {
+            const roleMtgs =
+                await this.meetingRoleMtgService.getRoleMtgByMeetingId(
+                    meetingId,
+                )
+            return roleMtgs
+        } catch (error) {
+            console.log(error)
+        }
     }
 }

@@ -18,7 +18,7 @@ import { httpErrors, messageLog } from '@shares/exception-filter'
 import { UserService } from '@api/modules/users/user.service'
 import { RoleService } from '@api/modules/roles/role.service'
 import { enumToArray } from '@shares/utils/enum'
-import { RoleEnum } from '@shares/constants'
+import { RoleEnum, RoleMtgEnum } from '@shares/constants'
 import { UserRoleService } from '@api/modules/user-roles/user-role.service'
 import { UserStatusService } from '@api/modules/user-status/user-status.service'
 import { PlanService } from '@api/modules/plans/plan.service'
@@ -33,6 +33,7 @@ import {
 } from '@shares/utils'
 import { uuid } from '@shares/utils/uuid'
 import { Logger } from 'winston'
+import { RoleMtgService } from '@api/modules/role-mtgs/role-mtg.service'
 
 @Injectable()
 export class CompanyService {
@@ -49,6 +50,7 @@ export class CompanyService {
         private readonly permissionService: PermissionService,
         private readonly rolePermissionService: RolePermissionService,
         private readonly emailService: EmailService,
+        private readonly roleMtgService: RoleMtgService,
         @Inject('winston')
         private readonly logger: Logger,
     ) {}
@@ -225,11 +227,17 @@ export class CompanyService {
         createdSuperAdminCompany.defaultAvatarHashColor =
             generateRandomHexColor()
         await createdSuperAdminCompany.save()
-        await Promise.all(
-            enumToArray(RoleEnum).map((role) =>
+        await Promise.all([
+            ...enumToArray(RoleEnum).map((role) =>
                 this.roleService.createCompanyRole(role, createdCompany.id),
             ),
-        )
+            ...enumToArray(RoleMtgEnum).map((role) =>
+                this.roleMtgService.createCompanyRoleMtg(
+                    role,
+                    createdCompany.id,
+                ),
+            ),
+        ])
         const [
             roleSuperAdminOfCompany,
             roleAdminOfCompany,
@@ -289,6 +297,7 @@ export class CompanyService {
             userId: createdSuperAdminCompany.id,
             roleId: roleSuperAdminOfCompany.id,
         })
+
         try {
             await this.emailService.sendEmailWhenCreatedCompanySuccesfully(
                 createdSuperAdminCompany,

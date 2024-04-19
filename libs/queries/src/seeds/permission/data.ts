@@ -125,4 +125,9 @@ export const permissionData: InsertPermissionDto[] = [
         description:
             'the user with this right can see detail board meeting in the my company',
     },
+    {
+        key: PermissionEnum.LIST_ROLE_MTG,
+        description:
+            'the user with this right can see list role_mtg in the my company',
+    },
 ]

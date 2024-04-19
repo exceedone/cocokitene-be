@@ -15,15 +15,18 @@ import {
 } from '@nestjs/common'
 import { MeetingStatusMiddleware } from '@shares/middlewares/meeting-status.middleware'
 import { BoardMeetingModule } from '../board-meetings/board-meeting.module'
+import { MeetingRoleMtgModule } from '@api/modules/meeting-role-mtgs/meeting-role-mtg.module'
+import { RoleMtgModule } from '@api/modules/role-mtgs/role-mtg.module'
 
 @Module({
     imports: [
         forwardRef(() => EmailModule),
-
+        RoleMtgModule,
         forwardRef(() => MeetingFileModule),
         ProposalModule,
         UserMeetingModule,
         forwardRef(() => UserModule),
+        MeetingRoleMtgModule,
 
         forwardRef(() => VotingModule),
         forwardRef(() => BoardMeetingModule),

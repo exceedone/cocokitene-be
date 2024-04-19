@@ -15,6 +15,8 @@ import { BoardMeetingController } from './board-meeting.controller'
 import { BoardMeetingService } from './board-meeting.service'
 import { MeetingStatusMiddleware } from '@shares/middlewares/meeting-status.middleware'
 import { MeetingModule } from '../meetings/meeting.module'
+import { CandidateModule } from '../candidate/candidate.module'
+import { MeetingRoleMtgModule } from '../meeting-role-mtgs/meeting-role-mtg.module'
 
 @Module({
     imports: [
@@ -22,6 +24,8 @@ import { MeetingModule } from '../meetings/meeting.module'
         forwardRef(() => MeetingFileModule),
         ProposalModule,
         UserMeetingModule,
+        CandidateModule,
+        MeetingRoleMtgModule,
         forwardRef(() => UserModule),
         forwardRef(() => VotingModule),
         forwardRef(() => MeetingModule),

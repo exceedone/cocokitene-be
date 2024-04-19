@@ -3,4 +3,5 @@ export enum RoleEnum {
     SUPER_ADMIN = 'SUPER_ADMIN',
     SHAREHOLDER = 'SHAREHOLDER',
     USER = 'USER',
+    BOARD = 'BOARD',
 }

@@ -7,6 +7,8 @@ import { HttpExceptionFilter, messageLog } from '@shares/exception-filter'
 import { JwtAuthGuard } from '@shares/guards/jwt-auth.guard'
 import { ResponseTransformInterceptor } from '@shares/interceptors/response.interceptor'
 import * as dns from 'dns'
+import { S3 } from '@aws-sdk/client-s3'
+import configuration from '@shares/config/configuration'
 
 async function bootstrap() {
     try {
@@ -64,9 +66,42 @@ async function bootstrap() {
             )
         }
 
-        logger.log('info', `${messageLog.TURN_ON_DAPP.message} ${port}`)
+        //Check connect S3
+        const credentials = {
+            accessKeyId: configuration().s3.accessKeyId,
+            secretAccessKey: configuration().s3.secretAccessKey,
+        }
+        const region = configuration().s3.region
+        const s3 = new S3({ credentials, region })
+
+        try {
+            const connectS3 = !!(await s3.headBucket({
+                Bucket: configuration().s3.bucketName,
+            }))
+            if (connectS3) {
+                //Connect to S3 successfully
+                Logger.log(`${messageLog.CONNECT_S3_SUCCESS.message}`)
+                logger.log('info', `${messageLog.CONNECT_S3_SUCCESS.message}`)
+            } else {
+                //Connect to S3 failed
+                logger.log(
+                    'error',
+                    `${messageLog.CONNECT_S3_FAILED.code} ${messageLog.CONNECT_S3_FAILED.message}`,
+                )
+            }
+        } catch (error) {
+            Logger.log(`${messageLog.CONNECT_S3_FAILED.message}`)
+            logger.log(
+                'error',
+                `${messageLog.CONNECT_S3_FAILED.code} ${messageLog.CONNECT_S3_FAILED.message}`,
+            )
+        }
+
+        setTimeout(() => {
+            logger.log('info', `${messageLog.TURN_ON_DAPP.message} ${port}`)
+            Logger.log(`${messageLog.TURN_ON_DAPP.message}${port}`)
+        }, 100)
         // logger.log(`${messageLog.TURN_ON_DAPP.message} ${port}`)
-        Logger.log(`${messageLog.TURN_ON_DAPP.message}${port}`)
     } catch (err) {
         console.log('Error Check ', err)
     }

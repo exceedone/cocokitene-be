@@ -13,6 +13,8 @@ import { User } from '@entities/user.entity'
 import { RegisterCompanyDto } from '@dtos/company.dto'
 import { FileTypes, MeetingRole } from '@shares/constants/meeting.const'
 import { MeetingFileService } from '@api/modules/meeting-files/meeting-file.service'
+import { RoleMtgEnum } from '@shares/constants'
+import { RoleMtgService } from '@api/modules/role-mtgs/role-mtg.service'
 
 @Injectable()
 export class EmailService {
@@ -23,13 +25,19 @@ export class EmailService {
         private readonly meetingRepository: MeetingRepository,
         private readonly userMeetingService: UserMeetingService,
         private readonly meetingFileService: MeetingFileService,
+        private readonly roleMtgService: RoleMtgService,
     ) {}
 
-    async sendEmailMeeting(meetingId: number) {
+    async sendEmailMeeting(meetingId: number, companyId: number) {
+        const roleMtgShareholder =
+            await this.roleMtgService.getRoleMtgByNameAndCompanyId(
+                RoleMtgEnum.SHAREHOLDER,
+                companyId,
+            )
         const idsParticipantsInMeetings =
             await this.userMeetingService.getUserMeetingByMeetingIdAndRole(
                 meetingId,
-                MeetingRole.SHAREHOLDER,
+                roleMtgShareholder.id,
             )
 
         const participants = await Promise.all(

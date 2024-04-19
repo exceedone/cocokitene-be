@@ -21,7 +21,7 @@ export class MeetingStatusMiddleware implements NestMiddleware {
             const meetingId = parseInt(req.params?.id)
             await this.meetingService.standardStatusMeeting(meetingId)
             // await this.boardMeetingService.standardStatusMeeting(meetingId)
-            console.log('end middleware')
+            // console.log('end middleware')
             next()
         } catch (error) {
             throw new HttpException(

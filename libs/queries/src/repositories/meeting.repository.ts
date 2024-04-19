@@ -12,6 +12,7 @@ import {
     MeetingType,
     StatusMeeting,
 } from '@shares/constants/meeting.const'
+import { CreateBoardMeetingDto } from '@dtos/board-meeting.dto'
 
 @CustomRepository(Meeting)
 export class MeetingRepository extends Repository<Meeting> {
@@ -276,5 +277,22 @@ export class MeetingRepository extends Repository<Meeting> {
 
         const meetings = await queryBuilder.getMany()
         return meetings
+    }
+
+    //Board Meeting
+    async createBoardMeeting(
+        createMeetingDto: CreateBoardMeetingDto,
+        typeMeeting: MeetingType,
+        creatorId: number,
+        companyId: number,
+    ): Promise<Meeting> {
+        const meeting = await this.create({
+            ...createMeetingDto,
+            type: typeMeeting,
+            creatorId,
+            companyId,
+        })
+        await meeting.save()
+        return meeting
     }
 }

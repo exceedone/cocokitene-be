@@ -25,6 +25,8 @@ import { ShareholderModule } from '@api/modules/shareholder/shareholder.module'
 import { MyLoggerModule } from '@api/modules/loggers/logger.module'
 import { BoardMeetingModule } from './board-meetings/board-meeting.module'
 import { ElectionModule } from './election/election.module'
+import { RoleMtgModule } from '@api/modules/role-mtgs/role-mtg.module'
+import { MeetingRoleMtgModule } from '@api/modules/meeting-role-mtgs/meeting-role-mtg.module'
 
 @Module({
     imports: [
@@ -54,6 +56,8 @@ import { ElectionModule } from './election/election.module'
         ShareholderModule,
         BoardMeetingModule,
         ElectionModule,
+        RoleMtgModule,
+        MeetingRoleMtgModule,
     ],
     controllers: [ApiController],
     providers: [ApiService],

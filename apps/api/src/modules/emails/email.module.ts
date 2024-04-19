@@ -11,6 +11,7 @@ import { UserRoleModule } from '@api/modules/user-roles/user-role.module'
 import { SystemAdminModule } from '@api/modules/system-admin/system-admin.module'
 import { ShareholderModule } from '@api/modules/shareholder/shareholder.module'
 import { MeetingFileModule } from '@api/modules/meeting-files/meeting-file.module'
+import { RoleMtgModule } from '@api/modules/role-mtgs/role-mtg.module'
 
 @Module({
     imports: [
@@ -45,6 +46,7 @@ import { MeetingFileModule } from '@api/modules/meeting-files/meeting-file.modul
         SystemAdminModule,
         ShareholderModule,
         MeetingFileModule,
+        RoleMtgModule,
     ],
 
     providers: [EmailService],

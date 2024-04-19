@@ -138,10 +138,12 @@ export class ProposalService {
 
     async updateListProposals(
         meetingId: number,
+        companyId: number,
         userId: number,
         proposals: ProposalDto[],
         totalShares: number,
         shareholders: number[],
+        roleMtgShareholderId: number,
     ): Promise<void> {
         const meeting = await this.meetingService.getInternalMeetingById(
             meetingId,
@@ -158,11 +160,14 @@ export class ProposalService {
 
         // list added
         const listAdded = proposals.filter((proposal) => !proposal.id)
+
         const usersToRemoves =
             await this.userMeetingService.getListUserToRemoveInMeeting(
                 meetingId,
                 shareholders,
+                roleMtgShareholderId,
             )
+
         try {
             await Promise.all([
                 ...listEdited.map(async (proposal) => {

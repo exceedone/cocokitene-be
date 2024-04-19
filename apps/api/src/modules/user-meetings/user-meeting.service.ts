@@ -8,21 +8,22 @@ import {
     Injectable,
 } from '@nestjs/common'
 import { UserMeetingRepository } from '@repositories/user-meeting.repository'
-import {
-    MeetingRole,
-    UserMeetingStatusEnum,
-} from '@shares/constants/meeting.const'
+import { UserMeetingStatusEnum } from '@shares/constants/meeting.const'
 import { httpErrors } from '@shares/exception-filter'
 import { UserService } from '@api/modules/users/user.service'
 import { User } from '@entities/user.entity'
 import { Logger } from 'winston'
+import { RoleMtgService } from '@api/modules/role-mtgs/role-mtg.service'
+import { MeetingRoleMtgService } from '@api/modules/meeting-role-mtgs/meeting-role-mtg.service'
 @Injectable()
 export class UserMeetingService {
     constructor(
         private readonly userMeetingRepository: UserMeetingRepository,
         // private readonly userService: UserService,
+        private readonly meetingRoleMtgService: MeetingRoleMtgService,
         @Inject(forwardRef(() => UserService))
         private readonly userService: UserService,
+        private readonly roleMtgService: RoleMtgService,
         @Inject('winston')
         private readonly logger: Logger,
     ) {}
@@ -30,13 +31,13 @@ export class UserMeetingService {
     async createUserMeeting(
         createUserMeetingDto: CreateUserMeetingDto,
     ): Promise<UserMeeting> {
-        const { userId, meetingId, role, status } = createUserMeetingDto
+        const { userId, meetingId, roleMtgId, status } = createUserMeetingDto
         try {
             const createdUserMeeting =
                 await this.userMeetingRepository.createUserMeeting({
                     userId,
                     meetingId,
-                    role,
+                    roleMtgId,
                     status,
                 })
             // return await createdUserMeeting.save()
@@ -55,31 +56,32 @@ export class UserMeetingService {
 
     async getUserMeetingByMeetingIdAndRole(
         meetingId: number,
-        role: MeetingRole,
+        roleMtgId: number,
     ): Promise<UserMeeting[]> {
         const userMeetings =
             await this.userMeetingRepository.getUserMeetingByMeetingIdAndRole(
                 meetingId,
-                role,
+                roleMtgId,
             )
 
         return userMeetings
     }
     async updateUserMeeting(
         meetingId: number,
-        meetingRole: MeetingRole,
+        roleMtgId: number,
         newIdPaticipants: number[],
     ): Promise<number[]> {
         const listUserIds =
             await this.getListUserIdPaticipantsByMeetingIdAndMeetingRole(
                 meetingId,
-                meetingRole,
+                roleMtgId,
             )
 
         // ids just add from dto
         const usersToAdds = newIdPaticipants.filter(
             (userId) => !listUserIds.includes(userId),
         )
+
         const addedUsersFollowRole: number[] = []
         addedUsersFollowRole.push(...usersToAdds)
 
@@ -93,7 +95,7 @@ export class UserMeetingService {
                 this.userMeetingRepository.removeUserFromMeeting(
                     usersToRemove,
                     meetingId,
-                    meetingRole,
+                    roleMtgId,
                 ),
             ),
             ...usersToAdds.map(async (usersToAdd) => {
@@ -107,14 +109,14 @@ export class UserMeetingService {
                     await this.createUserMeeting({
                         userId: usersToAdd,
                         meetingId: meetingId,
-                        role: meetingRole,
+                        roleMtgId: roleMtgId,
                         status: UserMeetingStatusEnum.PARTICIPATE,
                     })
                 } else {
                     await this.createUserMeeting({
                         userId: usersToAdd,
                         meetingId: meetingId,
-                        role: meetingRole,
+                        roleMtgId: roleMtgId,
                     })
                 }
             }),
@@ -159,22 +161,23 @@ export class UserMeetingService {
 
     async getListUserIdPaticipantsByMeetingIdAndMeetingRole(
         meetingId: number,
-        meetingRole: MeetingRole,
+        roleMtgId: number,
     ): Promise<number[]> {
         return await this.userMeetingRepository.getListUserIdPaticipantsByMeetingIdAndMeetingRole(
             meetingId,
-            meetingRole,
+            roleMtgId,
         )
     }
 
     async getListUserToRemoveInMeeting(
         meetingId: number,
         newIdPaticipants: number[],
+        roleMtgShareholderId: number,
     ): Promise<User[]> {
         const listOldShareholderIds =
             await this.getListUserIdPaticipantsByMeetingIdAndMeetingRole(
                 meetingId,
-                MeetingRole.SHAREHOLDER,
+                roleMtgShareholderId,
             )
         //id of user need to delete
         const idUsersToRemoves = listOldShareholderIds.filter(

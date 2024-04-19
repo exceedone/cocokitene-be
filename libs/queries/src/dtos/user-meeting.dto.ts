@@ -1,8 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger'
-import {
-    MeetingRole,
-    UserMeetingStatusEnum,
-} from '@shares/constants/meeting.const'
+import { UserMeetingStatusEnum } from '@shares/constants/meeting.const'
 import {
     IsEnum,
     IsNotEmpty,
@@ -27,18 +24,18 @@ export class CreateUserMeetingDto {
     })
     meetingId: number
 
-    @IsEnum(MeetingRole)
+    @IsNumber()
     @ApiProperty({
         required: true,
-        enum: MeetingRole,
+        example: 1,
     })
-    role: MeetingRole
+    roleMtgId: number
 
     @IsOptional()
-    @IsEnum(MeetingRole)
+    @IsEnum(UserMeetingStatusEnum)
     @ApiProperty({
         required: false,
-        enum: MeetingRole,
+        enum: UserMeetingStatusEnum,
     })
     status?: UserMeetingStatusEnum
 }
@@ -84,4 +81,31 @@ export class UserMeetingDataSendToBlockchainDto {
         example: 'participate',
     })
     status: string
+}
+
+export class UserMeetingDto {
+    @IsNotEmpty()
+    @IsNumber()
+    @Type(() => Number)
+    @ApiProperty({
+        required: true,
+        example: 1,
+    })
+    roleMtgId: number
+
+    @IsNotEmpty()
+    @IsString()
+    @ApiProperty({
+        required: true,
+        example: 'shareholder',
+    })
+    roleName?: string
+
+    @IsNotEmpty()
+    @Type(() => Number)
+    @ApiProperty({
+        required: true,
+        example: [1, 2, 3],
+    })
+    userIds: number[]
 }

@@ -8,14 +8,15 @@ export class ParticipantMeetingTransactionRepository extends Repository<Particip
     async createParticipantMeetingTransaction(
         participantDto: ParticipantDto,
     ): Promise<ParticipantMeetingTransaction> {
-        const { username, userId, status, role, meetingId } = participantDto
+        const { username, userId, status, roleMtgId, meetingId } =
+            participantDto
 
         const createParticipantMeetingTransaction = await this.create({
             meetingId,
             userId,
             username,
             status,
-            role,
+            roleMtgId,
         })
         return await createParticipantMeetingTransaction.save()
     }

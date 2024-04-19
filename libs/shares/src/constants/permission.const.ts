@@ -25,6 +25,7 @@ export enum PermissionEnum {
     BOARD_MEETING = 'board_meeting',
     EDIT_BOARD_MEETING = 'edit_board_meeting',
     DETAIL_BOARD_MEETING = 'detail_board_meeting',
+    LIST_ROLE_MTG = 'list_role_mtg',
 }
 
 export enum StatePermisisionForRolesEnum {

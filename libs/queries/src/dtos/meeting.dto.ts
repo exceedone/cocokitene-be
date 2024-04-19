@@ -1,9 +1,7 @@
 import {
-    IsArray,
     IsEnum,
     IsInt,
     IsNotEmpty,
-    IsNumber,
     IsOptional,
     IsString,
     ValidateNested,
@@ -19,6 +17,7 @@ import {
 import { MeetingFileDto } from '@dtos/meeting-file.dto'
 import { ProposalDto } from '@dtos/proposal.dto'
 import { GetAllDto } from '@dtos/base.dto'
+import { UserMeetingDto } from '@dtos/user-meeting.dto'
 
 export class GetAllMeetingDto extends GetAllDto {
     @IsOptional()
@@ -149,45 +148,15 @@ export class CreateMeetingDto {
     @Type(() => ProposalDto)
     amendmentResolutions: ProposalDto[]
 
-    @IsArray()
-    @IsNumber({}, { each: true })
     @ApiProperty({
         required: true,
-        example: [1, 2],
+        type: [UserMeetingDto],
     })
-    hosts: number[]
-
-    @IsArray()
-    @IsNumber({}, { each: true })
-    @ApiProperty({
-        required: true,
-        example: [1, 2],
+    @ValidateNested({
+        each: true,
     })
-    controlBoards: number[]
-
-    @IsArray()
-    @IsNumber({}, { each: true })
-    @ApiProperty({
-        required: true,
-        example: [1, 2, 3],
-    })
-    directors: number[]
-
-    @IsArray()
-    @IsNumber({}, { each: true })
-    @ApiProperty({
-        required: true,
-        example: [1, 2, 3, 4, 5],
-    })
-    administrativeCouncils: number[]
-
-    @IsArray()
-    @IsNumber({}, { each: true })
-    @ApiProperty({
-        required: true,
-        example: [1, 2, 3, 4],
-    })
-    shareholders: number[]
+    @Type(() => UserMeetingDto)
+    participants: UserMeetingDto[]
 }
 
 export class IdMeetingDto {
@@ -312,48 +281,14 @@ export class UpdateMeetingDto {
     @Type(() => ProposalDto)
     amendmentResolutions?: ProposalDto[]
 
-    @IsArray()
     @IsOptional()
-    @IsNumber({}, { each: true })
     @ApiProperty({
         required: false,
-        example: [1, 2],
+        type: [UserMeetingDto],
     })
-    hosts?: number[]
-
-    @IsArray()
-    @IsOptional()
-    @IsNumber({}, { each: true })
-    @ApiProperty({
-        required: false,
-        example: [1, 2],
+    @ValidateNested({
+        each: true,
     })
-    controlBoards?: number[]
-
-    @IsArray()
-    @IsOptional()
-    @IsNumber({}, { each: true })
-    @ApiProperty({
-        required: false,
-        example: [1, 2, 10],
-    })
-    directors?: number[]
-
-    @IsArray()
-    @IsOptional()
-    @IsNumber({}, { each: true })
-    @ApiProperty({
-        required: false,
-        example: [1, 2, 3, 4, 5],
-    })
-    administrativeCouncils?: number[]
-
-    @IsArray()
-    @IsOptional()
-    @IsNumber({}, { each: true })
-    @ApiProperty({
-        required: false,
-        example: [1, 2, 3, 4],
-    })
-    shareholders?: number[]
+    @Type(() => UserMeetingDto)
+    participants?: UserMeetingDto[]
 }
