@@ -1,3 +1,4 @@
+import { MeetingRoleMtgModule } from '@api/modules/meeting-role-mtgs/meeting-role-mtg.module'
 import { forwardRef, Module } from '@nestjs/common'
 import { VotingService } from '@api/modules/votings/voting.service'
 import { UserModule } from '@api/modules/users/user.module'
@@ -12,6 +13,7 @@ import { RoleMtgModule } from '@api/modules/role-mtgs/role-mtg.module'
         RoleMtgModule,
         UserMeetingModule,
         RoleModule,
+        MeetingRoleMtgModule,
         forwardRef(() => MeetingModule),
     ],
     providers: [VotingService],

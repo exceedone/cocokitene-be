@@ -295,4 +295,33 @@ export class MeetingRepository extends Repository<Meeting> {
         await meeting.save()
         return meeting
     }
+
+    async getBoardMeetingByIdAndCompanyId(
+        meetingId: number,
+        companyId: number,
+    ): Promise<Meeting> {
+        const boardMeeting = await this.createQueryBuilder('meeting')
+            .where('meeting.id = :id', { id: meetingId })
+            .andWhere('meeting.companyId = :companyId', { companyId })
+            .leftJoinAndSelect('meeting.meetingFiles', 'meetingFiles')
+            .leftJoinAndSelect('meeting.proposals', 'proposals')
+            .leftJoin('proposals.creator', 'creator')
+            .addSelect([
+                'creator.username',
+                'creator.email',
+                'creator.avatar',
+                'creator.defaultAvatarHashColor',
+            ])
+            .leftJoinAndSelect('proposals.proposalFiles', 'proposalFiles')
+            .leftJoinAndSelect('meeting.candidates', 'candidate')
+            .leftJoin('candidate.typeElection', 'typeElection')
+            .addSelect([
+                'typeElection.id',
+                'typeElection.status',
+                'typeElection.description',
+            ])
+            .getOne()
+
+        return boardMeeting
+    }
 }

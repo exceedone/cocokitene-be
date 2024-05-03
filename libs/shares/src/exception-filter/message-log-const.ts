@@ -245,11 +245,34 @@ export const messageLog = {
 
     //BoardMeeting
     CREATE_BOARD_MEETING_SUCCESS: {
-        message: '',
-        code: '',
+        message:
+            '[DAPP] Create Board Meeting successfully ,Board Meeting ID : ',
+        code: 'BOARD_MTG_0000',
     },
+
     CREATE_BOARD_MEETING_FAILED: {
-        message: '',
-        code: '',
+        message: '[DAPP] Create Shareholder Meeting failed ',
+        code: 'E0020',
+    },
+
+    UPDATE_BOARD_MEETING_SUCCESS: {
+        message:
+            '[DAPP] Update Board Meeting successfully ,Board Meeting ID : ',
+        code: 'BOARD_MTG_0001',
+    },
+    UPDATE_BOARD_MEETING_FAILED: {
+        message: '[DAPP] Update Board Meeting failed ,Board Meeting ID : ',
+        code: 'E0021',
+    },
+
+    //Voting Candidate
+    VOTING_CANDIDATE_OF_MEETING_SUCCESS: {
+        message: ' voting successfully for candidateId: ',
+        code: 'VOTING_CANDIDATE_OF_MEETING_0000',
+    },
+
+    VOTING_CANDIDATE_OF_MEETING_FAILED: {
+        message: ' voting failed for CandidateID: ',
+        code: 'E0022',
     },
 }

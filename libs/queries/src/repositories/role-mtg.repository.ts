@@ -4,15 +4,20 @@ import { CustomRepository } from '@shares/decorators'
 import { RoleMtgEnum, TypeRoleMeeting } from '@shares/constants'
 import { HttpException, HttpStatus } from '@nestjs/common'
 import { httpErrors } from '@shares/exception-filter'
-import { GetAllRoleMtgDto } from '@dtos/role-mtg.dto'
+import {
+    GetAllRoleMtgByTypeRoleMtgDto,
+    GetAllRoleMtgDto,
+    UpdateRoleMtgDto,
+} from '@dtos/role-mtg.dto'
 import { paginate, Pagination } from 'nestjs-typeorm-paginate'
 
 @CustomRepository(RoleMtg)
 export class RoleMtgRepository extends Repository<RoleMtg> {
     async createCompanyRole(
-        roleMtg: RoleMtgEnum,
+        roleMtg: RoleMtgEnum | string,
         companyId: number,
         description?: string,
+        type?: TypeRoleMeeting,
     ): Promise<RoleMtg> {
         try {
             const createCompanyRoleMtg = await this.create({
@@ -23,6 +28,10 @@ export class RoleMtgRepository extends Repository<RoleMtg> {
             })
             if (roleMtg === RoleMtgEnum.SHAREHOLDER) {
                 createCompanyRoleMtg.type = TypeRoleMeeting.SHAREHOLDER_MTG
+            }
+            if (type) {
+                createCompanyRoleMtg.type = type
+                await createCompanyRoleMtg.save()
             }
             await createCompanyRoleMtg.save()
             return createCompanyRoleMtg
@@ -35,7 +44,7 @@ export class RoleMtgRepository extends Repository<RoleMtg> {
     }
 
     async getAllRoleMtgByCompanyIdAndTypeRoleMtg(
-        options: GetAllRoleMtgDto,
+        options: GetAllRoleMtgByTypeRoleMtgDto,
         companyId: number,
     ): Promise<Pagination<RoleMtg>> {
         const { page, limit, searchQuery, type } = options
@@ -85,5 +94,39 @@ export class RoleMtgRepository extends Repository<RoleMtg> {
         }
         queryBuilder.orderBy('role_mtg.roleName', 'ASC')
         return paginate(queryBuilder, { page, limit })
+    }
+
+    async updateRoleMtgWithType(
+        roleMtgId: number,
+        companyId: number,
+        updateRoleMtgDto: UpdateRoleMtgDto,
+    ): Promise<RoleMtg> {
+        try {
+            await this.createQueryBuilder('role_mtg')
+                .update(RoleMtg)
+                .set({
+                    roleName: updateRoleMtgDto.roleName,
+                    type: updateRoleMtgDto.type,
+                    description: updateRoleMtgDto.description,
+                })
+                .where('role_mtg.id = :roleMtgId', {
+                    roleMtgId: roleMtgId,
+                })
+
+                .execute()
+            const roleMtg = await this.findOne({
+                where: {
+                    id: roleMtgId,
+                    companyId: companyId,
+                },
+            })
+
+            return roleMtg
+        } catch (error) {
+            throw new HttpException(
+                { message: error.message },
+                HttpStatus.INTERNAL_SERVER_ERROR,
+            )
+        }
     }
 }

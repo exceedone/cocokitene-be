@@ -31,9 +31,6 @@ import { Meeting } from '@entities/meeting.entity'
 import { UserMeeting } from '@entities/user-meeting.entity'
 import { MeetingFile } from '@entities/meeting-file.entity'
 import { ProposalFile } from '@entities/proposal-file'
-import { messageLog } from '@shares/exception-filter'
-import { DataSource } from 'typeorm'
-import { logger } from '@api/modules/loggers/logger'
 
 @Module({
     imports: [
@@ -84,19 +81,19 @@ import { logger } from '@api/modules/loggers/logger'
                 retryDelay: 10000,
             }),
             inject: [ConfigService],
-            dataSourceFactory: async (option) => {
-                try {
-                    const dataSource = await new DataSource(option).initialize()
-                    logger.info(
-                        `${messageLog.CONNECT_DATABASE_SUCCESSFULLY.message}`,
-                    )
-                    return dataSource
-                } catch (error) {
-                    logger.error(
-                        `${messageLog.CONNECT_DATABASE_FAILED.code} ${messageLog.CONNECT_DATABASE_FAILED.message}`,
-                    )
-                }
-            },
+            // dataSourceFactory: async (option) => {
+            //     try {
+            //         const dataSource = await new DataSource(option).initialize()
+            //         logger.info(
+            //             `${messageLog.CONNECT_DATABASE_SUCCESSFULLY.message}`,
+            //         )
+            //         return dataSource
+            //     } catch (error) {
+            //         logger.error(
+            //             `${messageLog.CONNECT_DATABASE_FAILED.code} ${messageLog.CONNECT_DATABASE_FAILED.message}`,
+            //         )
+            //     }
+            // },
         }),
     ],
 })

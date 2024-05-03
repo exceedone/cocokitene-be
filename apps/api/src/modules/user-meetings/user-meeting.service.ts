@@ -15,6 +15,7 @@ import { User } from '@entities/user.entity'
 import { Logger } from 'winston'
 import { RoleMtgService } from '@api/modules/role-mtgs/role-mtg.service'
 import { MeetingRoleMtgService } from '@api/modules/meeting-role-mtgs/meeting-role-mtg.service'
+import { RoleBoardMtgEnum } from '@shares/constants'
 @Injectable()
 export class UserMeetingService {
     constructor(
@@ -183,6 +184,8 @@ export class UserMeetingService {
         const idUsersToRemoves = listOldShareholderIds.filter(
             (userId) => !newIdPaticipants.includes(userId),
         )
+
+        //Get User out meeting
         const usersToRemoves = await Promise.all([
             ...idUsersToRemoves.map((id) =>
                 this.userService.getActiveUserById(id),
@@ -203,5 +206,55 @@ export class UserMeetingService {
             },
         })
         return userMeeting
+    }
+
+    async getListActiveBoardIdRemoveBoardMtg(
+        meetingId: number,
+        newIdBoards: number[],
+    ): Promise<number[]> {
+        const allParticipantsInMeeting =
+            await this.userMeetingRepository.getAllIdsParticipantInBoardMeeting(
+                meetingId,
+            )
+
+        //Get id of Role Host of Board Meeting
+        const listRoleBoardMtg =
+            await this.meetingRoleMtgService.getMeetingRoleMtgByMeetingId(
+                meetingId,
+            )
+
+        const idOfHostRoleInMtg = listRoleBoardMtg
+            .map((item) => item.roleMtg)
+            .filter(
+                (role) =>
+                    role.roleName.toUpperCase() ===
+                    RoleBoardMtgEnum.HOST.toUpperCase(),
+            )[0]?.id
+
+        const listIdOldBoardOfBoardMtg = Array.from(
+            new Set(
+                allParticipantsInMeeting
+                    .filter(
+                        (participant) =>
+                            participant.roleMtgId !== idOfHostRoleInMtg,
+                    )
+                    .map((user) => user.userId),
+            ),
+        )
+
+        const boardIdRemoveBoardMtg = listIdOldBoardOfBoardMtg.filter(
+            (userId) => !newIdBoards.includes(userId),
+        )
+
+        //Get board active out meeting
+        const userIdsActiveToRemoves = (
+            await Promise.all([
+                ...boardIdRemoveBoardMtg.map((userId) =>
+                    this.userService.getActiveUserById(userId),
+                ),
+            ])
+        ).map((board) => board.id)
+
+        return userIdsActiveToRemoves
     }
 }

@@ -24,6 +24,7 @@ export class RoleMtg extends BaseEntity {
         type: 'varchar',
         length: 255,
         nullable: false,
+        unique: true,
     })
     roleName: string
 

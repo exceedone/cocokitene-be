@@ -46,6 +46,27 @@ export class ProposalController {
         return proposal
     }
 
+    @Post('/vote-boardMtg/:proposalId')
+    @UseGuards(JwtAuthGuard)
+    @Permission(PermissionEnum.DETAIL_BOARD_MEETING)
+    @ApiBearerAuth()
+    @HttpCode(HttpStatus.OK)
+    async voteProposalBoardMtg(
+        @Param('proposalId') proposalId: number,
+        @Query() voteProposalDto: VoteProposalDto,
+        @UserScope() user: User,
+    ) {
+        const userId = user?.id
+        const companyId = user?.companyId
+        const proposal = await this.votingService.voteProposalOfBoardMtg(
+            companyId,
+            userId,
+            proposalId,
+            voteProposalDto,
+        )
+        return proposal
+    }
+
     // @Delete(':proposalId')
     // @UseGuards(JwtAuthGuard)
     // @HttpCode(HttpStatus.OK)

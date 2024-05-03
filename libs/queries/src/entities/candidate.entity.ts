@@ -71,7 +71,7 @@ export class Candidate extends BaseEntity {
     @JoinColumn({
         name: 'type',
     })
-    election: Election
+    typeElection: Election
 
     @ManyToOne(() => Meeting)
     @JoinColumn({

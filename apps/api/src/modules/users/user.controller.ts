@@ -60,6 +60,25 @@ export class UserController {
         return users
     }
 
+    @Get('/by-roleName/:roleName')
+    @HttpCode(HttpStatus.OK)
+    @ApiBearerAuth()
+    @UseGuards(JwtAuthGuard)
+    @Permission(PermissionEnum.LIST_ACCOUNT)
+    async getAllBoardsByCompany(
+        @Query() getAllBoardsDto: GetAllUsersDto,
+        @UserScope() user: User,
+        @Param('roleName') roleName: string,
+    ) {
+        const companyId = user?.companyId
+        const boards = await this.userService.getAllUserInCompanyByRoleName(
+            getAllBoardsDto,
+            companyId,
+            roleName,
+        )
+        return boards
+    }
+
     @Get('/:id')
     @UseGuards(JwtAuthGuard)
     @Permission(PermissionEnum.DETAIL_ACCOUNT)

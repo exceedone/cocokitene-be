@@ -7,7 +7,8 @@ export enum PermissionEnum {
     EDIT_MEETING = 'edit_meeting',
     DETAIL_MEETING = 'detail_meeting',
     SEND_MAIL_TO_SHAREHOLDER = 'send_mail_to_shareholder',
-    SHAREHOLDERS_MTG = 'shareholders_mtg',
+    SEND_MAIL_TO_BOARD = 'send_mail_to_board',
+    SHAREHOLDERS_MTG = 'list_shareholders_meeting',
     VOTING_PROPOSAL = 'voting_proposal',
     EDIT_PROPOSAL = 'edit_proposal',
     LIST_USER_STATUS = 'list_user_status',
@@ -22,10 +23,10 @@ export enum PermissionEnum {
     DETAIL_SHAREHOLDERS = 'detail_shareholders',
     EDIT_SHAREHOLDERS = 'edit_shareholders',
     CREATE_BOARD_MEETING = 'create_board_meeting',
-    BOARD_MEETING = 'board_meeting',
+    BOARD_MEETING = 'list_board_meeting',
     EDIT_BOARD_MEETING = 'edit_board_meeting',
     DETAIL_BOARD_MEETING = 'detail_board_meeting',
-    LIST_ROLE_MTG = 'list_role_mtg',
+    LIST_ROLE_MTG = 'list_role_meeting',
 }
 
 export enum StatePermisisionForRolesEnum {

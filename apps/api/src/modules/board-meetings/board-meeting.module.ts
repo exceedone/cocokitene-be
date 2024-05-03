@@ -17,6 +17,8 @@ import { MeetingStatusMiddleware } from '@shares/middlewares/meeting-status.midd
 import { MeetingModule } from '../meetings/meeting.module'
 import { CandidateModule } from '../candidate/candidate.module'
 import { MeetingRoleMtgModule } from '../meeting-role-mtgs/meeting-role-mtg.module'
+import { RoleMtgModule } from '../role-mtgs/role-mtg.module'
+import { VotingCandidateModule } from '../voting-candidate/voting-candidate.module'
 
 @Module({
     imports: [
@@ -26,6 +28,8 @@ import { MeetingRoleMtgModule } from '../meeting-role-mtgs/meeting-role-mtg.modu
         UserMeetingModule,
         CandidateModule,
         MeetingRoleMtgModule,
+        RoleMtgModule,
+        VotingCandidateModule,
         forwardRef(() => UserModule),
         forwardRef(() => VotingModule),
         forwardRef(() => MeetingModule),

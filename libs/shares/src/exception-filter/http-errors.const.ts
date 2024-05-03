@@ -115,8 +115,20 @@ export const httpErrors = {
     },
     // company-role-mtg
     COMPANY_ROLE_MTG_CREATE_FAILED: {
-        message: 'Company_role_mtg created failed. Please try again.',
+        message: 'Role Meeting created failed. Please try again.',
         code: 'ROLE_MTG_00001',
+    },
+    COMPANY_ROLE_MTG_UPDATE_FAILED: {
+        message: 'Role Meeting update failed. Please try again.',
+        code: 'ROLE_MTG_00002',
+    },
+    COMPANY_ROLE_MTG_NOT_EXISTED: {
+        message: 'Role Meeting not existed. Please try again.',
+        code: 'ROLE_MTG_00003',
+    },
+    COMPANY_ROLE_MTG_EXISTED: {
+        message: 'Role Meeting already existed. Please try again.',
+        code: 'ROLE_MTG_00004',
     },
 
     // meeting file error
@@ -355,9 +367,31 @@ export const httpErrors = {
         code: 'CANDIDATE_00001',
     },
 
+    CANDIDATE_NOT_FOUND: {
+        message: 'Candidate with meetingId and id not found. Please try again',
+        code: 'CANDIDATE_000002',
+    },
+
     //Board Meeting
     BOARD_MEETING_CREATE_FAILED: {
         message: 'Create Board Meeting failed , try again!',
         code: 'BOARD_MEETING_00001',
+    },
+
+    BOARD_MEETING_NOT_FOUND: {
+        message: 'Board meeting not existed. Please try again',
+        code: 'BOARD_MEETING_00002',
+    },
+
+    //Board Voting
+    BOARD_NOT_HAVE_THE_RIGHT_TO_VOTE: {
+        message:
+            'User are not a Board in this meeting so you do not have the right to vote. Please try again',
+        code: 'BOARD_VOTING_00001',
+    },
+
+    VOTING_CANDIDATE_FAILED: {
+        message: 'Create voting failded. Please send result diffirence.',
+        code: 'VOTING_00001',
     },
 }

@@ -74,6 +74,19 @@ export class UserService {
         return users
     }
 
+    async getAllUserInCompanyByRoleName(
+        getAllUsersDto: GetAllUsersDto,
+        companyId: number,
+        roleName: string,
+    ): Promise<Pagination<User>> {
+        const boards = await this.userRepository.getAllUserInCompanyByRoleName(
+            getAllUsersDto,
+            companyId,
+            roleName,
+        )
+        return boards
+    }
+
     async getTotalSharesHolderByShareholderIds(
         shareholderIds: number[],
     ): Promise<number> {

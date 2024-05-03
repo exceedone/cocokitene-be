@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+
 import {
     Controller,
     Post,
@@ -7,13 +9,18 @@ import {
     Body,
     Get,
     Query,
+    Param,
+    Patch,
 } from '@nestjs/common'
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger'
 import { BoardMeetingService } from './board-meeting.service'
 import { JwtAuthGuard } from '@shares/guards/jwt-auth.guard'
 import { PermissionEnum } from '@shares/constants/permission.const'
 import { Permission } from '@shares/decorators/permission.decorator'
-import { CreateBoardMeetingDto } from '@dtos/board-meeting.dto'
+import {
+    CreateBoardMeetingDto,
+    UpdateBoardMeetingDto,
+} from '@dtos/board-meeting.dto'
 import { UserScope } from '@shares/decorators/user.decorator'
 import { User } from '@entities/user.entity'
 import { GetAllMeetingDto } from '@dtos/meeting.dto'
@@ -59,6 +66,50 @@ export class BoardMeetingController {
             userId,
             companyId,
         )
+        return boardMeeting
+    }
+
+    @Get('/:id')
+    @UseGuards(JwtAuthGuard)
+    @Permission(PermissionEnum.DETAIL_BOARD_MEETING)
+    @HttpCode(HttpStatus.OK)
+    @ApiBearerAuth()
+    async getBoardMeetingById(
+        @Param('id') meetingId: number,
+        @UserScope() user: User,
+    ) {
+        const companyId = user?.companyId
+        const userId = user?.id
+
+        const boardMeeting = await this.boardMeetingService.getBoardMeetingById(
+            meetingId,
+            companyId,
+            userId,
+        )
+
+        return boardMeeting
+    }
+
+    @Patch('/:id')
+    @UseGuards(JwtAuthGuard)
+    @Permission(PermissionEnum.EDIT_BOARD_MEETING)
+    @ApiBearerAuth()
+    @HttpCode(HttpStatus.OK)
+    async updateBoardMeeting(
+        @Param('id') boardMeetingId: number,
+        @Body() updateBoardMeetingDto: UpdateBoardMeetingDto,
+        @UserScope() user: User,
+    ) {
+        const userId = user?.id
+        const companyId = user?.companyId
+
+        const boardMeeting = await this.boardMeetingService.updateBoardMeeting(
+            userId,
+            companyId,
+            boardMeetingId,
+            updateBoardMeetingDto,
+        )
+
         return boardMeeting
     }
 }

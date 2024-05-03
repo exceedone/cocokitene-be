@@ -218,7 +218,8 @@ export class MeetingService {
         const shareholders = participants
             .filter(
                 (participant) =>
-                    participant.roleName === RoleMtgEnum.SHAREHOLDER,
+                    participant.roleName.toLocaleUpperCase() ===
+                    RoleMtgEnum.SHAREHOLDER.toLocaleUpperCase(),
             )
             .map((participant) => participant.userIds)
             .flat()
@@ -522,8 +523,8 @@ export class MeetingService {
         const shareholders = participants
             .filter(
                 (participant) =>
-                    // participant.roleName === RoleMtgEnum.SHAREHOLDER,
-                    participant.roleName === 'Shareholder',
+                    participant.roleName.toUpperCase() ===
+                    RoleMtgEnum.SHAREHOLDER,
             )
             .map((participant) => participant.userIds)
             .flat()
@@ -531,8 +532,8 @@ export class MeetingService {
         const roleMtgShareholderId = participants
             .filter(
                 (participant) =>
-                    // participant.roleName === RoleMtgEnum.SHAREHOLDER,
-                    participant.roleName === 'Shareholder',
+                    participant.roleName.toUpperCase() ===
+                    RoleMtgEnum.SHAREHOLDER,
             )
             .map((participant) => participant.roleMtgId)
             .find((id) => true)

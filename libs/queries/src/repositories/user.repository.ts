@@ -104,6 +104,51 @@ export class UserRepository extends Repository<User> {
         return paginateRaw(queryBuilder, { page, limit })
     }
 
+    async getAllUserInCompanyByRoleName(
+        options: GetAllUsersDto,
+        companyId: number,
+        roleName: string,
+    ): Promise<Pagination<User>> {
+        const { page, limit, searchQuery, sortOrder } = options
+
+        const queryBuilder = this.createQueryBuilder('users')
+            .select([
+                'users.id',
+                'users.username',
+                'users.email',
+                'users.walletAddress',
+                'users.avatar',
+                'users.companyId',
+                'users.defaultAvatarHashColor',
+                'users.createdAt',
+                'users.updatedAt',
+                'GROUP_CONCAT(role.role ORDER BY role.role ASC) as listRole',
+            ])
+            .leftJoinAndSelect('users.userStatus', 'userStatus')
+            .leftJoin('users.userRole', 'userRole')
+            .leftJoin('userRole.role', 'role')
+            .andWhere('users.companyId = :companyId', { companyId })
+            .having('listRole LIKE :roleContaining', {
+                roleContaining: `%${roleName}%`,
+            })
+            .groupBy('users.id')
+
+        if (searchQuery) {
+            queryBuilder
+                .andWhere('(users.userName like :userName', {
+                    userName: `%${searchQuery}%`,
+                })
+                .orWhere('users.email like :email)', {
+                    email: `%${searchQuery}%`,
+                })
+        }
+        if (sortOrder) {
+            queryBuilder.orderBy('users.updatedAt', sortOrder)
+        }
+
+        return paginateRaw(queryBuilder, { page, limit })
+    }
+
     // async getUserByMeetingIdAndRole(
     //     meetingId: number,
     //     role: MeetingRole,

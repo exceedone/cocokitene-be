@@ -134,4 +134,16 @@ export class UserMeetingRepository extends Repository<UserMeeting> {
         })
         return participants
     }
+
+    async getAllIdsParticipantInBoardMeeting(
+        meetingId: number,
+    ): Promise<UserMeeting[]> {
+        const participants = await this.find({
+            where: {
+                meetingId: meetingId,
+            },
+        })
+
+        return participants
+    }
 }

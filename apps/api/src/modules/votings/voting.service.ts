@@ -19,6 +19,7 @@ import { UserMeetingStatusEnum } from '@shares/constants/meeting.const'
 import { Logger } from 'winston'
 import { RoleMtgEnum } from '@shares/constants'
 import { RoleMtgService } from '@api/modules/role-mtgs/role-mtg.service'
+import { MeetingRoleMtgService } from '../meeting-role-mtgs/meeting-role-mtg.service'
 
 @Injectable()
 export class VotingService {
@@ -31,6 +32,7 @@ export class VotingService {
         @Inject(forwardRef(() => MeetingService))
         private readonly meetingService: MeetingService,
         private readonly roleMtgService: RoleMtgService,
+        private readonly meetingRoleMtgService: MeetingRoleMtgService,
         @Inject('winston')
         private readonly logger: Logger,
     ) {}
@@ -181,7 +183,7 @@ export class VotingService {
             }
         } catch (error) {
             this.logger.info(
-                `[DAPP] User ID : ${userId} ${messageLog.VOTING_PROPOSAL_SHAREHOLDER_MEETING_SUCCESS.message} ${existedProposal.id}`,
+                `${messageLog.VOTING_PROPOSAL_SHAREHOLDER_MEETING_FAILED.code} [DAPP] User ID : ${userId} ${messageLog.VOTING_PROPOSAL_SHAREHOLDER_MEETING_FAILED.message} ${existedProposal.id}`,
             )
             throw new HttpException(
                 { message: error.message },
@@ -243,6 +245,180 @@ export class VotingService {
         } catch (error) {
             throw new HttpException(
                 httpErrors.DELETE_FAILED_USER_VOTING,
+                HttpStatus.INTERNAL_SERVER_ERROR,
+            )
+        }
+    }
+
+    async voteProposalOfBoardMtg(
+        companyId: number,
+        userId: number,
+        proposalId: number,
+        voteProposalDto: VoteProposalDto,
+    ): Promise<Proposal> {
+        const { result } = voteProposalDto
+
+        const existedUser = await this.userService.getActiveUserById(userId)
+        if (!existedUser) {
+            throw new HttpException(
+                httpErrors.USER_NOT_FOUND,
+                HttpStatus.BAD_REQUEST,
+            )
+        }
+
+        const proposal = await this.proposalRepository.getProposalById(
+            proposalId,
+        )
+
+        if (!proposal) {
+            throw new HttpException(
+                httpErrors.PROPOSAL_NOT_FOUND,
+                HttpStatus.NOT_FOUND,
+            )
+        }
+        if (proposal.meeting.companyId !== companyId) {
+            throw new HttpException(
+                httpErrors.MEETING_NOT_IN_THIS_COMPANY,
+                HttpStatus.BAD_REQUEST,
+            )
+        }
+
+        const meetingId = proposal.meetingId
+
+        const listRoleBoardMtg =
+            await this.meetingRoleMtgService.getMeetingRoleMtgByMeetingId(
+                meetingId,
+            )
+
+        const roleBoardMtg = listRoleBoardMtg
+            .map((item) => item.roleMtg)
+            .filter(
+                (role) =>
+                    role.roleName.toLocaleUpperCase() !==
+                    RoleMtgEnum.HOST.toLocaleUpperCase(),
+            )
+
+        const participantIdLicensedVotePromise = roleBoardMtg.map(
+            async (roleBoard) => {
+                const participantBoardMeetings =
+                    await this.userMeetingService.getUserMeetingByMeetingIdAndRole(
+                        meetingId,
+                        roleBoard.id,
+                    )
+
+                const participantIdOfRoles = participantBoardMeetings.map(
+                    (participant) => participant.user.id,
+                )
+                return {
+                    roleMtgId: roleBoard.id,
+                    roleMtgName: roleBoard.roleName,
+                    userParticipants: participantIdOfRoles,
+                }
+            },
+        )
+        const participantBoards = await Promise.all(
+            participantIdLicensedVotePromise,
+        )
+
+        const participantBoardIds = participantBoards
+            .map((item) => item.userParticipants)
+            .flat()
+
+        if (!participantBoardIds.includes(userId)) {
+            throw new HttpException(
+                httpErrors.BOARD_NOT_HAVE_THE_RIGHT_TO_VOTE,
+                HttpStatus.BAD_REQUEST,
+            )
+        }
+
+        const userMeeting =
+            await this.userMeetingService.getUserMeetingByUserIdAndMeetingId(
+                userId,
+                meetingId,
+            )
+
+        const isUserJoinedBoardMeeting =
+            userMeeting.status === UserMeetingStatusEnum.PARTICIPATE
+        if (!isUserJoinedBoardMeeting) {
+            throw new HttpException(
+                httpErrors.USER_NOT_YET_ATTENDANCE,
+                HttpStatus.BAD_REQUEST,
+            )
+        }
+
+        const meeting = await this.meetingService.getInternalMeetingById(
+            meetingId,
+        )
+
+        const currentDate = new Date()
+        const endVotingTime = new Date(meeting.endVotingTime)
+        if (currentDate > endVotingTime) {
+            throw new HttpException(
+                httpErrors.VOTING_WHEN_MEETING_ENDED,
+                HttpStatus.BAD_REQUEST,
+            )
+        }
+
+        const existedProposal = await this.proposalRepository.getProposalById(
+            proposalId,
+        )
+
+        try {
+            const checkExistedVoting =
+                await this.findVotingByUserIdAndProposalId(userId, proposalId)
+
+            if (checkExistedVoting) {
+                const updateCountVoteExistedProposal =
+                    await this.updateVoteCount(
+                        existedProposal,
+                        checkExistedVoting,
+                        voteProposalDto,
+                        1,
+                    )
+                this.logger.info(
+                    `[DAPP] User ID : ${userId} ${messageLog.VOTING_PROPOSAL_SHAREHOLDER_MEETING_SUCCESS.message} ${existedProposal.id}`,
+                )
+                return updateCountVoteExistedProposal
+            } else {
+                let createdVoting: Voting
+                try {
+                    createdVoting = await this.votingRepository.createVoting({
+                        userId: userId,
+                        proposalId: proposalId,
+                        result: result,
+                    })
+                    switch (result) {
+                        case VoteProposalResult.VOTE:
+                            existedProposal.votedQuantity += 1
+                            existedProposal.notVoteYetQuantity -= 1
+                            break
+                        case VoteProposalResult.UNVOTE:
+                            existedProposal.unVotedQuantity += 1
+                            existedProposal.notVoteYetQuantity -= 1
+                            break
+                    }
+                    await createdVoting.save()
+                    await existedProposal.save()
+                    this.logger.info(
+                        `[DAPP] User ID : ${userId} ${messageLog.VOTING_PROPOSAL_SHAREHOLDER_MEETING_SUCCESS.message} ${existedProposal.id}`,
+                    )
+                    return existedProposal
+                } catch (error) {
+                    this.logger.error(
+                        `${messageLog.VOTING_PROPOSAL_SHAREHOLDER_MEETING_FAILED.code} [DAPP] User ID : ${userId} ${messageLog.VOTING_PROPOSAL_SHAREHOLDER_MEETING_FAILED.message} ${existedProposal.id}`,
+                    )
+                    throw new HttpException(
+                        httpErrors.VOTING_CREATED_FAILED,
+                        HttpStatus.INTERNAL_SERVER_ERROR,
+                    )
+                }
+            }
+        } catch (error) {
+            this.logger.info(
+                `${messageLog.VOTING_PROPOSAL_SHAREHOLDER_MEETING_FAILED.code} [DAPP] User ID : ${userId} ${messageLog.VOTING_PROPOSAL_SHAREHOLDER_MEETING_FAILED.message} ${existedProposal.id}`,
+            )
+            throw new HttpException(
+                { message: error.message },
                 HttpStatus.INTERNAL_SERVER_ERROR,
             )
         }

@@ -27,6 +27,8 @@ import { BoardMeetingModule } from './board-meetings/board-meeting.module'
 import { ElectionModule } from './election/election.module'
 import { RoleMtgModule } from '@api/modules/role-mtgs/role-mtg.module'
 import { MeetingRoleMtgModule } from '@api/modules/meeting-role-mtgs/meeting-role-mtg.module'
+import { VotingCandidateModule } from './voting-candidate/voting-candidate.module'
+import { CandidateModule } from './candidate/candidate.module'
 
 @Module({
     imports: [
@@ -58,6 +60,8 @@ import { MeetingRoleMtgModule } from '@api/modules/meeting-role-mtgs/meeting-rol
         ElectionModule,
         RoleMtgModule,
         MeetingRoleMtgModule,
+        CandidateModule,
+        VotingCandidateModule,
     ],
     controllers: [ApiController],
     providers: [ApiService],

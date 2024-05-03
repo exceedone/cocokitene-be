@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger'
 import {
+    IsEnum,
     IsNotEmpty,
     IsOptional,
     IsString,
@@ -10,6 +11,7 @@ import { Type } from 'class-transformer'
 import { ProposalDto } from './proposal.dto'
 import { CandidateDto } from './candidate.dto'
 import { UserMeetingDto } from '@dtos/user-meeting.dto'
+import { StatusMeeting } from '@shares/constants/meeting.const'
 
 export class CreateBoardMeetingDto {
     @IsNotEmpty()
@@ -120,4 +122,128 @@ export class CreateBoardMeetingDto {
     })
     @Type(() => UserMeetingDto)
     participants: UserMeetingDto[]
+}
+
+export class UpdateBoardMeetingDto {
+    @IsOptional()
+    @IsString()
+    @ApiProperty({
+        example: 'Update Board Meeting',
+        required: false,
+    })
+    title?: string
+
+    @IsOptional()
+    @IsString()
+    @ApiProperty({
+        example: 'Update note of BoardMeeting',
+        required: false,
+    })
+    note?: string
+
+    @IsOptional()
+    @IsString()
+    @ApiProperty({
+        example: 'https://meet.google.com/mhu-gupg-oux',
+        required: false,
+    })
+    meetingLink?: string
+
+    @IsOptional()
+    @IsString()
+    @ApiProperty({
+        example: '2023-12-20 15:00:00',
+        required: false,
+    })
+    startTime?: string
+
+    @IsOptional()
+    @IsString()
+    @ApiProperty({
+        example: '2024-12-20 16:00:00',
+        required: false,
+    })
+    endTime?: string
+
+    @IsOptional()
+    @IsString()
+    @ApiProperty({
+        example: '2024-12-20 16:00:00',
+        required: false,
+    })
+    endVotingTime?: string
+
+    @IsOptional()
+    @IsEnum(StatusMeeting)
+    @ApiProperty({
+        enum: StatusMeeting,
+        required: false,
+    })
+    status?: StatusMeeting
+
+    @IsOptional()
+    @ApiProperty({
+        required: false,
+        type: [MeetingFileDto],
+    })
+    @ValidateNested({
+        each: true,
+    })
+    @Type(() => MeetingFileDto)
+    meetingMinutes?: MeetingFileDto[]
+
+    @IsOptional()
+    @ApiProperty({
+        required: false,
+        type: [MeetingFileDto],
+    })
+    @ValidateNested({
+        each: true,
+    })
+    @Type(() => MeetingFileDto)
+    meetingInvitations?: MeetingFileDto[]
+
+    @IsOptional()
+    @ApiProperty({
+        required: false,
+        type: [ProposalDto],
+    })
+    @ValidateNested({
+        each: true,
+    })
+    @Type(() => ProposalDto)
+    managementAndFinancials?: ProposalDto[]
+
+    @IsOptional()
+    @ApiProperty({
+        required: false,
+        type: [ProposalDto],
+    })
+    @ValidateNested({
+        each: true,
+    })
+    @Type(() => ProposalDto)
+    elections?: ProposalDto[]
+
+    @IsOptional()
+    @ApiProperty({
+        required: false,
+        type: [CandidateDto],
+    })
+    @ValidateNested({
+        each: true,
+    })
+    @Type(() => CandidateDto)
+    candidates?: CandidateDto[]
+
+    @IsOptional()
+    @ApiProperty({
+        required: false,
+        type: [UserMeetingDto],
+    })
+    @ValidateNested({
+        each: true,
+    })
+    @Type(() => UserMeetingDto)
+    participants?: UserMeetingDto[]
 }
