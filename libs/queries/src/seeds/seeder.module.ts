@@ -14,6 +14,8 @@ import { RolePermissionSeederModule } from '@seeds/role-permission/role-permissi
 import { UserRoleSeederModule } from '@seeds/user-role/user-role.seeder.module'
 import { SystemAdminSeederModule } from '@seeds/system-admin/system-admin.seeder.module'
 import { ElectionSeederModule } from '@seeds/election/election.seeder.module'
+import { ReactionIconSeederModule } from '@seeds/reaction-icon/reaction-icon.seeder.module'
+import { ChatPermissionSeederModule } from '@seeds/chat-permission/chat-permission.seeder.module'
 
 @Module({
     imports: [
@@ -32,6 +34,8 @@ import { ElectionSeederModule } from '@seeds/election/election.seeder.module'
         UserRoleSeederModule,
         SystemAdminSeederModule,
         ElectionSeederModule,
+        ReactionIconSeederModule,
+        ChatPermissionSeederModule,
     ],
     providers: [Seeder],
 })

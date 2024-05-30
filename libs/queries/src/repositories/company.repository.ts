@@ -40,7 +40,7 @@ export class CompanyRepository extends Repository<Company> {
                 'companyStatus',
                 'companyStatus.id = companys.statusId',
             )
-            .leftJoin('plans', 'plan', 'plan.id = companys.planId')
+            .leftJoin('plans_mst', 'plan', 'plan.id = companys.planId')
             .leftJoin('meetings', 'meeting', 'companys.id = meeting.companyId')
             .leftJoin('users', 'user', 'user.companyId = companys.id')
             .addSelect(`COUNT(DISTINCT  meeting.id)`, 'totalCreatedMTGs')

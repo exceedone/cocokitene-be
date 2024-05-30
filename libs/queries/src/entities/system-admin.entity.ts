@@ -6,7 +6,7 @@ import {
     PrimaryGeneratedColumn,
     UpdateDateColumn,
 } from 'typeorm'
-@Entity('system_admins')
+@Entity('system_admins_mst')
 export class SystemAdmin extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number

@@ -38,10 +38,15 @@ import { VoteProposalResult } from '@shares/constants/proposal.const'
 import { GetAllDto } from '@dtos/base.dto'
 import { UserService } from '@api/modules/users/user.service'
 import { User } from '@entities/user.entity'
-import { PermissionEnum, RoleMtgEnum } from '@shares/constants'
+import {
+    ChatPermissionEnum,
+    PermissionEnum,
+    RoleMtgEnum,
+} from '@shares/constants'
 import { Logger } from 'winston'
 import { MeetingRoleMtgService } from '@api/modules/meeting-role-mtgs/meeting-role-mtg.service'
 import { RoleMtgService } from '@api/modules/role-mtgs/role-mtg.service'
+import { ChatPermissionService } from '@api/modules/chat-permission/chat-permission.service'
 
 @Injectable()
 export class MeetingService {
@@ -58,6 +63,7 @@ export class MeetingService {
         private readonly userService: UserService,
         private readonly meetingRoleMtgService: MeetingRoleMtgService,
         private readonly roleMtgService: RoleMtgService,
+        private readonly chatPermissionService: ChatPermissionService,
         @Inject('winston')
         private readonly logger: Logger,
     ) {}
@@ -207,7 +213,13 @@ export class MeetingService {
                 HttpStatus.INTERNAL_SERVER_ERROR,
             )
         }
-
+        // when create a meeting, chat mode fault is every public private
+        const chatPermissionEveryPublicPrivate =
+            await this.chatPermissionService.getChatPermissionByName(
+                ChatPermissionEnum.EVERY_PUBLIC_PRIVATE,
+            )
+        createdMeeting.chatPermissionId = chatPermissionEveryPublicPrivate.id
+        await createdMeeting.save()
         const {
             meetingMinutes,
             meetingInvitations,
@@ -681,5 +693,13 @@ export class MeetingService {
                 companyId,
             )
         return meeting
+    }
+
+    async getAllParticipantInviteMeeting(meetingId: number): Promise<any> {
+        const participants =
+            await this.userMeetingService.getAllParticipantInviteMeeting(
+                meetingId,
+            )
+        return participants
     }
 }

@@ -8,7 +8,7 @@ import {
 } from 'typeorm'
 import { UserStatusEnum } from '@shares/constants'
 
-@Entity('user_statuses')
+@Entity('user_statuses_mst')
 export class UserStatus extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number

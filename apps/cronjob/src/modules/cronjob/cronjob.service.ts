@@ -21,7 +21,6 @@ export class CronjobService {
         @Inject('winston')
         private readonly logger: Logger,
     ) {}
-
     getConfigCrawlerByContractType(type: CONTRACT_TYPE): ConfigCrawler {
         const chainId = getChainId()
         const contractArray = CONTRACT_BY_CHAIN[chainId]

@@ -37,7 +37,7 @@ export class RoleService {
     }
 
     async getRoleByRoleNameAndIdCompany(
-        roleName: RoleEnum,
+        roleName: string,
         companyId: number,
     ): Promise<Role> {
         const role = await this.roleRepository.findOne({

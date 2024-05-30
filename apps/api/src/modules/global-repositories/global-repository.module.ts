@@ -28,6 +28,10 @@ import { ElectionRepository } from '@repositories/election.repository'
 import { CandidateRepository } from '@repositories/candidate.repository'
 import { MeetingRoleMtgRepository } from '@repositories/meeting-role-mtg.repository'
 import { RoleMtgRepository } from '@repositories/role-mtg.repository'
+import { MessageRepository } from '@repositories/message.repository'
+import { ChatPermissionRepository } from '@repositories/chat-permission.repository'
+import { ReactionMessagesRepository } from '@repositories/reaction-messages.repository'
+import { ReactionIconRepository } from '@repositories/reaction-icon.repository'
 
 const commonRepositories = [
     UserRepository,
@@ -59,6 +63,10 @@ const commonRepositories = [
     CandidateRepository,
     RoleMtgRepository,
     MeetingRoleMtgRepository,
+    MessageRepository,
+    ChatPermissionRepository,
+    ReactionMessagesRepository,
+    ReactionIconRepository,
 ]
 
 @Global()

@@ -7,6 +7,7 @@ import {
     ManyToOne,
     OneToMany,
     PrimaryGeneratedColumn,
+    Unique,
     UpdateDateColumn,
 } from 'typeorm'
 import { Company } from '@entities/company.entity'
@@ -15,6 +16,7 @@ import { UserMeeting } from '@entities/user-meeting.entity'
 import { TypeRoleMeeting } from '@shares/constants'
 
 @Entity('role_mtg')
+@Unique(['roleName', 'companyId'])
 export class RoleMtg extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number
@@ -24,7 +26,7 @@ export class RoleMtg extends BaseEntity {
         type: 'varchar',
         length: 255,
         nullable: false,
-        unique: true,
+        // unique: true,
     })
     roleName: string
 

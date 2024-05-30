@@ -77,6 +77,12 @@ interface Configuration {
     log: {
         folderLog: string
     }
+    chat: {
+        sendChatPublic: string
+        sendChatPrivate: string
+        receiveChatPrivate: string
+        receiveChatPublic: string
+    }
 }
 
 export default (): Configuration => ({
@@ -174,5 +180,11 @@ export default (): Configuration => ({
     },
     log: {
         folderLog: process.env.FOLDER_LOG,
+    },
+    chat: {
+        sendChatPublic: process.env.CHAT_PUBLIC,
+        sendChatPrivate: process.env.CHAT_PRIVATE,
+        receiveChatPrivate: process.env.RECEIVE_CHAT_PRIVATE,
+        receiveChatPublic: process.env.RECEIVE_CHAT_PUBLIC,
     },
 })

@@ -31,6 +31,7 @@ import {
 import { Like } from 'typeorm'
 import { EmailService } from '@api/modules/emails/email.service'
 import { Logger } from 'winston'
+import { RoleService } from '../roles/role.service'
 @Injectable()
 export class UserService {
     constructor(
@@ -39,6 +40,7 @@ export class UserService {
         private readonly companyService: CompanyService,
         private readonly userRoleService: UserRoleService,
         private readonly emailService: EmailService,
+        private readonly roleService: RoleService,
         @Inject('winston')
         private readonly logger: Logger,
     ) {}
@@ -79,12 +81,25 @@ export class UserService {
         companyId: number,
         roleName: string,
     ): Promise<Pagination<User>> {
-        const boards = await this.userRepository.getAllUserInCompanyByRoleName(
+        const idOfRoleInCompany =
+            await this.roleService.getRoleByRoleNameAndIdCompany(
+                roleName,
+                companyId,
+            )
+
+        if (!idOfRoleInCompany) {
+            throw new HttpException(
+                httpErrors.ROLE_NOT_EXISTED,
+                HttpStatus.NOT_FOUND,
+            )
+        }
+
+        const users = await this.userRepository.getAllUserInCompanyByRoleName(
             getAllUsersDto,
             companyId,
-            roleName,
+            idOfRoleInCompany.id,
         )
-        return boards
+        return users
     }
 
     async getTotalSharesHolderByShareholderIds(

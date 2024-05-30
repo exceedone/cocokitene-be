@@ -146,4 +146,18 @@ export class UserMeetingRepository extends Repository<UserMeeting> {
 
         return participants
     }
+
+    async getAllParticipantInviteMeeting(
+        meetingId: number,
+    ): Promise<UserMeeting[]> {
+        const participants = await this.createQueryBuilder('user_meetings')
+            .select(['user_meetings.id'])
+            .leftJoin('user_meetings.user', 'user')
+            .addSelect(['user.id', 'user.email'])
+            .where('user_meetings.meetingId = :meetingId', {
+                meetingId: meetingId,
+            })
+            .getMany()
+        return participants
+    }
 }

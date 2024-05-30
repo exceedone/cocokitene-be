@@ -27,7 +27,7 @@ export class ProposalController {
 
     @Post('/vote/:proposalId')
     @UseGuards(JwtAuthGuard)
-    @Permission(PermissionEnum.VOTING_PROPOSAL)
+    @Permission(PermissionEnum.DETAIL_MEETING)
     @ApiBearerAuth()
     @HttpCode(HttpStatus.OK)
     async voteProposal(

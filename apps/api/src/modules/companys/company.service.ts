@@ -18,7 +18,7 @@ import { httpErrors, messageLog } from '@shares/exception-filter'
 import { UserService } from '@api/modules/users/user.service'
 import { RoleService } from '@api/modules/roles/role.service'
 import { enumToArray } from '@shares/utils/enum'
-import { RoleEnum, RoleMtgEnum } from '@shares/constants'
+import { PermissionEnum, RoleEnum, RoleMtgEnum } from '@shares/constants'
 import { UserRoleService } from '@api/modules/user-roles/user-role.service'
 import { UserStatusService } from '@api/modules/user-status/user-status.service'
 import { PlanService } from '@api/modules/plans/plan.service'
@@ -242,9 +242,12 @@ export class CompanyService {
             roleSuperAdminOfCompany,
             roleAdminOfCompany,
             roleShareholderOfCompany,
-            roleUserAdminOfCompany,
+            roleUserOfCompany,
+            roleBoardOfCompany,
             listPermissions,
             listPermissionsBase,
+            listPermissionsBaseForRoleBoard,
+            listPermissionsBaseForRoleShareholder,
         ] = await Promise.all([
             this.roleService.getRoleByRoleNameAndIdCompany(
                 RoleEnum.SUPER_ADMIN,
@@ -262,17 +265,23 @@ export class CompanyService {
                 RoleEnum.USER,
                 createdCompany.id,
             ),
+            this.roleService.getRoleByRoleNameAndIdCompany(
+                RoleEnum.BOARD,
+                createdCompany.id,
+            ),
             this.permissionService.getAllInternalPermissions({
                 searchQuery: '',
             }),
             this.permissionService.getAllPermissionsBase(),
+            this.permissionService.getPermissionsBaseForRoleBoard(),
+            this.permissionService.getPermissionsBaseForRoleShareholder(),
         ])
 
-        await Promise.all(
+        await Promise.all([
             [
-                roleAdminOfCompany,
+                roleBoardOfCompany,
                 roleShareholderOfCompany,
-                roleUserAdminOfCompany,
+                roleUserOfCompany,
             ].map(async (role) => {
                 await Promise.all([
                     ...listPermissionsBase.map((permission) =>
@@ -283,14 +292,42 @@ export class CompanyService {
                     ),
                 ])
             }),
-        )
+
+            ...listPermissionsBaseForRoleBoard.map((permission) => {
+                this.rolePermissionService.createRolePermission({
+                    permissionId: permission.id,
+                    roleId: roleBoardOfCompany.id,
+                })
+            }),
+
+            ...listPermissionsBaseForRoleShareholder.map((permission) => {
+                this.rolePermissionService.createRolePermission({
+                    permissionId: permission.id,
+                    roleId: roleShareholderOfCompany.id,
+                })
+            }),
+        ])
         await Promise.all([
+            //Seed permission for Super Admin
             ...listPermissions.map((permission) =>
                 this.rolePermissionService.createRolePermission({
                     permissionId: permission.id,
                     roleId: roleSuperAdminOfCompany.id,
                 }),
             ),
+            //Seed permission for Admin Role
+            ...listPermissions.map((permission) => {
+                if (
+                    permission.key !==
+                        PermissionEnum.SETTING_PERMISSION_FOR_ROLES &&
+                    permission.key !== PermissionEnum.CREATE_ROLE
+                ) {
+                    this.rolePermissionService.createRolePermission({
+                        permissionId: permission.id,
+                        roleId: roleAdminOfCompany.id,
+                    })
+                }
+            }),
         ])
 
         await this.userRoleService.createUserRole({

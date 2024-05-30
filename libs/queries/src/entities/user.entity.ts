@@ -12,6 +12,7 @@ import {
 import { UserStatus } from '@entities/user-status.entity'
 import { Company } from '@entities/company.entity'
 import { UserRole } from '@entities/user-role.entity'
+import { Reaction } from '@entities/reaction-messages.entity'
 
 @Entity('users')
 export class User extends BaseEntity {
@@ -126,4 +127,7 @@ export class User extends BaseEntity {
 
     @OneToMany(() => UserRole, (userRole) => userRole.user)
     userRole: UserRole[]
+
+    @OneToMany(() => Reaction, (reaction) => reaction.user)
+    reactions: Reaction[]
 }

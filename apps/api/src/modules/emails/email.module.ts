@@ -12,6 +12,7 @@ import { SystemAdminModule } from '@api/modules/system-admin/system-admin.module
 import { ShareholderModule } from '@api/modules/shareholder/shareholder.module'
 import { MeetingFileModule } from '@api/modules/meeting-files/meeting-file.module'
 import { RoleMtgModule } from '@api/modules/role-mtgs/role-mtg.module'
+import { MeetingRoleMtgModule } from '../meeting-role-mtgs/meeting-role-mtg.module'
 
 @Module({
     imports: [
@@ -47,6 +48,7 @@ import { RoleMtgModule } from '@api/modules/role-mtgs/role-mtg.module'
         ShareholderModule,
         MeetingFileModule,
         RoleMtgModule,
+        MeetingRoleMtgModule,
     ],
 
     providers: [EmailService],

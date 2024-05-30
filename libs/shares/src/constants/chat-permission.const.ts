@@ -1,0 +1,5 @@
+export enum ChatPermissionEnum {
+    HOST_ONLY = 'HOST_ONLY',
+    EVERY_PUBLIC = 'EVERY_PUBLIC',
+    EVERY_PUBLIC_PRIVATE = 'EVERY_PUBLIC_PRIVATE',
+}

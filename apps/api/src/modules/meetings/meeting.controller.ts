@@ -125,6 +125,15 @@ export class MeetingController {
         return this.meetingService.getAllMeetingParticipant(meetingId, filter)
     }
 
+    @Get('/:id/participants-invite')
+    @UseGuards(JwtAuthGuard)
+    @Permission(PermissionEnum.DETAIL_MEETING)
+    @HttpCode(HttpStatus.OK)
+    @ApiBearerAuth()
+    async getAllParticipantInviteMeeting(@Param('id') meetingId: number) {
+        return this.meetingService.getAllParticipantInviteMeeting(meetingId)
+    }
+
     @Get('/:id')
     @UseGuards(JwtAuthGuard)
     @Permission(PermissionEnum.DETAIL_MEETING)

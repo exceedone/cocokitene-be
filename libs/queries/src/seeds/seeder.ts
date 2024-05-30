@@ -10,6 +10,8 @@ import { RolePermissionSeederService } from '@seeds/role-permission/role-permiss
 import { UserRoleSeederService } from '@seeds/user-role/user-role.seeder.service'
 import { SystemAdminSeederService } from '@seeds/system-admin/system-admin.seeder.service'
 import { ElectionSeederService } from '@seeds/election/election.seeder.service'
+import { ReactionIconSeederService } from '@seeds/reaction-icon/reaction-icon.seeder.service'
+import { ChatPermissionSeederService } from '@seeds/chat-permission/chat-permission.seeder.service'
 
 @Injectable()
 export class Seeder {
@@ -25,9 +27,13 @@ export class Seeder {
         private readonly userRoleSeederService: UserRoleSeederService,
         private readonly systemAdminSeederService: SystemAdminSeederService,
         private readonly electionSeederService: ElectionSeederService,
+        private readonly emojiSeederService: ReactionIconSeederService,
+        private readonly chatPermissionSeederService: ChatPermissionSeederService,
     ) {}
     async seed() {
         Logger.log('START_SEEDING__DATA')
+        await this.seedEmoji()
+        await this.seedChatPermission()
         await this.seedElection()
         await this.seedPlan()
         await this.seedCompanyStatus()
@@ -74,5 +80,13 @@ export class Seeder {
     }
     async seedSystemAdmin() {
         await this.systemAdminSeederService.seedSystemAdmin()
+    }
+
+    async seedEmoji() {
+        await this.emojiSeederService.seedEmoji()
+    }
+
+    async seedChatPermission() {
+        await this.chatPermissionSeederService.seedChatPermission()
     }
 }

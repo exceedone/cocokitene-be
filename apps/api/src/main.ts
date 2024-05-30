@@ -9,14 +9,17 @@ import { ResponseTransformInterceptor } from '@shares/interceptors/response.inte
 import * as dns from 'dns'
 import { S3 } from '@aws-sdk/client-s3'
 import configuration from '@shares/config/configuration'
+import { SocketAdapter } from '@api/modules/adapter/socket.adapter'
 
 async function bootstrap() {
     try {
         const app = await NestFactory.create(ApiModule)
         const config = app.get<ConfigService>(ConfigService)
         const globalPrefix = config.get('api.prefix')
-
-        app.enableCors()
+        const socketAdapter = new SocketAdapter(app)
+        app.useWebSocketAdapter(socketAdapter)
+        // app.enableCors()
+        app.enableCors({ credentials: true, origin: '*' })
         app.setGlobalPrefix(globalPrefix)
         // app.useGlobalInterceptors(new SentryInterceptor())
         app.useGlobalInterceptors(new ResponseTransformInterceptor())

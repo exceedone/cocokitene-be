@@ -10,7 +10,7 @@ import {
 import { PermissionEnum } from '@shares/constants/permission.const'
 import { RolePermission } from './role-permission.entity'
 
-@Entity('permissions')
+@Entity('permissions_mst')
 export class Permission extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number

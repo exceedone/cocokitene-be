@@ -29,6 +29,9 @@ import { RoleMtgModule } from '@api/modules/role-mtgs/role-mtg.module'
 import { MeetingRoleMtgModule } from '@api/modules/meeting-role-mtgs/meeting-role-mtg.module'
 import { VotingCandidateModule } from './voting-candidate/voting-candidate.module'
 import { CandidateModule } from './candidate/candidate.module'
+import { MessageModule } from '@api/modules/messages/message.module'
+import { SocketModule } from '@api/modules/socket/socket.module'
+import { ChatPermissionModule } from '@api/modules/chat-permission/chat-permission.module'
 
 @Module({
     imports: [
@@ -62,6 +65,9 @@ import { CandidateModule } from './candidate/candidate.module'
         MeetingRoleMtgModule,
         CandidateModule,
         VotingCandidateModule,
+        MessageModule,
+        SocketModule,
+        ChatPermissionModule,
     ],
     controllers: [ApiController],
     providers: [ApiService],

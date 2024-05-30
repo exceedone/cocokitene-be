@@ -24,11 +24,15 @@ import {
 import { UserScope } from '@shares/decorators/user.decorator'
 import { User } from '@entities/user.entity'
 import { GetAllMeetingDto } from '@dtos/meeting.dto'
+import { EmailService } from '../emails/email.service'
 
 @Controller('board-meetings')
 @ApiTags('board-meetings')
 export class BoardMeetingController {
-    constructor(private readonly boardMeetingService: BoardMeetingService) {}
+    constructor(
+        private readonly boardMeetingService: BoardMeetingService,
+        private readonly emailService: EmailService,
+    ) {}
 
     @Get('')
     @UseGuards(JwtAuthGuard)
@@ -111,5 +115,21 @@ export class BoardMeetingController {
         )
 
         return boardMeeting
+    }
+
+    //Send Email to Board of Board Meeting
+    @Post('/send-email/board-meeting/:id')
+    @UseGuards(JwtAuthGuard)
+    @HttpCode(HttpStatus.OK)
+    @ApiBearerAuth()
+    @Permission(PermissionEnum.SEND_MAIL_TO_BOARD)
+    async sendEmailToBoard(
+        @Param('id') boardMeetingId: number,
+        @UserScope() user: User,
+    ) {
+        const companyId = user.companyId
+        await this.emailService.sendEmailBoardMeeting(boardMeetingId, companyId)
+
+        return 'Email sent to Board successfully'
     }
 }

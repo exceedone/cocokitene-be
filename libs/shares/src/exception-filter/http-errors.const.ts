@@ -394,4 +394,9 @@ export const httpErrors = {
         message: 'Create voting failded. Please send result diffirence.',
         code: 'VOTING_00001',
     },
+    // message
+    CREATE_MESSAGE_FAILED: {
+        message: 'Create message failed. Please try again',
+        code: 'MESSAGE_00000',
+    },
 }

@@ -8,14 +8,14 @@ import { HttpException, HttpStatus } from '@nestjs/common'
 export class PlanRepository extends Repository<Plan> {
     async getAllPlans(options: GetAllPlanDto): Promise<Pagination<Plan>> {
         const { page, limit, searchQuery } = options
-        const queryBuilder = this.createQueryBuilder('plans').select([
-            'plans.id',
-            'plans.planName',
-            'plans.description',
-            'plans.maxStorage',
-            'plans.maxMeeting',
-            'plans.price',
-            'plans.maxShareholderAccount',
+        const queryBuilder = this.createQueryBuilder('plans_mst').select([
+            'plans_mst.id',
+            'plans_mst.planName',
+            'plans_mst.description',
+            'plans_mst.maxStorage',
+            'plans_mst.maxMeeting',
+            'plans_mst.price',
+            'plans_mst.maxShareholderAccount',
         ])
         if (searchQuery) {
             queryBuilder.andWhere('plans.planName like :planName', {
@@ -30,7 +30,7 @@ export class PlanRepository extends Repository<Plan> {
         updatePlanDto: UpdatePlanDto,
     ): Promise<Plan> {
         try {
-            await this.createQueryBuilder('plans')
+            await this.createQueryBuilder('plans_mst')
                 .update(Plan)
                 .set({
                     planName: updatePlanDto.planName,
@@ -40,7 +40,7 @@ export class PlanRepository extends Repository<Plan> {
                     price: updatePlanDto.price,
                     maxShareholderAccount: updatePlanDto.maxShareholderAccount,
                 })
-                .where('plans.id = :planId', { planId })
+                .where('plans_mst.id = :planId', { planId })
                 .execute()
 
             const plan = await this.findOne({

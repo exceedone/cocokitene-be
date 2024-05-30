@@ -3,15 +3,18 @@ import {
     Candidate,
     Company,
     CompanyStatus,
+    ChatPermission,
     Election,
     FileMeetingTransaction,
     FileProposalTransaction,
     MeetingRoleMtg,
+    Message,
     ParticipantMeetingTransaction,
     Permission,
     Plan,
     Proposal,
     ProposalTransaction,
+    Reaction,
     Role,
     RoleMtg,
     RolePermission,
@@ -31,6 +34,7 @@ import { Meeting } from '@entities/meeting.entity'
 import { UserMeeting } from '@entities/user-meeting.entity'
 import { MeetingFile } from '@entities/meeting-file.entity'
 import { ProposalFile } from '@entities/proposal-file'
+import { Emoji } from '@entities/reaction-icon.entity'
 
 @Module({
     imports: [
@@ -72,6 +76,10 @@ import { ProposalFile } from '@entities/proposal-file'
                     Candidate,
                     RoleMtg,
                     MeetingRoleMtg,
+                    ChatPermission,
+                    Reaction,
+                    Message,
+                    Emoji,
                 ],
                 timezone: 'Z',
                 synchronize: configService.get('database.synchronize'),

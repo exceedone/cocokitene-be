@@ -14,6 +14,8 @@ import { Proposal } from '@entities/proposal.entity'
 import { MeetingType, StatusMeeting } from '@shares/constants/meeting.const'
 import { Candidate } from './candidate.entity'
 import { MeetingRoleMtg } from '@entities/meeting-role-mtg.entity'
+import { ChatPermission } from '@entities/chat-permission.entity'
+
 @Entity('meetings')
 export class Meeting extends BaseEntity {
     @PrimaryGeneratedColumn()
@@ -74,6 +76,14 @@ export class Meeting extends BaseEntity {
     creatorId: number
 
     @Column({
+        nullable: true,
+        name: 'chat_permission_id',
+        type: 'integer',
+        width: 11,
+    })
+    chatPermissionId: number
+
+    @Column({
         nullable: false,
         type: 'enum',
         name: 'type',
@@ -104,4 +114,10 @@ export class Meeting extends BaseEntity {
 
     @OneToMany(() => MeetingRoleMtg, (meetingRoleMtg) => meetingRoleMtg.meeting)
     meetingRoleMtg: MeetingRoleMtg[]
+
+    @ManyToOne(() => ChatPermission)
+    @JoinColumn({
+        name: 'chat_permission_id',
+    })
+    ChatPermission: ChatPermission
 }

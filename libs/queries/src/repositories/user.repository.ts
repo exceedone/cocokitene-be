@@ -107,7 +107,7 @@ export class UserRepository extends Repository<User> {
     async getAllUserInCompanyByRoleName(
         options: GetAllUsersDto,
         companyId: number,
-        roleName: string,
+        roleId: number,
     ): Promise<Pagination<User>> {
         const { page, limit, searchQuery, sortOrder } = options
 
@@ -122,14 +122,14 @@ export class UserRepository extends Repository<User> {
                 'users.defaultAvatarHashColor',
                 'users.createdAt',
                 'users.updatedAt',
-                'GROUP_CONCAT(role.role ORDER BY role.role ASC) as listRole',
+                'GROUP_CONCAT(role.id ORDER BY role.role ASC) as listRole',
             ])
             .leftJoinAndSelect('users.userStatus', 'userStatus')
             .leftJoin('users.userRole', 'userRole')
             .leftJoin('userRole.role', 'role')
             .andWhere('users.companyId = :companyId', { companyId })
             .having('listRole LIKE :roleContaining', {
-                roleContaining: `%${roleName}%`,
+                roleContaining: `%${roleId}%`,
             })
             .groupBy('users.id')
 

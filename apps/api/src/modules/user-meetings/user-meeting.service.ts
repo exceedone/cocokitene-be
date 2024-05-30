@@ -257,4 +257,13 @@ export class UserMeetingService {
 
         return userIdsActiveToRemoves
     }
+
+    async getAllParticipantInviteMeeting(meetingId: number) {
+        const participants =
+            await this.userMeetingRepository.getAllParticipantInviteMeeting(
+                meetingId,
+            )
+        // console.log(participants);
+        return participants
+    }
 }

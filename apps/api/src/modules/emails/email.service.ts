@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Injectable } from '@nestjs/common'
-
 import { UserRepository } from '@repositories/user.repository'
 import { MailerService } from '@nestjs-modules/mailer'
 import { MeetingRepository } from '@repositories/meeting.repository'
@@ -11,10 +10,16 @@ import { baseUrlFe } from '@shares/utils'
 import { Company } from '@entities/company.entity'
 import { User } from '@entities/user.entity'
 import { RegisterCompanyDto } from '@dtos/company.dto'
-import { FileTypes, MeetingRole } from '@shares/constants/meeting.const'
+import {
+    FileTypes,
+    MeetingRole,
+    UserMeetingStatusEnum,
+} from '@shares/constants/meeting.const'
 import { MeetingFileService } from '@api/modules/meeting-files/meeting-file.service'
-import { RoleMtgEnum } from '@shares/constants'
+import { RoleBoardMtgEnum, RoleMtgEnum } from '@shares/constants'
 import { RoleMtgService } from '@api/modules/role-mtgs/role-mtg.service'
+import { MeetingRoleMtgService } from '../meeting-role-mtgs/meeting-role-mtg.service'
+import Handlebars from 'handlebars'
 
 @Injectable()
 export class EmailService {
@@ -26,6 +31,7 @@ export class EmailService {
         private readonly userMeetingService: UserMeetingService,
         private readonly meetingFileService: MeetingFileService,
         private readonly roleMtgService: RoleMtgService,
+        private readonly meetingRoleMtgService: MeetingRoleMtgService,
     ) {}
 
     async sendEmailMeeting(meetingId: number, companyId: number) {
@@ -84,6 +90,104 @@ export class EmailService {
                 detailMeeting: detailMeeting,
                 numberPhoneService: numberPhoneService,
                 files: meetingFiles.map((item) => item.url),
+            },
+        })
+    }
+
+    async sendEmailBoardMeeting(meetingId: number, companyId: number) {
+        //Get unique Board of Board Meeting
+        const listRoleBoardMtg =
+            await this.meetingRoleMtgService.getMeetingRoleMtgByMeetingId(
+                meetingId,
+            )
+        const roleBoardMtg = listRoleBoardMtg
+            .map((item) => item.roleMtg)
+            .sort((a, b) => a.roleName.localeCompare(b.roleName))
+
+        const participantsPromises = roleBoardMtg.map(async (roleBoard) => {
+            const participantBoardMeeting =
+                await this.userMeetingService.getUserMeetingByMeetingIdAndRole(
+                    meetingId,
+                    roleBoard.id,
+                )
+
+            const participantOfRole = participantBoardMeeting.map(
+                (participant) => {
+                    return {
+                        userId: participant.user.id,
+                        userEmail: participant.user.email,
+                    }
+                },
+            )
+
+            return {
+                roleMtgId: roleBoard.id,
+                roleMtgName: roleBoard.roleName,
+                userParticipants: participantOfRole,
+            }
+        })
+
+        const participants = await Promise.all(participantsPromises)
+
+        const idOfHostRoleInMtg = listRoleBoardMtg
+            .map((item) => item.roleMtg)
+            .filter(
+                (role) =>
+                    role.roleName.toLocaleUpperCase() ===
+                    RoleBoardMtgEnum.HOST.toLocaleUpperCase(),
+            )
+
+        const participantBoard = participants
+            .filter((item) => item.roleMtgId !== idOfHostRoleInMtg[0]?.id)
+            .map((item) => item.userParticipants)
+            .flat()
+
+        const cachedObject = {}
+        const uniqueParticipantBoard = participantBoard.filter((obj) => {
+            if (!cachedObject[obj.userId]) {
+                cachedObject[obj.userId] = true
+                return true
+            }
+            return false
+        })
+
+        const emailOfBoard = uniqueParticipantBoard.map(
+            (board) => board.userEmail,
+        )
+
+        const boardMeetingFiles =
+            await this.meetingFileService.getMeetingFilesByMeetingIdAndType(
+                meetingId,
+                FileTypes.MEETING_INVITATION,
+            )
+
+        const boardMeeting = await this.meetingRepository.findOne({
+            where: {
+                id: meetingId,
+            },
+        })
+
+        const fePort = configuration().fe.port,
+            ipAddress = configuration().fe.ipAddress,
+            languageJa = configuration().fe.languageJa,
+            baseUrl = baseUrlFe(fePort, ipAddress, languageJa),
+            detailMeeting =
+                baseUrl + `/board-meeting/detail/${boardMeeting.id}`,
+            numberPhoneService = configuration().phone.numberPhone
+
+        await this.mailerService.sendMail({
+            cc: emailOfBoard,
+            subject: '取締役総会招待通知',
+            template: './send-meeting-invite',
+            context: {
+                title: boardMeeting.title,
+                startTime: boardMeeting.startTime,
+                endTime: boardMeeting.endTime,
+                endVotingTime: boardMeeting.endVotingTime,
+                link: boardMeeting.meetingLink,
+                detailMeeting: detailMeeting,
+                numberPhoneService: numberPhoneService,
+                files: boardMeetingFiles.map((item) => item.url),
             },
         })
     }
@@ -219,3 +323,8 @@ export class EmailService {
         })
     }
 }
+
+//Add increase @index in .hbs file
+Handlebars.registerHelper('inc', function (value, options) {
+    return parseInt(value) + 1
+})

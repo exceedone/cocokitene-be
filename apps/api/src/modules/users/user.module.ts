@@ -5,6 +5,7 @@ import { CompanyModule } from '@api/modules/companys/company.module'
 import { UserRoleModule } from '@api/modules/user-roles/user-role.module'
 import { EmailModule } from '@api/modules/emails/email.module'
 import { MyLoggerModule } from '@api/modules/loggers/logger.module'
+import { RoleModule } from '../roles/role.module'
 
 @Module({
     imports: [
@@ -12,6 +13,7 @@ import { MyLoggerModule } from '@api/modules/loggers/logger.module'
         UserRoleModule,
         EmailModule,
         MyLoggerModule,
+        RoleModule,
     ],
     controllers: [UserController],
     providers: [UserService],

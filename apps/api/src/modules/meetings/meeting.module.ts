@@ -17,6 +17,7 @@ import { MeetingStatusMiddleware } from '@shares/middlewares/meeting-status.midd
 import { BoardMeetingModule } from '../board-meetings/board-meeting.module'
 import { MeetingRoleMtgModule } from '@api/modules/meeting-role-mtgs/meeting-role-mtg.module'
 import { RoleMtgModule } from '@api/modules/role-mtgs/role-mtg.module'
+import { ChatPermissionModule } from '@api/modules/chat-permission/chat-permission.module'
 
 @Module({
     imports: [
@@ -25,6 +26,7 @@ import { RoleMtgModule } from '@api/modules/role-mtgs/role-mtg.module'
         forwardRef(() => MeetingFileModule),
         ProposalModule,
         UserMeetingModule,
+        ChatPermissionModule,
         forwardRef(() => UserModule),
         MeetingRoleMtgModule,
 
