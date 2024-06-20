@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common'
+import { Module, forwardRef } from '@nestjs/common'
 import { EmailService } from '@api/modules/emails/email.service'
 import { MailerModule } from '@nestjs-modules/mailer'
 import { ConfigService } from '@nestjs/config'
@@ -13,6 +13,7 @@ import { ShareholderModule } from '@api/modules/shareholder/shareholder.module'
 import { MeetingFileModule } from '@api/modules/meeting-files/meeting-file.module'
 import { RoleMtgModule } from '@api/modules/role-mtgs/role-mtg.module'
 import { MeetingRoleMtgModule } from '../meeting-role-mtgs/meeting-role-mtg.module'
+import { UserModule } from '../users/user.module'
 
 @Module({
     imports: [
@@ -49,6 +50,7 @@ import { MeetingRoleMtgModule } from '../meeting-role-mtgs/meeting-role-mtg.modu
         MeetingFileModule,
         RoleMtgModule,
         MeetingRoleMtgModule,
+        forwardRef(() => UserModule),
     ],
 
     providers: [EmailService],

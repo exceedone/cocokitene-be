@@ -22,13 +22,14 @@ export class MessageRepository extends Repository<Message> {
     async createMessagePrivate(
         createMessagePrivateDto: CreateMessagePrivateDto,
     ): Promise<Message> {
-        const { meetingId, senderId, receiverId, content } =
+        const { meetingId, senderId, receiverId, content, replyMessageId } =
             createMessagePrivateDto
         const createdMessage = await this.create({
             meetingId: meetingId,
             senderId: senderId,
             content: content,
             receiverId: receiverId,
+            replyMessageId: replyMessageId,
         })
         await createdMessage.save()
         return createdMessage
@@ -39,12 +40,7 @@ export class MessageRepository extends Repository<Message> {
         meetingId: number,
     ): Promise<Message[]> {
         const queryBuilder = this.createQueryBuilder('messages')
-            .select([
-                'messages.id',
-                'messages.content',
-                'messages.createdAt',
-                // 'messages.replyMessageId',
-            ])
+            .select(['messages.id', 'messages.content', 'messages.createdAt'])
             .leftJoin('messages.sender', 'sender')
             .addSelect(['sender.id', 'sender.email'])
             .leftJoin('messages.receiver', 'receiver')
@@ -54,6 +50,9 @@ export class MessageRepository extends Repository<Message> {
             .addSelect(['replySender.id', 'replySender.email'])
             .leftJoin('replyMessage.receiver', 'replyReceiver')
             .addSelect(['replyReceiver.id', 'replyReceiver.email'])
+            .leftJoinAndSelect('messages.reactions', 'reactions')
+            .leftJoin('reactions.emoji', 'emoji')
+            .addSelect(['emoji.id', 'emoji.key'])
             .where('messages.meetingId = :meetingId', { meetingId: meetingId })
             .andWhere('messages.receiverId IS NULL')
             .orWhere(

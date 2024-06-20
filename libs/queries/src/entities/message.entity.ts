@@ -76,6 +76,6 @@ export class Message extends BaseEntity {
     @UpdateDateColumn({ name: 'updated_at' })
     updatedAt: Date
 
-    @OneToMany(() => Reaction, (reaction) => reaction.user)
+    @OneToMany(() => Reaction, (reaction) => reaction.message)
     reactions: Reaction[]
 }

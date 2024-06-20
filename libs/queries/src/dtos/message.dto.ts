@@ -1,4 +1,10 @@
-import { IsInt, IsNotEmpty, IsOptional, IsString } from 'class-validator'
+import {
+    IsInt,
+    IsNotEmpty,
+    IsNumber,
+    IsOptional,
+    IsString,
+} from 'class-validator'
 import { ApiProperty, OmitType } from '@nestjs/swagger'
 
 export class CreateMessageDto {
@@ -77,4 +83,22 @@ export class CreateMessagePrivateDto {
         example: 'hello mn',
     })
     content: string
+
+    @IsInt()
+    @IsOptional()
+    @ApiProperty({
+        example: 1,
+        required: false,
+    })
+    replyMessageId?: number
+}
+
+export class UpdateLastMessageUserSeenDto {
+    @IsNumber()
+    @IsNotEmpty()
+    @ApiProperty({
+        required: true,
+        example: 1,
+    })
+    lastMessageIdSeen: number
 }

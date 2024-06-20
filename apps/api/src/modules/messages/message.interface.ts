@@ -19,4 +19,13 @@ export interface DataMessageChat {
         receiverId: userChatInfo
         content: string
     }
+    reactions?: {
+        id: number
+        userId: number
+        messageId: number
+        emoji: {
+            id: number
+            key: string
+        }
+    }[]
 }

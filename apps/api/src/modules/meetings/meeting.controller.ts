@@ -29,6 +29,7 @@ import { Permission } from '@shares/decorators/permission.decorator'
 import { PermissionEnum } from '@shares/constants/permission.const'
 import { GetAllDto } from '@dtos/base.dto'
 import { MeetingRoleMtgService } from '@api/modules/meeting-role-mtgs/meeting-role-mtg.service'
+import { PermissionChatInMeetingDto } from '@dtos/chat-permission.dto'
 
 @Controller('meetings')
 @ApiTags('meetings')
@@ -189,5 +190,29 @@ export class MeetingController {
         } catch (error) {
             console.log(error)
         }
+    }
+
+    @Patch('/:id/changePermissionChat')
+    @UseGuards(JwtAuthGuard)
+    @ApiBearerAuth()
+    @Permission(PermissionEnum.EDIT_MEETING)
+    @HttpCode(HttpStatus.OK)
+    async updatePermissionChat(
+        @Param('id') meetingId: number,
+        @Body() permissionChatDto: PermissionChatInMeetingDto,
+        @UserScope() user: User,
+    ) {
+        const userId = user.id
+        const companyId = user.companyId
+        const { permissionChatId } = permissionChatDto
+        const permissionChat =
+            await this.meetingService.changePermissionChatInMeeting(
+                userId,
+                meetingId,
+                companyId,
+                permissionChatId,
+            )
+
+        return permissionChat
     }
 }

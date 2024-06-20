@@ -40,7 +40,7 @@ interface Configuration {
             user: string
             password: string
         }
-        cc_emails: Array<string>
+        cc_emails: string
     }
 
     crawler: {
@@ -136,7 +136,7 @@ export default (): Configuration => ({
             user: process.env.EMAIL_USER,
             password: process.env.EMAIL_PASSWORD,
         },
-        cc_emails: (process.env.CC_EMAILS || '').split(','),
+        cc_emails: process.env.CC_EMAILS || '',
     },
     crawler: {
         adminAddress: process.env.ADMIN_ADDRESS || '',

@@ -32,6 +32,7 @@ import { MessageRepository } from '@repositories/message.repository'
 import { ChatPermissionRepository } from '@repositories/chat-permission.repository'
 import { ReactionMessagesRepository } from '@repositories/reaction-messages.repository'
 import { ReactionIconRepository } from '@repositories/reaction-icon.repository'
+import { UserSeenMessageRepository } from '@repositories/user-seen-message.repository'
 
 const commonRepositories = [
     UserRepository,
@@ -67,6 +68,7 @@ const commonRepositories = [
     ChatPermissionRepository,
     ReactionMessagesRepository,
     ReactionIconRepository,
+    UserSeenMessageRepository,
 ]
 
 @Global()

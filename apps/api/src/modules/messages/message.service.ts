@@ -86,9 +86,19 @@ export class MessageService {
                           content: message.replyMessage.content,
                       }
                     : null,
+                reactions: message.reactions
+                    ? message.reactions.map((item) => ({
+                          id: item.id,
+                          userId: item.userId,
+                          messageId: item.messageId,
+                          emoji: {
+                              id: item.emoji.id,
+                              key: item.emoji.key,
+                          },
+                      }))
+                    : null,
             }
         })
-
         return {
             rootChat: meetingId,
             messageChat: messageChat,

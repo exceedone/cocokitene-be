@@ -1,8 +1,6 @@
-import {
-    CreateBoardMeetingDto,
-    UpdateBoardMeetingDto,
-} from 'libs/queries/src/dtos/board-meeting.dto'
+import { GetAllMeetingDto } from '@dtos/meeting.dto'
 import { Meeting } from '@entities/meeting.entity'
+import { User } from '@entities/user.entity'
 import {
     HttpException,
     HttpStatus,
@@ -12,29 +10,36 @@ import {
 } from '@nestjs/common'
 import { MeetingRepository } from '@repositories/meeting.repository'
 import {
+    ChatPermissionEnum,
+    PermissionEnum,
+    RoleBoardMtgEnum,
+} from '@shares/constants'
+import {
     MeetingType,
     StatusMeeting,
     UserMeetingStatusEnum,
 } from '@shares/constants/meeting.const'
+import { VoteProposalResult } from '@shares/constants/proposal.const'
 import { httpErrors, messageLog } from '@shares/exception-filter'
-import { Logger } from 'winston'
-import { MeetingFileService } from '../meeting-files/meeting-file.service'
-import { ProposalService } from '../proposals/proposal.service'
-import { UserMeetingService } from '../user-meetings/user-meeting.service'
-import { CandidateService } from '../candidate/candidate.service'
+import {
+    CreateBoardMeetingDto,
+    UpdateBoardMeetingDto,
+} from 'libs/queries/src/dtos/board-meeting.dto'
 import { Pagination } from 'nestjs-typeorm-paginate'
-import { GetAllMeetingDto } from '@dtos/meeting.dto'
-import { User } from '@entities/user.entity'
-import { PermissionEnum, RoleBoardMtgEnum } from '@shares/constants'
+import { Logger } from 'winston'
+import { CandidateService } from '../candidate/candidate.service'
+import { MeetingFileService } from '../meeting-files/meeting-file.service'
 import { MeetingRoleMtgService } from '../meeting-role-mtgs/meeting-role-mtg.service'
 import { ProposalItemDetailMeeting } from '../meetings/meeting.interface'
+import { ProposalService } from '../proposals/proposal.service'
+import { UserMeetingService } from '../user-meetings/user-meeting.service'
+import { VotingCandidateService } from '../voting-candidate/voting-candidate.service'
 import { VotingService } from '../votings/voting.service'
-import { VoteProposalResult } from '@shares/constants/proposal.const'
 import {
     CandidateItemDetailMeeting,
     DetailBoardMeetingResponse,
 } from './board-meeting.interface'
-import { VotingCandidateService } from '../voting-candidate/voting-candidate.service'
+import { ChatPermissionService } from '../chat-permission/chat-permission.service'
 
 @Injectable()
 export class BoardMeetingService {
@@ -49,6 +54,8 @@ export class BoardMeetingService {
         private readonly meetingRoleMtgService: MeetingRoleMtgService,
         private readonly votingService: VotingService,
         private readonly votingCandidateService: VotingCandidateService,
+        private readonly chatPermissionService: ChatPermissionService,
+
         @Inject('winston')
         private readonly logger: Logger,
     ) {}
@@ -131,6 +138,16 @@ export class BoardMeetingService {
                 HttpStatus.INTERNAL_SERVER_ERROR,
             )
         }
+
+        //Seed permission of chat for meeting is chat Public and Private
+        const chatPermissionEveryPublicPrivate =
+            await this.chatPermissionService.getChatPermissionByName(
+                ChatPermissionEnum.EVERY_PUBLIC_PRIVATE,
+            )
+
+        createdBoardMeeting.chatPermissionId =
+            chatPermissionEveryPublicPrivate.id
+        await createdBoardMeeting.save()
 
         const {
             meetingMinutes,
@@ -468,6 +485,17 @@ export class BoardMeetingService {
                 HttpStatus.BAD_REQUEST,
             )
         }
+
+        if (
+            existedBoardMeeting.status == StatusMeeting.CANCELED ||
+            existedBoardMeeting.status == StatusMeeting.HAPPENED
+        ) {
+            throw new HttpException(
+                httpErrors.MEETING_UPDATE_FAILED,
+                HttpStatus.BAD_REQUEST,
+            )
+        }
+
         //Update board Meeting
         try {
             existedBoardMeeting =

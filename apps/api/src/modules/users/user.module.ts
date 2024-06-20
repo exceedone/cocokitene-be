@@ -11,7 +11,7 @@ import { RoleModule } from '../roles/role.module'
     imports: [
         forwardRef(() => CompanyModule),
         UserRoleModule,
-        EmailModule,
+        forwardRef(() => EmailModule),
         MyLoggerModule,
         RoleModule,
     ],

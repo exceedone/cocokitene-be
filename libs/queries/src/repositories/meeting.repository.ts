@@ -1,4 +1,4 @@
-import { Repository } from 'typeorm'
+import { Brackets, Repository } from 'typeorm'
 import { CustomRepository } from '@shares/decorators'
 import {
     IPaginationOptions,
@@ -22,6 +22,7 @@ export class MeetingRepository extends Repository<Meeting> {
         canUserCreateMeeting: boolean,
         options: IPaginationOptions & GetAllMeetingDto,
     ): Promise<Pagination<Meeting>> {
+        const currentDateTime = new Date()
         const searchQuery = options.searchQuery || ''
         const sortField = options.sortField
         const sortOrder = options.sortOrder
@@ -37,6 +38,7 @@ export class MeetingRepository extends Repository<Meeting> {
                 'meetings.status',
                 'meetings.note',
                 'meetings.type',
+                'meetings.companyId',
             ])
             .distinct(true)
         if (canUserCreateMeeting) {
@@ -68,18 +70,6 @@ export class MeetingRepository extends Repository<Meeting> {
                 companyId: companyId,
             })
 
-        if (type == MeetingTime.FUTURE) {
-            queryBuilder.andWhere(
-                'meetings.startTime >= :currentDateTime OR (meetings.startTime <= :currentDateTime AND meetings.endTime >= :currentDateTime)',
-                {
-                    currentDateTime: new Date(),
-                },
-            )
-        } else {
-            queryBuilder.andWhere('meetings.endTime <= :currentDateTime', {
-                currentDateTime: new Date(),
-            })
-        }
         if (searchQuery) {
             queryBuilder.andWhere('(meetings.title like :searchQuery)', {
                 searchQuery: `%${searchQuery}%`,
@@ -94,6 +84,23 @@ export class MeetingRepository extends Repository<Meeting> {
             queryBuilder.orderBy(`meetings.${sortField}`, sortOrder)
         }
 
+        if (type == MeetingTime.FUTURE) {
+            queryBuilder.andWhere(
+                new Brackets((qb) => {
+                    qb.where(
+                        'meetings.startTime <= :currentDateTime AND meetings.endTime >= :currentDateTime',
+                        { currentDateTime: currentDateTime },
+                    ).orWhere('meetings.startTime >= :currentDateTime', {
+                        currentDateTime: currentDateTime,
+                    })
+                }),
+            )
+        } else {
+            queryBuilder.andWhere('meetings.endTime <= :currentDateTime ', {
+                currentDateTime: new Date(),
+            })
+        }
+
         return paginateRaw(queryBuilder, options)
     }
 
@@ -101,13 +108,14 @@ export class MeetingRepository extends Repository<Meeting> {
         companyId: number,
         options: IPaginationOptions & GetAllMeetingDto,
     ): Promise<Meeting[]> {
+        const currentDateTime = new Date()
         const searchQuery = options.searchQuery || ''
         const sortField = options.sortField
         const sortOrder = options.sortOrder
         const type = options.type
         const meetingType = options.meetingType
         const queryBuilder = this.createQueryBuilder('meetings')
-            .select(['meetings.id'])
+            .select(['meetings.id', 'meetings.companyId', 'meetings.type'])
             .where('meetings.companyId= :companyId', {
                 companyId: companyId,
             })
@@ -116,22 +124,22 @@ export class MeetingRepository extends Repository<Meeting> {
             queryBuilder.andWhere(
                 'meetings.startTime >= :currentDateTime OR (meetings.startTime <= :currentDateTime AND meetings.endTime >= :currentDateTime)',
                 {
-                    currentDateTime: new Date(),
+                    currentDateTime: currentDateTime,
                 },
             )
         } else {
             queryBuilder.andWhere('meetings.endTime <= :currentDateTime', {
-                currentDateTime: new Date(),
-            })
-        }
-        if (searchQuery) {
-            queryBuilder.andWhere('(meetings.title like :searchQuery)', {
-                searchQuery: `%${searchQuery}%`,
+                currentDateTime: currentDateTime,
             })
         }
         if (meetingType) {
             queryBuilder.andWhere('meetings.type = :typeMeeting', {
                 typeMeeting: meetingType,
+            })
+        }
+        if (searchQuery) {
+            queryBuilder.andWhere('(meetings.title like :searchQuery)', {
+                searchQuery: `%${searchQuery}%`,
             })
         }
         if (sortField && sortOrder) {

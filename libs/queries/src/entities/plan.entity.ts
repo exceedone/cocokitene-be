@@ -1,4 +1,11 @@
-import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from 'typeorm'
+import {
+    BaseEntity,
+    Column,
+    CreateDateColumn,
+    Entity,
+    PrimaryGeneratedColumn,
+    UpdateDateColumn,
+} from 'typeorm'
 @Entity('plans_mst')
 export class Plan extends BaseEntity {
     @PrimaryGeneratedColumn()
@@ -52,4 +59,10 @@ export class Plan extends BaseEntity {
         width: 11,
     })
     maxShareholderAccount: number
+
+    @CreateDateColumn({ name: 'created_at' })
+    createdAt: Date
+
+    @UpdateDateColumn({ name: 'updated_at' })
+    updatedAt: Date
 }

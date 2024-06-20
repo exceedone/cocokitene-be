@@ -12,11 +12,11 @@ export class CompanyStatusService {
     async getAllCompanyStatus(
         getAllCompanyStatusDto: GetAllCompanyStatusDto,
     ): Promise<Pagination<CompanyStatus>> {
-        const comapnyStatus =
+        const companyStatus =
             await this.companyStatusRepository.getAllCompanyStatus(
                 getAllCompanyStatusDto,
             )
-        return comapnyStatus
+        return companyStatus
     }
     async getCompanyStatusById(statusId: number): Promise<CompanyStatus> {
         const companyStatus =

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable, forwardRef } from '@nestjs/common'
 import { UserRepository } from '@repositories/user.repository'
 import { MailerService } from '@nestjs-modules/mailer'
 import { MeetingRepository } from '@repositories/meeting.repository'
@@ -10,16 +10,13 @@ import { baseUrlFe } from '@shares/utils'
 import { Company } from '@entities/company.entity'
 import { User } from '@entities/user.entity'
 import { RegisterCompanyDto } from '@dtos/company.dto'
-import {
-    FileTypes,
-    MeetingRole,
-    UserMeetingStatusEnum,
-} from '@shares/constants/meeting.const'
+import { FileTypes } from '@shares/constants/meeting.const'
 import { MeetingFileService } from '@api/modules/meeting-files/meeting-file.service'
 import { RoleBoardMtgEnum, RoleMtgEnum } from '@shares/constants'
 import { RoleMtgService } from '@api/modules/role-mtgs/role-mtg.service'
 import { MeetingRoleMtgService } from '../meeting-role-mtgs/meeting-role-mtg.service'
 import Handlebars from 'handlebars'
+import { UserService } from '../users/user.service'
 
 @Injectable()
 export class EmailService {
@@ -32,6 +29,8 @@ export class EmailService {
         private readonly meetingFileService: MeetingFileService,
         private readonly roleMtgService: RoleMtgService,
         private readonly meetingRoleMtgService: MeetingRoleMtgService,
+        @Inject(forwardRef(() => UserService))
+        private readonly userService: UserService,
     ) {}
 
     async sendEmailMeeting(meetingId: number, companyId: number) {
@@ -70,6 +69,11 @@ export class EmailService {
         const recipientEmails = participants.map(
             (participant) => participant.email,
         )
+
+        const superAdminOfCompany = await this.userService.getSuperAdminCompany(
+            companyId,
+        )
+
         const fePort = configuration().fe.port,
             ipAddress = configuration().fe.ipAddress,
             languageJa = configuration().fe.languageJa,
@@ -78,7 +82,8 @@ export class EmailService {
             numberPhoneService = configuration().phone.numberPhone
 
         await this.mailerService.sendMail({
-            cc: recipientEmails,
+            to: recipientEmails,
+            cc: superAdminOfCompany?.email ?? '',
             subject: '総会招待通知',
             template: './send-meeting-invite',
             context: {
@@ -166,6 +171,9 @@ export class EmailService {
                 id: meetingId,
             },
         })
+        const superAdminOfCompany = await this.userService.getSuperAdminCompany(
+            companyId,
+        )
 
         const fePort = configuration().fe.port,
             ipAddress = configuration().fe.ipAddress,
@@ -176,7 +184,8 @@ export class EmailService {
             numberPhoneService = configuration().phone.numberPhone
 
         await this.mailerService.sendMail({
-            cc: emailOfBoard,
+            to: emailOfBoard,
+            cc: superAdminOfCompany?.email ?? '',
             subject: '取締役総会招待通知',
             template: './send-meeting-invite',
             context: {
@@ -222,7 +231,8 @@ export class EmailService {
         companyInformation: Company,
         defaultPasswordSuperAdmin: string,
     ) {
-        const emailServer = configuration().email.auth.user,
+        // const emailServer = configuration().email.auth.user,
+        const emailServer = configuration().email.cc_emails,
             numberPhoneService = configuration().phone.numberPhone,
             fePort = configuration().fe.port,
             ipAddress = configuration().fe.ipAddress,
@@ -254,7 +264,8 @@ export class EmailService {
         const { email, username, shareQuantity, walletAddress, phone } =
             createdUser
 
-        const emailServer = configuration().email.auth.user,
+        // const emailServer = configuration().email.auth.user,
+        const emailServer = configuration().email.cc_emails,
             fePort = configuration().fe.port,
             ipAddress = configuration().fe.ipAddress,
             languageJa = configuration().fe.languageJa,
@@ -277,9 +288,9 @@ export class EmailService {
         })
     }
     async sendEmailRegisterCompany(registerCompanyDto: RegisterCompanyDto) {
-        const cc_emails = configuration().email.cc_emails,
-            emailServer = configuration().email.auth.user
-        cc_emails.push(emailServer)
+        const cc_emails = configuration().email.cc_emails
+        // emailServer = configuration().email.auth.user
+        // cc_emails.push(emailServer)
         const numberPhoneService = configuration().phone.numberPhone
         const { note, company, phone, username, email } = registerCompanyDto
         await this.mailerService.sendMail({
