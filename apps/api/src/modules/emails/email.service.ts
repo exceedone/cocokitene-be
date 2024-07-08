@@ -203,13 +203,14 @@ export class EmailService {
 
     async sendEmailConfirmResetPassword(systemAdmin: SystemAdmin) {
         const resetPasswordToken = systemAdmin.resetPasswordToken,
+            expireTime = systemAdmin.resetPasswordExpireTime,
             emailSystemAdmin = systemAdmin.email,
             fePort = configuration().fe.port,
             ipAddress = configuration().fe.ipAddress,
             languageJa = configuration().fe.languageJa,
             baseUrl = baseUrlFe(fePort, ipAddress, languageJa)
 
-        const resetLink = `${baseUrl}/reset-password?token=${resetPasswordToken}`
+        const resetLink = `${baseUrl}/reset-password?token=${resetPasswordToken}-${expireTime}`
         if (!emailSystemAdmin) {
             console.log('koo co email')
             return
@@ -311,13 +312,14 @@ export class EmailService {
 
     async sendEmailConfirmResetPasswordUser(user: User) {
         const resetPasswordToken = user.resetPasswordToken,
+            expireTime = user.resetPasswordExpireTime,
             emailUser = user.email,
             fePort = configuration().fe.port,
             ipAddress = configuration().fe.ipAddress,
             languageJa = configuration().fe.languageJa,
             baseUrl = baseUrlFe(fePort, ipAddress, languageJa)
 
-        const resetLink = `${baseUrl}/reset-password-user?token=${resetPasswordToken}`
+        const resetLink = `${baseUrl}/reset-password-user?token=${resetPasswordToken}-${expireTime}`
         if (!emailUser) {
             console.log('koo co email')
             return

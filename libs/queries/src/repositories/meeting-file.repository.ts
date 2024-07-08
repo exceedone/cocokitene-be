@@ -59,6 +59,14 @@ export class MeetingFileRepository extends Repository<MeetingFile> {
             where: {
                 meetingId: meetingId,
             },
+            select: {
+                id: true,
+                url: true,
+                meetingId: true,
+                fileType: true,
+                deletedAt: true,
+                createdAt: true,
+            },
         })
         return meetingFile
     }

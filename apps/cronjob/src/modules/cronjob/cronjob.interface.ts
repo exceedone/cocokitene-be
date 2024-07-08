@@ -1,5 +1,6 @@
 import { Meeting } from '@entities/meeting.entity'
 import {
+    FileTypes,
     MeetingRole,
     UserMeetingStatusEnum,
 } from '@shares/constants/meeting.const'
@@ -38,6 +39,7 @@ export interface ListFileOfMeeting {
     meetingId: number
     meetingFileId: number
     url: string
+    type: FileTypes
 }
 
 export interface MeetingEnded extends Partial<Meeting> {

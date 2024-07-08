@@ -25,6 +25,7 @@ import { UserScope } from '@shares/decorators/user.decorator'
 import { User } from '@entities/user.entity'
 import { GetAllMeetingDto } from '@dtos/meeting.dto'
 import { EmailService } from '../emails/email.service'
+import { MeetingService } from '../meetings/meeting.service'
 
 @Controller('board-meetings')
 @ApiTags('board-meetings')
@@ -32,6 +33,7 @@ export class BoardMeetingController {
     constructor(
         private readonly boardMeetingService: BoardMeetingService,
         private readonly emailService: EmailService,
+        private readonly meetingService: MeetingService,
     ) {}
 
     @Get('')
@@ -89,6 +91,7 @@ export class BoardMeetingController {
             meetingId,
             companyId,
             userId,
+            user,
         )
 
         return boardMeeting
@@ -131,5 +134,21 @@ export class BoardMeetingController {
         await this.emailService.sendEmailBoardMeeting(boardMeetingId, companyId)
 
         return 'Email sent to Board successfully'
+    }
+    @Get('/:id/dataHash')
+    @UseGuards(JwtAuthGuard)
+    @Permission(PermissionEnum.CHECK_DATA_BOARD_MEETING)
+    @ApiBearerAuth()
+    @HttpCode(HttpStatus.OK)
+    async getDataHashByMeetingId(
+        @Param('id') meetingId: number,
+        @UserScope() user: User,
+    ) {
+        const companyId = user?.companyId
+        const dataHash = await this.meetingService.getDataHashByMeetingId(
+            meetingId,
+            companyId,
+        )
+        return dataHash
     }
 }

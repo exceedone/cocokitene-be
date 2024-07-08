@@ -11,7 +11,6 @@ import { UserMeetingRepository } from '@repositories/user-meeting.repository'
 import { UserMeetingStatusEnum } from '@shares/constants/meeting.const'
 import { httpErrors } from '@shares/exception-filter'
 import { UserService } from '@api/modules/users/user.service'
-import { User } from '@entities/user.entity'
 import { Logger } from 'winston'
 import { RoleMtgService } from '@api/modules/role-mtgs/role-mtg.service'
 import { MeetingRoleMtgService } from '@api/modules/meeting-role-mtgs/meeting-role-mtg.service'
@@ -32,7 +31,8 @@ export class UserMeetingService {
     async createUserMeeting(
         createUserMeetingDto: CreateUserMeetingDto,
     ): Promise<UserMeeting> {
-        const { userId, meetingId, roleMtgId, status } = createUserMeetingDto
+        const { userId, meetingId, roleMtgId, status, quantityShare } =
+            createUserMeetingDto
         try {
             const createdUserMeeting =
                 await this.userMeetingRepository.createUserMeeting({
@@ -40,6 +40,7 @@ export class UserMeetingService {
                     meetingId,
                     roleMtgId,
                     status,
+                    quantityShare,
                 })
             // return await createdUserMeeting.save()
             return createdUserMeeting
@@ -71,6 +72,7 @@ export class UserMeetingService {
         meetingId: number,
         roleMtgId: number,
         newIdPaticipants: number[],
+        roleMtgShareholderId?: number,
     ): Promise<number[]> {
         const listUserIds =
             await this.getListUserIdPaticipantsByMeetingIdAndMeetingRole(
@@ -107,18 +109,45 @@ export class UserMeetingService {
                         UserMeetingStatusEnum.PARTICIPATE,
                     )
                 if (isUserParticipateMeeting) {
-                    await this.createUserMeeting({
-                        userId: usersToAdd,
-                        meetingId: meetingId,
-                        roleMtgId: roleMtgId,
-                        status: UserMeetingStatusEnum.PARTICIPATE,
-                    })
+                    if (roleMtgId === roleMtgShareholderId) {
+                        const quantityOfShareholder =
+                            await this.userService.getQuantityShareByShareholderId(
+                                usersToAdd,
+                            )
+                        await this.createUserMeeting({
+                            userId: usersToAdd,
+                            meetingId: meetingId,
+                            roleMtgId: roleMtgId,
+                            quantityShare: quantityOfShareholder,
+                            status: UserMeetingStatusEnum.PARTICIPATE,
+                        })
+                    } else {
+                        await this.createUserMeeting({
+                            userId: usersToAdd,
+                            meetingId: meetingId,
+                            roleMtgId: roleMtgId,
+                            status: UserMeetingStatusEnum.PARTICIPATE,
+                        })
+                    }
                 } else {
-                    await this.createUserMeeting({
-                        userId: usersToAdd,
-                        meetingId: meetingId,
-                        roleMtgId: roleMtgId,
-                    })
+                    if (roleMtgId === roleMtgShareholderId) {
+                        const quantityOfShareholder =
+                            await this.userService.getQuantityShareByShareholderId(
+                                usersToAdd,
+                            )
+                        await this.createUserMeeting({
+                            userId: usersToAdd,
+                            meetingId: meetingId,
+                            roleMtgId: roleMtgId,
+                            quantityShare: quantityOfShareholder,
+                        })
+                    } else {
+                        await this.createUserMeeting({
+                            userId: usersToAdd,
+                            meetingId: meetingId,
+                            roleMtgId: roleMtgId,
+                        })
+                    }
                 }
             }),
         ])
@@ -174,7 +203,7 @@ export class UserMeetingService {
         meetingId: number,
         newIdPaticipants: number[],
         roleMtgShareholderId: number,
-    ): Promise<User[]> {
+    ): Promise<UserMeeting[]> {
         const listOldShareholderIds =
             await this.getListUserIdPaticipantsByMeetingIdAndMeetingRole(
                 meetingId,
@@ -187,8 +216,12 @@ export class UserMeetingService {
 
         //Get User out meeting
         const usersToRemoves = await Promise.all([
-            ...idUsersToRemoves.map((id) =>
-                this.userService.getActiveUserById(id),
+            ...idUsersToRemoves.map((userId) =>
+                this.userMeetingRepository.getParticipantMeetingById(
+                    meetingId,
+                    userId,
+                    roleMtgShareholderId,
+                ),
             ),
         ])
         return usersToRemoves
@@ -265,5 +298,49 @@ export class UserMeetingService {
             )
         // console.log(participants);
         return participants
+    }
+
+    async getTotalQuantityShareByParticipantId(
+        meetingId: number,
+        shareholderIds: number[],
+        roleMeetingId: number,
+    ): Promise<number> {
+        const shareholderParticipant = await Promise.all([
+            ...shareholderIds.map((shareholderId) =>
+                this.userMeetingRepository.getParticipantMeetingById(
+                    meetingId,
+                    shareholderId,
+                    roleMeetingId,
+                ),
+            ),
+        ])
+
+        const totalShare = shareholderParticipant.reduce(
+            (accumulator, currentValue) => {
+                if (currentValue.quantityShare) {
+                    accumulator =
+                        accumulator + Number(currentValue.quantityShare)
+                }
+                return accumulator
+            },
+            0,
+        )
+
+        return totalShare
+    }
+
+    async getParticipantInMeeting(
+        meetingId: number,
+        userId: number,
+        roleMtgId: number,
+    ): Promise<UserMeeting> {
+        const participant =
+            await this.userMeetingRepository.getParticipantMeetingById(
+                meetingId,
+                userId,
+                roleMtgId,
+            )
+
+        return participant
     }
 }

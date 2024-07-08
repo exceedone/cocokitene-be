@@ -283,6 +283,7 @@ export class BoardMeetingService {
         meetingId: number,
         companyId: number,
         userId: number,
+        user: User,
     ): Promise<DetailBoardMeetingResponse> {
         const boardMeeting =
             await this.boardMeetingRepository.getBoardMeetingByIdAndCompanyId(
@@ -338,6 +339,24 @@ export class BoardMeetingService {
         })
 
         const participants = await Promise.all(participantsPromises)
+
+        const permissionKeys: string[] = (user as any).permissionKeys || []
+        const canUserCreateBoardMeeting = permissionKeys.includes(
+            PermissionEnum.CREATE_BOARD_MEETING,
+        )
+
+        const isParticipant = participants
+            .flatMap((participant) => participant.userParticipants)
+            .some((parti) => parti.userId == userId)
+        console.log('canUserCreateMeeting: ', canUserCreateBoardMeeting)
+        console.log('Is Participants: ', isParticipant)
+
+        if (!isParticipant && !canUserCreateBoardMeeting) {
+            throw new HttpException(
+                httpErrors.BOARD_MEETING_NOT_FOUND,
+                HttpStatus.NOT_FOUND,
+            )
+        }
 
         const idOfHostRoleInMtg = listRoleBoardMtg
             .map((item) => item.roleMtg)

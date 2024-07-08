@@ -18,4 +18,15 @@ export class VotingCandidateRepository extends Repository<VotingCandidate> {
         await createVotingCandidate.save()
         return createVotingCandidate
     }
+
+    async getListVotedByCandidateId(
+        candidateId: number,
+    ): Promise<VotingCandidate[]> {
+        const votingCandidate = await this.find({
+            where: {
+                votedForCandidateId: candidateId,
+            },
+        })
+        return votingCandidate
+    }
 }

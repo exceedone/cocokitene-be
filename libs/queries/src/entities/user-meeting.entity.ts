@@ -42,6 +42,14 @@ export class UserMeeting extends BaseEntity {
     })
     roleMtgId: number
 
+    @Column({
+        name: 'quantity_share',
+        type: 'integer',
+        width: 11,
+        nullable: true,
+    })
+    quantityShare: number
+
     @ManyToOne(() => User)
     @JoinColumn({
         name: 'user_id',

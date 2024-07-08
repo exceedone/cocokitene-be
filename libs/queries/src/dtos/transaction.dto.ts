@@ -1,7 +1,6 @@
-import { IsEnum, IsNotEmpty, IsNumber, IsString } from 'class-validator'
+import { IsNotEmpty, IsNumber, IsString } from 'class-validator'
 import { ApiProperty } from '@nestjs/swagger'
 import { Type } from 'class-transformer'
-import { TRANSACTION_TYPE } from '@shares/constants'
 
 export class CreateTransactionDto {
     @IsNumber()
@@ -12,21 +11,13 @@ export class CreateTransactionDto {
     })
     chainId: number
 
-    @IsNotEmpty()
-    @IsString()
-    @ApiProperty({
-        required: true,
-        example: 'the meeing about product strategy meeting',
-    })
-    titleMeeting: string
-
     @IsString()
     @IsNotEmpty()
     @ApiProperty({
         required: true,
-        example: 'https://google.com',
+        example: '0x53537d9660647c48598533c15c9bbc6c4d149aa0',
     })
-    meetingLink: string
+    contractAddress: string
 
     @IsNumber()
     @Type(() => Number)
@@ -36,78 +27,75 @@ export class CreateTransactionDto {
     })
     meetingId: number
 
-    @IsNumber()
-    @Type(() => Number)
-    @ApiProperty({
-        required: true,
-        example: 1,
-    })
-    companyId: number
-
-    @IsNumber()
-    @Type(() => Number)
-    @ApiProperty({
-        required: true,
-        example: 1,
-    })
-    shareholdersJoined: number
-
-    @IsNumber()
-    @Type(() => Number)
-    @ApiProperty({
-        required: true,
-        example: 1,
-    })
-    joinedMeetingShares: number
-
-    @IsNumber()
-    @Type(() => Number)
-    @ApiProperty({
-        required: true,
-        example: 1,
-    })
-    totalMeetingShares: number
-
-    @IsNumber()
-    @Type(() => Number)
-    @ApiProperty({
-        required: true,
-        example: 1,
-    })
-    shareholdersTotal: number
-
-    @IsNumber()
     @IsNotEmpty()
-    @Type(() => Number)
+    @IsString()
     @ApiProperty({
         required: true,
-        example: 1734543456,
+        example: '1716794897128',
     })
-    startTimeMeeting: number
-
-    @IsNumber()
-    @IsNotEmpty()
-    @Type(() => Number)
-    @ApiProperty({
-        required: true,
-        example: 1734543456,
-    })
-    endTimeMeeting: number
-
-    @IsNotEmpty()
-    @IsEnum(TRANSACTION_TYPE)
-    @ApiProperty({
-        required: true,
-        example: TRANSACTION_TYPE.CREATE_MEETING,
-        enum: TRANSACTION_TYPE,
-    })
-    type: TRANSACTION_TYPE
+    keyQuery: string
 
     @IsString()
     @IsNotEmpty()
     @ApiProperty({
         required: true,
-        example: '0x53537d9660647c48598533c15c9bbc6c4d149aa0',
+        example: '85b5ab0df489fd6807b050d6806b3e66',
     })
-    contractAddress: string
+    detailMeetingHash: string
+
+    @IsString()
+    @IsNotEmpty()
+    @ApiProperty({
+        required: true,
+        example: '85b5ab0df489fd6807b050d6806b3e67',
+    })
+    basicInformationMeetingHash: string
+
+    @IsString()
+    @IsNotEmpty()
+    @ApiProperty({
+        required: true,
+        example: '85b5ab0df489fd6807b050d6806b3e69',
+    })
+    fileMeetingHash: string
+
+    @IsString()
+    @IsNotEmpty()
+    @ApiProperty({
+        required: true,
+        example: '85b5ab0df489fd6807b050d6806b3e70',
+    })
+    proposalMeetingHash: string
+
+    @IsString()
+    @IsNotEmpty()
+    @ApiProperty({
+        required: true,
+        example: '85b5ab0df489fd6807b050d6806b3e71',
+    })
+    votedProposalHash: string
+
+    @IsString()
+    @IsNotEmpty()
+    @ApiProperty({
+        required: true,
+        example: '85b5ab0df489fd6807b050d6806b3e72',
+    })
+    candidateHash: string
+
+    @IsString()
+    @IsNotEmpty()
+    @ApiProperty({
+        required: true,
+        example: '85b5ab0df489fd6807b050d6806b3e72',
+    })
+    votedCandidateHash: string
+
+    @IsString()
+    @IsNotEmpty()
+    @ApiProperty({
+        required: true,
+        example: '85b5ab0df489fd6807b050d6806b3e73',
+    })
+    participantHash: string
 }

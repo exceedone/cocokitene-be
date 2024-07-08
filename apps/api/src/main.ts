@@ -29,6 +29,7 @@ async function bootstrap() {
                 transform: true,
             }),
         )
+        console.log(new Date().getTime() / 1000)
         app.useGlobalFilters(new HttpExceptionFilter())
         app.useGlobalGuards(new JwtAuthGuard(new Reflector()))
         // app.useGlobalGuards(new JwtAuthGuard())

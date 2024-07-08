@@ -75,11 +75,11 @@ export const httpErrors = {
         code: 'MEETING_00002',
     },
     MEETING_HAS_DELAYED: {
-        message: 'Meeting has delayed. Please try again',
+        message: 'MEETING_HAS_DELAYED_PLEASE_TRY_AGAIN',
         code: 'MEETING_00003',
     },
     MEETING_NOT_START: {
-        message: 'Meeting is not start. Please try again',
+        message: 'MEETING_IS_NOT_START_PLEASE_TRY_AGAIN',
         code: 'MEETING_00004',
     },
     MEETING_NOT_FOUND: {

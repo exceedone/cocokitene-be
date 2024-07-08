@@ -1,7 +1,13 @@
 import { VoteCandidateDto } from '@dtos/voting-candidate.dto'
 import { Candidate } from '@entities/candidate.entity'
 import { VotingCandidate } from '@entities/voting-candidate.entity'
-import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common'
+import {
+    HttpException,
+    HttpStatus,
+    Inject,
+    Injectable,
+    forwardRef,
+} from '@nestjs/common'
 import { VotingCandidateRepository } from '@repositories/voting-candidate.repository'
 import { MeetingRoleMtgService } from '../meeting-role-mtgs/meeting-role-mtg.service'
 import { CandidateRepository } from '@repositories/candidate.repository'
@@ -19,9 +25,11 @@ export class VotingCandidateService {
     constructor(
         private readonly votingCandidateRepository: VotingCandidateRepository,
         private readonly candidateRepository: CandidateRepository,
+        @Inject(forwardRef(() => UserService))
         private readonly userService: UserService,
         private readonly userMeetingService: UserMeetingService,
         private readonly meetingRoleMtgService: MeetingRoleMtgService,
+        @Inject(forwardRef(() => MeetingService))
         private readonly meetingService: MeetingService,
         @Inject('winston')
         private readonly logger: Logger,
@@ -279,5 +287,16 @@ export class VotingCandidateService {
                 HttpStatus.INTERNAL_SERVER_ERROR,
             )
         }
+    }
+
+    async getAllVotingByCandidateId(
+        candidateId: number,
+    ): Promise<VoteCandidateDto[]> {
+        const voteOfCandidate =
+            await this.votingCandidateRepository.getListVotedByCandidateId(
+                candidateId,
+            )
+
+        return voteOfCandidate
     }
 }

@@ -7,7 +7,7 @@ import { HttpException, HttpStatus } from '@nestjs/common'
 @CustomRepository(Plan)
 export class PlanRepository extends Repository<Plan> {
     async getAllPlans(options: GetAllPlanDto): Promise<Pagination<Plan>> {
-        const { page, limit, searchQuery } = options
+        const { page, limit, searchQuery, sortOrder } = options
         const queryBuilder = this.createQueryBuilder('plans_mst').select([
             'plans_mst.id',
             'plans_mst.planName',
@@ -18,9 +18,12 @@ export class PlanRepository extends Repository<Plan> {
             'plans_mst.maxShareholderAccount',
         ])
         if (searchQuery) {
-            queryBuilder.andWhere('plans.planName like :planName', {
+            queryBuilder.andWhere('plans_mst.planName like :planName', {
                 planName: `%${searchQuery}%`,
             })
+        }
+        if (sortOrder) {
+            queryBuilder.orderBy('plans_mst.updated_at', sortOrder)
         }
         return paginate(queryBuilder, { page, limit })
     }

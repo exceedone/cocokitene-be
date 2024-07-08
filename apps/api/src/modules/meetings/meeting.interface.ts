@@ -1,7 +1,10 @@
 import { Meeting } from '@entities/meeting.entity'
 import { Proposal } from '@entities/proposal.entity'
 import { VoteProposalResult } from '@shares/constants/proposal.const'
-import { UserMeetingStatusEnum } from '@shares/constants/meeting.const'
+import {
+    FileTypes,
+    UserMeetingStatusEnum,
+} from '@shares/constants/meeting.const'
 
 export interface ProposalItemDetailMeeting extends Proposal {
     voteResult: VoteProposalResult
@@ -34,4 +37,18 @@ export interface DetailMeetingResponse extends Partial<Meeting> {
 
 export interface ParticipantMeeting {
     userWithRoleMtg: ParticipantDetailMeeting[]
+}
+
+export interface calculateVoter {
+    voterTotal: number
+    voterJoined: number
+    totalMeetingVote: number
+    joinedMeetingVote: number
+}
+
+export interface ListFileOfMeeting {
+    meetingId: number
+    meetingFileId: number
+    url: string
+    type: FileTypes
 }

@@ -1,8 +1,25 @@
 import { GetAllDto } from '@dtos/base.dto'
 import { ApiProperty } from '@nestjs/swagger'
-import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator'
+import { Sort_By_Order } from '@shares/constants'
+import {
+    IsEnum,
+    IsNotEmpty,
+    IsNumber,
+    IsOptional,
+    IsString,
+} from 'class-validator'
 
-export class GetAllPlanDto extends GetAllDto {}
+export class GetAllPlanDto extends GetAllDto {
+    @IsOptional()
+    @IsEnum(Sort_By_Order)
+    @ApiProperty({
+        required: false,
+        example: Sort_By_Order.ASC,
+        default: Sort_By_Order.ASC,
+        enum: Sort_By_Order,
+    })
+    sortOrder?: Sort_By_Order
+}
 
 export class UpdatePlanDto {
     @IsString()

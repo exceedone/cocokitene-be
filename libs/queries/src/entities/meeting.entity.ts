@@ -5,6 +5,7 @@ import {
     JoinColumn,
     ManyToOne,
     OneToMany,
+    OneToOne,
     PrimaryGeneratedColumn,
 } from 'typeorm'
 import { Company } from '@entities/company.entity'
@@ -15,6 +16,7 @@ import { MeetingType, StatusMeeting } from '@shares/constants/meeting.const'
 import { Candidate } from './candidate.entity'
 import { MeetingRoleMtg } from '@entities/meeting-role-mtg.entity'
 import { ChatPermission } from '@entities/chat-permission.entity'
+import { Transaction } from './transaction.entity'
 
 @Entity('meetings')
 export class Meeting extends BaseEntity {
@@ -120,4 +122,7 @@ export class Meeting extends BaseEntity {
         name: 'chat_permission_id',
     })
     ChatPermission: ChatPermission
+
+    @OneToOne(() => Transaction, (transaction) => transaction.meeting)
+    transaction: Transaction
 }

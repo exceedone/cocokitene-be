@@ -19,8 +19,8 @@ import { ProposalFileService } from '@api/modules/proposal-files/proposal-file.s
 import { UserMeetingService } from '@api/modules/user-meetings/user-meeting.service'
 import { VoteProposalResult } from '@shares/constants/proposal.const'
 import { CalculateProposal } from '@api/modules/proposals/proposal.interface'
-import { User } from '@entities/user.entity'
 import { Logger } from 'winston'
+import { UserMeeting } from '@entities/user-meeting.entity'
 @Injectable()
 export class ProposalService {
     constructor(
@@ -229,7 +229,7 @@ export class ProposalService {
 
     async recalculateVoteResult(
         proposal: ProposalDto,
-        usersToRemoves: User[],
+        usersToRemoves: UserMeeting[],
         totalShares: number,
     ): Promise<CalculateProposal> {
         let votedQuantity = 0,
@@ -245,7 +245,7 @@ export class ProposalService {
                 //handle check result voted by user
                 const resultVotedByUser =
                     await this.votingService.findVotingByUserIdAndProposalId(
-                        user.id,
+                        user.userId,
                         currentProposal.id,
                     )
                 if (!resultVotedByUser) {
@@ -254,14 +254,14 @@ export class ProposalService {
                     const result = resultVotedByUser.result
                     switch (result) {
                         case VoteProposalResult.VOTE:
-                            temporaryVoteQuantity += user.shareQuantity
+                            temporaryVoteQuantity += user.quantityShare
                             break
                         case VoteProposalResult.UNVOTE:
-                            temporaryUnvoteQuantity += user.shareQuantity
+                            temporaryUnvoteQuantity += user.quantityShare
                             break
                     }
                     await this.votingService.removeUserVoting(
-                        user.id,
+                        user.userId,
                         currentProposal.id,
                     )
                 }

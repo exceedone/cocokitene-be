@@ -9,13 +9,15 @@ export class UserMeetingRepository extends Repository<UserMeeting> {
     async createUserMeeting(
         createUserMeetingDto: CreateUserMeetingDto,
     ): Promise<UserMeeting> {
-        const { userId, meetingId, roleMtgId, status } = createUserMeetingDto
+        const { userId, meetingId, roleMtgId, status, quantityShare } =
+            createUserMeetingDto
 
         const createdUserMeeting = await this.create({
             userId,
             meetingId,
             roleMtgId,
             status,
+            quantityShare,
         })
         return await createdUserMeeting.save()
         // return createdUserMeeting
@@ -41,6 +43,7 @@ export class UserMeetingRepository extends Repository<UserMeeting> {
                     defaultAvatarHashColor: true,
                     shareQuantity: true,
                 },
+                quantityShare: true,
             },
             relations: ['user'],
             order: {
@@ -142,6 +145,14 @@ export class UserMeetingRepository extends Repository<UserMeeting> {
             where: {
                 meetingId: meetingId,
             },
+            select: {
+                id: true,
+                userId: true,
+                meetingId: true,
+                status: true,
+                roleMtgId: true,
+                createdAt: true,
+            },
         })
 
         return participants
@@ -159,5 +170,20 @@ export class UserMeetingRepository extends Repository<UserMeeting> {
             })
             .getMany()
         return participants
+    }
+
+    async getParticipantMeetingById(
+        meetingId: number,
+        participantId: number,
+        roleMtgId: number,
+    ): Promise<UserMeeting> {
+        const participant = await this.findOne({
+            where: {
+                meetingId: meetingId,
+                roleMtgId: roleMtgId,
+                userId: participantId,
+            },
+        })
+        return participant
     }
 }

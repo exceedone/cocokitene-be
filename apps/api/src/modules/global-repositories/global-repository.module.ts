@@ -18,11 +18,6 @@ import { TypeOrmExModule } from '@shares/modules'
 import { PermissionRepository } from '@repositories/permission.repository'
 import { RolePermissionRepository } from '@repositories/role-permission.repository'
 import { TransactionRepository } from '@repositories/transaction.repository'
-import { FileProposalTransactionRepository } from '@repositories/file-proposal-transaction.repository'
-import { ParticipantMeetingTransactionRepository } from '@repositories/participant-meeting-transaction.repository'
-import { ProposalTransactionRepository } from '@repositories/proposal-transaction.repository'
-import { VotingTransactionRepository } from '@repositories/voting-transaction.repository'
-import { FileMeetingTransactionRepository } from '@repositories/file-meeting-transaction.repository'
 import { VotingCandidateRepository } from '@repositories/voting-candidate.repository'
 import { ElectionRepository } from '@repositories/election.repository'
 import { CandidateRepository } from '@repositories/candidate.repository'
@@ -53,12 +48,7 @@ const commonRepositories = [
     PermissionRepository,
     RolePermissionRepository,
     ShareholderRepository,
-    FileProposalTransactionRepository,
     TransactionRepository,
-    ParticipantMeetingTransactionRepository,
-    ProposalTransactionRepository,
-    VotingTransactionRepository,
-    FileMeetingTransactionRepository,
     VotingCandidateRepository,
     ElectionRepository,
     CandidateRepository,

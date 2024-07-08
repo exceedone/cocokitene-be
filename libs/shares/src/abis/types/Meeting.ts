@@ -21,12 +21,6 @@ export interface EventOptions {
     topics?: string[]
 }
 
-export type CreateMeeting = ContractEventLog<{
-    id_meeting: string
-    numberInBlockchain: string
-    0: string
-    1: string
-}>
 export type EIP712DomainChanged = ContractEventLog<{}>
 export type Initialized = ContractEventLog<{
     version: string
@@ -39,6 +33,12 @@ export type LogAddValidator = ContractEventLog<{
 export type LogRemoveValidator = ContractEventLog<{
     _validator: string
     0: string
+}>
+export type MeetingCreated = ContractEventLog<{
+    _keyMeeting: string
+    numberInBlockchain: string
+    0: string
+    1: string
 }>
 export type OwnershipTransferred = ContractEventLog<{
     previousOwner: string
@@ -54,40 +54,6 @@ export type Unpaused = ContractEventLog<{
     account: string
     0: string
 }>
-export type UpdateFileOfMeeting = ContractEventLog<{
-    id_meeting: string
-    step: string
-    0: string
-    1: string
-}>
-export type UpdateFileOfProposalMeeting = ContractEventLog<{
-    id_meeting: string
-    step: string
-    0: string
-    1: string
-}>
-export type UpdateMeeting = ContractEventLog<{
-    id_meeting: string
-    0: string
-}>
-export type UpdateParticipantMeeting = ContractEventLog<{
-    id_meeting: string
-    step: string
-    0: string
-    1: string
-}>
-export type UpdateParticipantProposal = ContractEventLog<{
-    id_proposal: string
-    step: string
-    0: string
-    1: string
-}>
-export type UpdateProposalMeeting = ContractEventLog<{
-    id_meeting: string
-    step: string
-    0: string
-    1: string
-}>
 
 export interface Meeting extends BaseContract {
     constructor(
@@ -101,67 +67,11 @@ export interface Meeting extends BaseContract {
 
         UPDATE_MEETING_TYPEHASH(): NonPayableTransactionObject<string>
 
-        addFileMeetingNoSign(
-            _meeting_id: number | string | BN,
-            _newFileMeetings: [number | string | BN, string][],
-            _step: number | string | BN,
-        ): NonPayableTransactionObject<void>
-
-        addFileProposalNoSign(
-            _meeting_id: number | string | BN,
-            _newFileProposals: [number | string | BN, string][],
-            _step: number | string | BN,
-        ): NonPayableTransactionObject<void>
-
-        addProposalsNoSign(
-            _meeting_id: number | string | BN,
-            _newProposals: [
-                number | string | BN,
-                string,
-                number | string | BN,
-                number | string | BN,
-                number | string | BN,
-            ][],
-            _step: number | string | BN,
-        ): NonPayableTransactionObject<void>
-
-        addUserNoSign(
-            _meeting_id: number | string | BN,
-            _newParticipantMeetings: [
-                number | string | BN,
-                string,
-                string,
-                string,
-            ][],
-            _step: number | string | BN,
-        ): NonPayableTransactionObject<void>
-
-        addUserProposalNoSign(
-            _proposal_id: number | string | BN,
-            _newParticipantProposals: [number | string | BN, string][],
-            _step: number | string | BN,
-        ): NonPayableTransactionObject<void>
-
         addValidator(_newValidator: string): NonPayableTransactionObject<void>
 
-        checkIsCreated(
-            _meetind_id: number | string | BN,
-        ): NonPayableTransactionObject<{
-            0: boolean
-            1: string
-        }>
-
         createNoSign(
-            _meeting_id: number | string | BN,
-            _title: string,
-            _start_time: number | string | BN,
-            _end_time: number | string | BN,
-            _meeting_link: string,
-            _company_id: number | string | BN,
-            _shareholders_totals: number | string | BN,
-            _shareholders_joined: number | string | BN,
-            _total_meeting_shares: number | string | BN,
-            _joined_meeting_shares: number | string | BN,
+            _keyMeeting: string,
+            _newMeetingHash: [string, string][],
         ): NonPayableTransactionObject<void>
 
         eip712Domain(): NonPayableTransactionObject<{
@@ -181,50 +91,9 @@ export interface Meeting extends BaseContract {
             6: string[]
         }>
 
-        getFileMeetingData(
-            _meeting_id: number | string | BN,
-        ): NonPayableTransactionObject<[string, string][]>
-
-        getFileProposalData(
-            _meeting_id: number | string | BN,
-        ): NonPayableTransactionObject<[string, string][]>
-
         getMeetingData(
-            _meeting_id: number | string | BN,
-        ): NonPayableTransactionObject<
-            [
-                string,
-                string,
-                string,
-                string,
-                string,
-                string,
-                string[],
-                boolean,
-                string,
-                string,
-                string,
-                string,
-                [string, string, string, string, string][],
-                string,
-                [string, string, string, string][],
-                string,
-                [string, string][],
-                string,
-                [string, string][],
-                string,
-            ]
-        >
-
-        getProposalMeetingData(
-            _meeting_id: number | string | BN,
-        ): NonPayableTransactionObject<
-            [string, string, string, string, string][]
-        >
-
-        getUserInfoData(
-            _meeting_id: number | string | BN,
-        ): NonPayableTransactionObject<[string, string, string, string][]>
+            _keyMeeting: string,
+        ): NonPayableTransactionObject<[[string, string][], string, boolean]>
 
         getValidators(): NonPayableTransactionObject<string[]>
 
@@ -242,32 +111,11 @@ export interface Meeting extends BaseContract {
 
         totalMeeting(): NonPayableTransactionObject<string>
 
-        totalProposal(): NonPayableTransactionObject<string>
-
         transferOwnership(newOwner: string): NonPayableTransactionObject<void>
 
         unpause(): NonPayableTransactionObject<void>
-
-        updateNoSign(
-            _meeting_id: number | string | BN,
-            _title: string,
-            _start_time: number | string | BN,
-            _end_time: number | string | BN,
-            _meeting_link: string,
-            _company_id: number | string | BN,
-            _shareholders_totals: number | string | BN,
-            _shareholders_joined: number | string | BN,
-            _total_meeting_shares: number | string | BN,
-            _joined_meeting_shares: number | string | BN,
-        ): NonPayableTransactionObject<void>
     }
     events: {
-        CreateMeeting(cb?: Callback<CreateMeeting>): EventEmitter
-        CreateMeeting(
-            options?: EventOptions,
-            cb?: Callback<CreateMeeting>,
-        ): EventEmitter
-
         EIP712DomainChanged(cb?: Callback<EIP712DomainChanged>): EventEmitter
         EIP712DomainChanged(
             options?: EventOptions,
@@ -292,6 +140,12 @@ export interface Meeting extends BaseContract {
             cb?: Callback<LogRemoveValidator>,
         ): EventEmitter
 
+        MeetingCreated(cb?: Callback<MeetingCreated>): EventEmitter
+        MeetingCreated(
+            options?: EventOptions,
+            cb?: Callback<MeetingCreated>,
+        ): EventEmitter
+
         OwnershipTransferred(cb?: Callback<OwnershipTransferred>): EventEmitter
         OwnershipTransferred(
             options?: EventOptions,
@@ -304,59 +158,8 @@ export interface Meeting extends BaseContract {
         Unpaused(cb?: Callback<Unpaused>): EventEmitter
         Unpaused(options?: EventOptions, cb?: Callback<Unpaused>): EventEmitter
 
-        UpdateFileOfMeeting(cb?: Callback<UpdateFileOfMeeting>): EventEmitter
-        UpdateFileOfMeeting(
-            options?: EventOptions,
-            cb?: Callback<UpdateFileOfMeeting>,
-        ): EventEmitter
-
-        UpdateFileOfProposalMeeting(
-            cb?: Callback<UpdateFileOfProposalMeeting>,
-        ): EventEmitter
-        UpdateFileOfProposalMeeting(
-            options?: EventOptions,
-            cb?: Callback<UpdateFileOfProposalMeeting>,
-        ): EventEmitter
-
-        UpdateMeeting(cb?: Callback<UpdateMeeting>): EventEmitter
-        UpdateMeeting(
-            options?: EventOptions,
-            cb?: Callback<UpdateMeeting>,
-        ): EventEmitter
-
-        UpdateParticipantMeeting(
-            cb?: Callback<UpdateParticipantMeeting>,
-        ): EventEmitter
-        UpdateParticipantMeeting(
-            options?: EventOptions,
-            cb?: Callback<UpdateParticipantMeeting>,
-        ): EventEmitter
-
-        UpdateParticipantProposal(
-            cb?: Callback<UpdateParticipantProposal>,
-        ): EventEmitter
-        UpdateParticipantProposal(
-            options?: EventOptions,
-            cb?: Callback<UpdateParticipantProposal>,
-        ): EventEmitter
-
-        UpdateProposalMeeting(
-            cb?: Callback<UpdateProposalMeeting>,
-        ): EventEmitter
-        UpdateProposalMeeting(
-            options?: EventOptions,
-            cb?: Callback<UpdateProposalMeeting>,
-        ): EventEmitter
-
         allEvents(options?: EventOptions, cb?: Callback<EventLog>): EventEmitter
     }
-
-    once(event: 'CreateMeeting', cb: Callback<CreateMeeting>): void
-    once(
-        event: 'CreateMeeting',
-        options: EventOptions,
-        cb: Callback<CreateMeeting>,
-    ): void
 
     once(event: 'EIP712DomainChanged', cb: Callback<EIP712DomainChanged>): void
     once(
@@ -386,6 +189,13 @@ export interface Meeting extends BaseContract {
         cb: Callback<LogRemoveValidator>,
     ): void
 
+    once(event: 'MeetingCreated', cb: Callback<MeetingCreated>): void
+    once(
+        event: 'MeetingCreated',
+        options: EventOptions,
+        cb: Callback<MeetingCreated>,
+    ): void
+
     once(
         event: 'OwnershipTransferred',
         cb: Callback<OwnershipTransferred>,
@@ -401,58 +211,4 @@ export interface Meeting extends BaseContract {
 
     once(event: 'Unpaused', cb: Callback<Unpaused>): void
     once(event: 'Unpaused', options: EventOptions, cb: Callback<Unpaused>): void
-
-    once(event: 'UpdateFileOfMeeting', cb: Callback<UpdateFileOfMeeting>): void
-    once(
-        event: 'UpdateFileOfMeeting',
-        options: EventOptions,
-        cb: Callback<UpdateFileOfMeeting>,
-    ): void
-
-    once(
-        event: 'UpdateFileOfProposalMeeting',
-        cb: Callback<UpdateFileOfProposalMeeting>,
-    ): void
-    once(
-        event: 'UpdateFileOfProposalMeeting',
-        options: EventOptions,
-        cb: Callback<UpdateFileOfProposalMeeting>,
-    ): void
-
-    once(event: 'UpdateMeeting', cb: Callback<UpdateMeeting>): void
-    once(
-        event: 'UpdateMeeting',
-        options: EventOptions,
-        cb: Callback<UpdateMeeting>,
-    ): void
-
-    once(
-        event: 'UpdateParticipantMeeting',
-        cb: Callback<UpdateParticipantMeeting>,
-    ): void
-    once(
-        event: 'UpdateParticipantMeeting',
-        options: EventOptions,
-        cb: Callback<UpdateParticipantMeeting>,
-    ): void
-
-    once(
-        event: 'UpdateParticipantProposal',
-        cb: Callback<UpdateParticipantProposal>,
-    ): void
-    once(
-        event: 'UpdateParticipantProposal',
-        options: EventOptions,
-        cb: Callback<UpdateParticipantProposal>,
-    ): void
-
-    once(
-        event: 'UpdateProposalMeeting',
-        cb: Callback<UpdateProposalMeeting>,
-    ): void
-    once(
-        event: 'UpdateProposalMeeting',
-        options: EventOptions,
-        cb: Callback<UpdateProposalMeeting>,
-    ): void
 }

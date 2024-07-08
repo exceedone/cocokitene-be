@@ -67,4 +67,25 @@ export class CandidateRepository extends Repository<Candidate> {
         const candidate = await this.getCandidateById(candidateId)
         return candidate
     }
+
+    async getAllCandidateByMeetingId(meetingId: number): Promise<Candidate[]> {
+        const candidates = await this.find({
+            where: {
+                meetingId: meetingId,
+            },
+            select: {
+                id: true,
+                title: true,
+                candidateName: true,
+                type: true,
+                votedQuantity: true,
+                unVotedQuantity: true,
+                notVoteYetQuantity: true,
+                meetingId: true,
+                creatorId: true,
+                deletedAt: true,
+            },
+        })
+        return candidates
+    }
 }

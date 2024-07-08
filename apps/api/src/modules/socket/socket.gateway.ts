@@ -59,6 +59,8 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
             createMessageDto,
         )
 
+        // console.log('createdMessage', createdMessage)
+
         const createdMessageResponse = {
             ...createdMessage,
             sender: {

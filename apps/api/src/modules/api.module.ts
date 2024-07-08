@@ -35,6 +35,7 @@ import { ChatPermissionModule } from '@api/modules/chat-permission/chat-permissi
 import { ReactionIconModule } from './reaction-icons/reaction-icon.module'
 import { ReactionMessageModule } from './reaction_messages/reaction-message.module'
 import { UserSeenMessageModule } from './user-seen-message/user-seen-message.module'
+import { TransactionModule } from './transaction/transaction.module'
 
 @Module({
     imports: [
@@ -74,6 +75,7 @@ import { UserSeenMessageModule } from './user-seen-message/user-seen-message.mod
         ReactionIconModule,
         ReactionMessageModule,
         UserSeenMessageModule,
+        TransactionModule,
     ],
     controllers: [ApiController],
     providers: [ApiService],

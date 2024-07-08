@@ -51,3 +51,14 @@ export enum UserJoinMeetingStatusEnum {
     MEETING_WAS_CANCEL = 2,
     MEETING_WAS_DELAYED = 3,
 }
+
+export enum MeetingHash {
+    HASH_MEETING_BASE = 'basicInformationMeetingHash',
+    HASH_MEETING_FILE = 'fileMeetingHash',
+    HASH_MEETING_PROPOSAL = 'proposalMeetingHash',
+    HASH_MEETING_VOTED_PROPOSAL = 'votedProposalHash',
+    HASH_MEETING_CANDIDATE = 'candidateHash',
+    HASH_MEETING_VOTED_CANDIDATE = 'votedCandidateHash',
+    HASH_MEETING_PARTICIPANT = 'participantHash',
+    HASH_DETAIL_MEETING = 'detailMeetingHash',
+}

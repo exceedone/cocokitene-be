@@ -38,6 +38,14 @@ export class CreateUserMeetingDto {
         enum: UserMeetingStatusEnum,
     })
     status?: UserMeetingStatusEnum
+
+    @IsOptional()
+    @IsNumber()
+    @ApiProperty({
+        required: false,
+        example: 100,
+    })
+    quantityShare?: number
 }
 
 export class ParticipantDto extends CreateUserMeetingDto {

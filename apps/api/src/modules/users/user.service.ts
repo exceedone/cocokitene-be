@@ -121,6 +121,16 @@ export class UserService {
         return totalShares
     }
 
+    async getQuantityShareByShareholderId(
+        shareholderId: number,
+    ): Promise<number> {
+        const shareholder = await this.userRepository.getActiveUserById(
+            shareholderId,
+        )
+
+        return shareholder.shareQuantity
+    }
+
     async getActiveUserById(userId: number): Promise<User> {
         const user = await this.userRepository.getActiveUserById(userId)
 

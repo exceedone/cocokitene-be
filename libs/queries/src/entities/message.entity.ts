@@ -35,7 +35,7 @@ export class Message extends BaseEntity {
     @Column({
         name: 'content',
         type: 'varchar',
-        length: 255,
+        length: 1000,
         nullable: false,
     })
     content: string
