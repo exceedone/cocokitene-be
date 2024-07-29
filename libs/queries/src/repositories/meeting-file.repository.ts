@@ -32,13 +32,13 @@ export class MeetingFileRepository extends Repository<MeetingFile> {
         meetingFileId: number,
         meetingFileDto: MeetingFileDto,
     ): Promise<MeetingFile> {
-        await this.createQueryBuilder('meeting_files')
+        await this.createQueryBuilder('meeting_file')
             .update(MeetingFile)
             .set({
                 url: meetingFileDto.url,
                 fileType: meetingFileDto.fileType,
             })
-            .where('meeting_files.id = :meetingFileId', { meetingFileId })
+            .where('meeting_file.id = :meetingFileId', { meetingFileId })
             .execute()
         const meetingFile = await this.findOne({
             where: {

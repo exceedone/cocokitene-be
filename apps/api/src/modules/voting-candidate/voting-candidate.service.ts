@@ -1,6 +1,6 @@
 import { VoteCandidateDto } from '@dtos/voting-candidate.dto'
-import { Candidate } from '@entities/candidate.entity'
-import { VotingCandidate } from '@entities/voting-candidate.entity'
+import { Candidate } from '@entities/nominees.entity'
+import { VotingCandidate } from '@entities/voted-for-nominee.entity'
 import {
     HttpException,
     HttpStatus,
@@ -8,9 +8,9 @@ import {
     Injectable,
     forwardRef,
 } from '@nestjs/common'
-import { VotingCandidateRepository } from '@repositories/voting-candidate.repository'
+import { VotingCandidateRepository } from '@repositories/voting-board-members.repository'
 import { MeetingRoleMtgService } from '../meeting-role-mtgs/meeting-role-mtg.service'
-import { CandidateRepository } from '@repositories/candidate.repository'
+import { CandidateRepository } from '@repositories/nominees.repository'
 import { RoleMtgEnum } from '@shares/constants'
 import { httpErrors, messageLog } from '@shares/exception-filter'
 import { UserService } from '../users/user.service'
@@ -19,6 +19,7 @@ import { MeetingService } from '../meetings/meeting.service'
 import { UserMeetingStatusEnum } from '@shares/constants/meeting.const'
 import { VoteProposalResult } from '@shares/constants/proposal.const'
 import { Logger } from 'winston'
+import { VoteCandidateInPersonnel } from '@dtos/personnel-voting.dto'
 
 @Injectable()
 export class VotingCandidateService {
@@ -39,14 +40,23 @@ export class VotingCandidateService {
         userId: number,
         votedForCandidateId: number,
     ): Promise<VotingCandidate> {
-        const existedVotingCandidate =
-            await this.votingCandidateRepository.findOne({
-                where: {
-                    userId: userId,
-                    votedForCandidateId: votedForCandidateId,
-                },
-            })
-        return existedVotingCandidate
+        try {
+            console.log({ userId, votedForCandidateId })
+            const existedVotingCandidate =
+                await this.votingCandidateRepository.findOne({
+                    where: {
+                        userId: userId,
+                        votedForCandidateId: votedForCandidateId,
+                    },
+                })
+            console.log(
+                'existedVotingCandidate---------: ',
+                existedVotingCandidate,
+            )
+            return existedVotingCandidate
+        } catch (error) {
+            console.log('Error---:', error)
+        }
     }
 
     async voteCandidate(
@@ -75,15 +85,16 @@ export class VotingCandidateService {
                 HttpStatus.NOT_FOUND,
             )
         }
+        console.log('candidate: ', candidate)
 
-        if (candidate.meeting.companyId !== companyId) {
-            throw new HttpException(
-                httpErrors.MEETING_NOT_IN_THIS_COMPANY,
-                HttpStatus.BAD_REQUEST,
-            )
-        }
+        // if (candidate.personnelVoting.meeting.companyId !== companyId) {
+        //     throw new HttpException(
+        //         httpErrors.MEETING_NOT_IN_THIS_COMPANY,
+        //         HttpStatus.BAD_REQUEST,
+        //     )
+        // }
 
-        const meetingId = candidate.meetingId
+        const meetingId = candidate.personnelVoting.meetingId
 
         const listRoleBoardMtg =
             await this.meetingRoleMtgService.getMeetingRoleMtgByMeetingId(
@@ -164,6 +175,8 @@ export class VotingCandidateService {
             const checkExistedVoting =
                 await this.findVotingByUserIdAndCandidateId(userId, candidateId)
 
+            console.log('checkExistedVoting: ', checkExistedVoting)
+
             if (checkExistedVoting) {
                 const updateCountVoteExistedCandidate = await this.updateVote(
                     candidate,
@@ -183,8 +196,14 @@ export class VotingCandidateService {
                                 userId: userId,
                                 votedForCandidateId: candidateId,
                                 result: result,
+                                quantityShare: 1,
                             },
                         )
+                    console.log(
+                        'createVotingCandidate: ',
+                        createVotingCandidate,
+                    )
+
                     switch (result) {
                         case VoteProposalResult.VOTE:
                             candidate.votedQuantity += 1
@@ -203,6 +222,7 @@ export class VotingCandidateService {
 
                     return candidate
                 } catch (error) {
+                    console.log('error: ', error)
                     this.logger.error(
                         `${messageLog.VOTING_CANDIDATE_OF_MEETING_FAILED.code} [DAPP] User ID : ${userId} ${messageLog.VOTING_CANDIDATE_OF_MEETING_FAILED.message} ${candidate.id}`,
                     )
@@ -224,7 +244,8 @@ export class VotingCandidateService {
     }
 
     async deleteVoting(votedForCandidateId: number) {
-        await this.votingCandidateRepository.softDelete({ votedForCandidateId })
+        // await this.votingCandidateRepository.softDelete({ votedForCandidateId })
+        await this.votingCandidateRepository.delete({ votedForCandidateId })
     }
 
     async updateVote(
@@ -298,5 +319,71 @@ export class VotingCandidateService {
             )
 
         return voteOfCandidate
+    }
+
+    async updateVoteCandidate(
+        candidate: Candidate,
+        checkExistedVoting: VotingCandidate,
+        voteCandidateDto: VoteCandidateInPersonnel,
+    ): Promise<Candidate> {
+        try {
+            const { result, quantityShare } = voteCandidateDto
+            const resultOld = checkExistedVoting.result
+
+            console.log('result---quantityShare: ', result, quantityShare)
+
+            if (
+                result !== resultOld ||
+                quantityShare !== checkExistedVoting.quantityShare
+            ) {
+                console.log('Update Voted for Nominee---------')
+                switch (resultOld) {
+                    case VoteProposalResult.UNVOTE:
+                        candidate.unVotedQuantity -=
+                            checkExistedVoting.quantityShare
+                        candidate.notVoteYetQuantity +=
+                            checkExistedVoting.quantityShare
+                        break
+                    case VoteProposalResult.VOTE:
+                        candidate.votedQuantity -=
+                            checkExistedVoting.quantityShare
+                        candidate.notVoteYetQuantity +=
+                            checkExistedVoting.quantityShare
+                        break
+                }
+
+                switch (result) {
+                    case VoteProposalResult.UNVOTE:
+                        candidate.unVotedQuantity += quantityShare
+                        candidate.notVoteYetQuantity -= quantityShare
+                        break
+                    case VoteProposalResult.VOTE:
+                        candidate.votedQuantity += quantityShare
+                        candidate.notVoteYetQuantity -= quantityShare
+                        break
+                }
+                if (
+                    result === VoteProposalResult.NO_IDEA ||
+                    quantityShare == 0 ||
+                    quantityShare == null
+                ) {
+                    candidate.notVoteYetQuantity +=
+                        checkExistedVoting.quantityShare
+                    await this.votingCandidateRepository.delete(
+                        checkExistedVoting.id,
+                    )
+                } else {
+                    checkExistedVoting.result = result
+                    checkExistedVoting.quantityShare = quantityShare
+                    await checkExistedVoting.save()
+                }
+                await candidate.save()
+                return candidate
+            }
+
+            return candidate
+        } catch (error) {
+            console.log('error UpdateVoteCandidate: ', error)
+        }
     }
 }

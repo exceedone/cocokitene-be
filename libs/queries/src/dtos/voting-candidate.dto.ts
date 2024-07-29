@@ -23,9 +23,17 @@ export class CreateVoteCandidateDto {
         enum: VoteProposalResult,
     })
     result: VoteProposalResult
+
+    @IsNumber()
+    @ApiProperty({
+        required: true,
+        example: 1,
+    })
+    quantityShare: number
 }
 
 export class VoteCandidateDto extends OmitType(CreateVoteCandidateDto, [
     'userId',
     'votedForCandidateId',
+    'quantityShare',
 ]) {}

@@ -137,7 +137,7 @@ export class MeetingController {
 
     @Get('/:id')
     @UseGuards(JwtAuthGuard)
-    @Permission(PermissionEnum.DETAIL_MEETING)
+    @Permission(PermissionEnum.DETAIL_MEETING, PermissionEnum.EDIT_MEETING)
     @HttpCode(HttpStatus.OK)
     @ApiBearerAuth()
     async getMeetingById(
@@ -219,7 +219,7 @@ export class MeetingController {
 
     @Get('/:id/dataHash')
     @UseGuards(JwtAuthGuard)
-    @Permission(PermissionEnum.CHECK_DATA_MEETING)
+    @Permission(PermissionEnum.SHAREHOLDERS_MTG)
     @ApiBearerAuth()
     @HttpCode(HttpStatus.OK)
     async getDataHashByMeetingId(

@@ -1,6 +1,6 @@
-import { UserSeenMessage } from '@entities/user_seen_message.entity'
+import { UserSeenMessage } from '@entities/seen-messages.entity'
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common'
-import { UserSeenMessageRepository } from '@repositories/user-seen-message.repository'
+import { UserSeenMessageRepository } from '@repositories/seen-messages.repository'
 import { httpErrors } from '@shares/exception-filter'
 
 @Injectable()

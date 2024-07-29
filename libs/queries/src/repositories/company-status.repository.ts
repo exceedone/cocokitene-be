@@ -23,14 +23,14 @@ export class CompanyStatusRepository extends Repository<CompanyStatus> {
     ): Promise<Pagination<CompanyStatus>> {
         const { page, limit, searchQuery } = options
         const queryBuilder = await this.createQueryBuilder(
-            'company_statuses',
+            'company_status_mst',
         ).select([
-            'company_statuses.status',
-            'company_statuses.id',
-            'company_statuses.description',
+            'company_status_mst.status',
+            'company_status_mst.id',
+            'company_status_mst.description',
         ])
         if (searchQuery) {
-            queryBuilder.andWhere('company_statuses.status like :status', {
+            queryBuilder.andWhere('company_status_mst.status like :status', {
                 status: `%${searchQuery}%`,
             })
         }

@@ -3,7 +3,7 @@ import {
     GetAllProposalDto,
     ProposalDto,
 } from '@dtos/proposal.dto'
-import { Proposal } from '@entities/proposal.entity'
+import { Proposal } from '@entities/meeting-proposal.entity'
 import {
     forwardRef,
     HttpException,
@@ -11,7 +11,7 @@ import {
     Inject,
     Injectable,
 } from '@nestjs/common'
-import { ProposalRepository } from '@repositories/proposal.repository'
+import { ProposalRepository } from '@repositories/meeting-proposal.repository'
 import { httpErrors } from '@shares/exception-filter'
 import { VotingService } from '@api/modules/votings/voting.service'
 import { MeetingService } from '@api/modules/meetings/meeting.service'
@@ -20,7 +20,7 @@ import { UserMeetingService } from '@api/modules/user-meetings/user-meeting.serv
 import { VoteProposalResult } from '@shares/constants/proposal.const'
 import { CalculateProposal } from '@api/modules/proposals/proposal.interface'
 import { Logger } from 'winston'
-import { UserMeeting } from '@entities/user-meeting.entity'
+import { UserMeeting } from '@entities/meeting-participant.entity'
 @Injectable()
 export class ProposalService {
     constructor(

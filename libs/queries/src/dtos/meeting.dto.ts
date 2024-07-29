@@ -18,6 +18,7 @@ import { MeetingFileDto } from '@dtos/meeting-file.dto'
 import { ProposalDto } from '@dtos/proposal.dto'
 import { GetAllDto } from '@dtos/base.dto'
 import { UserMeetingDto } from '@dtos/user-meeting.dto'
+import { PersonnelVotingDto } from './personnel-voting.dto'
 
 export class GetAllMeetingDto extends GetAllDto {
     @IsOptional()
@@ -147,6 +148,17 @@ export class CreateMeetingDto {
     })
     @Type(() => ProposalDto)
     amendmentResolutions: ProposalDto[]
+
+    //executiveOfficerElection
+    @ApiProperty({
+        required: true,
+        type: [PersonnelVotingDto],
+    })
+    @ValidateNested({
+        each: true,
+    })
+    @Type(() => PersonnelVotingDto)
+    personnelVoting: PersonnelVotingDto[]
 
     @ApiProperty({
         required: true,
@@ -280,6 +292,18 @@ export class UpdateMeetingDto {
     })
     @Type(() => ProposalDto)
     amendmentResolutions?: ProposalDto[]
+
+    //executiveOfficerElection
+    @IsOptional()
+    @ApiProperty({
+        required: false,
+        type: [PersonnelVotingDto],
+    })
+    @ValidateNested({
+        each: true,
+    })
+    @Type(() => PersonnelVotingDto)
+    personnelVoting?: PersonnelVotingDto[]
 
     @IsOptional()
     @ApiProperty({

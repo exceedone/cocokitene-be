@@ -1,5 +1,5 @@
 import { Repository } from 'typeorm'
-import { RoleMtg } from '@entities/role-mtg.entity'
+import { RoleMtg } from '@entities/meeting-role.entity'
 import { CustomRepository } from '@shares/decorators'
 import { RoleMtgEnum, TypeRoleMeeting } from '@shares/constants'
 import { HttpException, HttpStatus } from '@nestjs/common'
@@ -49,25 +49,25 @@ export class RoleMtgRepository extends Repository<RoleMtg> {
     ): Promise<Pagination<RoleMtg>> {
         const { page, limit, searchQuery, type } = options
 
-        const queryBuilder = this.createQueryBuilder('role_mtg')
+        const queryBuilder = this.createQueryBuilder('meeting_role')
             .select([
-                'role_mtg.id',
-                'role_mtg.roleName',
-                'role_mtg.description',
-                'role_mtg.type',
+                'meeting_role.id',
+                'meeting_role.roleName',
+                'meeting_role.description',
+                'meeting_role.type',
             ])
-            .where('role_mtg.companyId = :companyId', {
+            .where('meeting_role.companyId = :companyId', {
                 companyId: companyId,
             })
-            .andWhere('role_mtg.type IN (:...types) ', {
+            .andWhere('meeting_role.type IN (:...types) ', {
                 types: [type, TypeRoleMeeting.BOTH_MTG],
             })
         if (searchQuery) {
-            queryBuilder.andWhere('role_mtg.roleName like :searchQuery', {
+            queryBuilder.andWhere('meeting_role.roleName like :searchQuery', {
                 searchQuery: `%${searchQuery}%`,
             })
         }
-        queryBuilder.orderBy('role_mtg.roleName', 'ASC')
+        queryBuilder.orderBy('meeting_role.roleName', 'ASC')
         return paginate(queryBuilder, { page, limit })
     }
 
@@ -76,23 +76,23 @@ export class RoleMtgRepository extends Repository<RoleMtg> {
         companyId: number,
     ): Promise<Pagination<RoleMtg>> {
         const { page, limit, searchQuery } = options
-        const queryBuilder = this.createQueryBuilder('role_mtg')
+        const queryBuilder = this.createQueryBuilder('meeting_role')
             .select([
-                'role_mtg.id',
-                'role_mtg.roleName',
-                'role_mtg.description',
-                'role_mtg.type',
+                'meeting_role.id',
+                'meeting_role.roleName',
+                'meeting_role.description',
+                'meeting_role.type',
             ])
-            .where('role_mtg.companyId = :companyId', {
+            .where('meeting_role.companyId = :companyId', {
                 companyId: companyId,
             })
 
         if (searchQuery) {
-            queryBuilder.andWhere('role_mtg.roleName like :searchQuery', {
+            queryBuilder.andWhere('meeting_role.roleName like :searchQuery', {
                 searchQuery: `%${searchQuery}%`,
             })
         }
-        queryBuilder.orderBy('role_mtg.roleName', 'ASC')
+        queryBuilder.orderBy('meeting_role.roleName', 'ASC')
         return paginate(queryBuilder, { page, limit })
     }
 
@@ -102,14 +102,14 @@ export class RoleMtgRepository extends Repository<RoleMtg> {
         updateRoleMtgDto: UpdateRoleMtgDto,
     ): Promise<RoleMtg> {
         try {
-            await this.createQueryBuilder('role_mtg')
+            await this.createQueryBuilder('meeting_role')
                 .update(RoleMtg)
                 .set({
                     roleName: updateRoleMtgDto.roleName,
                     type: updateRoleMtgDto.type,
                     description: updateRoleMtgDto.description,
                 })
-                .where('role_mtg.id = :roleMtgId', {
+                .where('meeting_role.id = :roleMtgId', {
                     roleMtgId: roleMtgId,
                 })
 

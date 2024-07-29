@@ -9,9 +9,9 @@ import {
     UpdateDateColumn,
 } from 'typeorm'
 import { Meeting } from '@entities/meeting.entity'
-import { RoleMtg } from '@entities/role-mtg.entity'
+import { RoleMtg } from '@entities/meeting-role.entity'
 
-@Entity('meeting_role_mtgs')
+@Entity('meeting_role_relations')
 export class MeetingRoleMtg extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number
@@ -27,6 +27,12 @@ export class MeetingRoleMtg extends BaseEntity {
     })
     roleMtgId: number
 
+    @CreateDateColumn({ name: 'created_at' })
+    createdAt: Date
+
+    @UpdateDateColumn({ name: 'updated_at' })
+    updatedAt: Date
+
     @ManyToOne(() => Meeting, (meeting) => meeting.meetingRoleMtg)
     @JoinColumn({
         name: 'meeting_id',
@@ -38,10 +44,4 @@ export class MeetingRoleMtg extends BaseEntity {
         name: 'role_mtg_id',
     })
     roleMtg: RoleMtg
-
-    @CreateDateColumn({ name: 'created_at' })
-    createdAt: Date
-
-    @UpdateDateColumn({ name: 'updated_at' })
-    updatedAt: Date
 }

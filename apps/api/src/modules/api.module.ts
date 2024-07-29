@@ -36,6 +36,7 @@ import { ReactionIconModule } from './reaction-icons/reaction-icon.module'
 import { ReactionMessageModule } from './reaction_messages/reaction-message.module'
 import { UserSeenMessageModule } from './user-seen-message/user-seen-message.module'
 import { TransactionModule } from './transaction/transaction.module'
+import { PersonnelVotingModule } from './personnel-voting/personnel-voting.module'
 
 @Module({
     imports: [
@@ -76,6 +77,7 @@ import { TransactionModule } from './transaction/transaction.module'
         ReactionMessageModule,
         UserSeenMessageModule,
         TransactionModule,
+        PersonnelVotingModule,
     ],
     controllers: [ApiController],
     providers: [ApiService],

@@ -33,7 +33,7 @@ export class RoleMtgController {
     @HttpCode(HttpStatus.OK)
     @UseGuards(JwtAuthGuard)
     @ApiBearerAuth()
-    @Permission(PermissionEnum.LIST_ROLE_MTG)
+    @Permission(PermissionEnum.SHAREHOLDERS_MTG, PermissionEnum.BOARD_MEETING)
     async getAllRoleMtgByCompanyIdAndTypeRoleMtg(
         @Query() getAllRoleMtgByTypeRoleMtgDto: GetAllRoleMtgByTypeRoleMtgDto,
         @UserScope() user: User,

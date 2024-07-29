@@ -46,7 +46,10 @@ export class ShareholderController {
 
     @Get('/:id')
     @UseGuards(JwtAuthGuard)
-    @Permission(PermissionEnum.DETAIL_SHAREHOLDERS)
+    @Permission(
+        PermissionEnum.DETAIL_SHAREHOLDERS,
+        PermissionEnum.EDIT_SHAREHOLDERS,
+    )
     @HttpCode(HttpStatus.OK)
     @ApiBearerAuth()
     async getShareholderById(

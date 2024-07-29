@@ -1,5 +1,5 @@
 import { Repository } from 'typeorm'
-import { Proposal } from '@entities/proposal.entity'
+import { Proposal } from '@entities/meeting-proposal.entity'
 import { CustomRepository } from '@shares/decorators'
 import {
     CreateProposalDto,
@@ -48,12 +48,15 @@ export class ProposalRepository extends Repository<Proposal> {
     }
 
     async getInternalProposalById(id: number): Promise<Proposal> {
-        const proposal = await this.createQueryBuilder('proposals')
+        const proposal = await this.createQueryBuilder('meeting_proposal')
             .select()
-            .where('proposals.id = :id', {
+            .where('meeting_proposal.id = :id', {
                 id,
             })
-            .leftJoinAndSelect('proposals.proposalFiles', 'proposalFiles')
+            .leftJoinAndSelect(
+                'meeting_proposal.proposalFiles',
+                'proposalFiles',
+            )
             .getOne()
 
         return proposal
@@ -71,7 +74,7 @@ export class ProposalRepository extends Repository<Proposal> {
             votedQuantity,
             unVotedQuantity,
         } = proposalDtoUpdate
-        await this.createQueryBuilder('proposals')
+        await this.createQueryBuilder('meeting_proposal')
             .update(Proposal)
             .set({
                 title: title,
@@ -82,7 +85,7 @@ export class ProposalRepository extends Repository<Proposal> {
                 notVoteYetQuantity: notVoteYetQuantity,
                 // creatorId: userId,
             })
-            .where('proposals.id = :proposalId', { proposalId })
+            .where('meeting_proposal.id = :proposalId', { proposalId })
             .execute()
         const proposal = await this.getProposalByProposalId(proposalId)
         return proposal
@@ -104,20 +107,20 @@ export class ProposalRepository extends Repository<Proposal> {
         options: IPaginationOptions & GetAllProposalDto,
     ): Promise<Pagination<Proposal>> {
         const typeQuery = options.type
-        const queryBuilder = this.createQueryBuilder('proposals')
+        const queryBuilder = this.createQueryBuilder('meeting_proposal')
             .select([
-                'proposals.id',
-                'proposals.title',
-                'proposals.description',
-                'proposals.type',
-                'proposals.votedQuantity',
-                'proposals.unVotedQuantity',
-                'proposals.notVoteYetQuantity',
+                'meeting_proposal.id',
+                'meeting_proposal.title',
+                'meeting_proposal.description',
+                'meeting_proposal.type',
+                'meeting_proposal.votedQuantity',
+                'meeting_proposal.unVotedQuantity',
+                'meeting_proposal.notVoteYetQuantity',
             ])
             .leftJoin(
                 'votings',
                 'voting',
-                'proposals.id = voting.proposalId AND voting.userId = :userId',
+                'meeting_proposal.id = voting.proposalId AND voting.userId = :userId',
                 { userId },
             )
             .addSelect(
@@ -132,10 +135,10 @@ export class ProposalRepository extends Repository<Proposal> {
                 'resultActionVote',
             )
 
-            .where('proposals.type = :type', {
+            .where('meeting_proposal.type = :type', {
                 type: typeQuery,
             })
-            .andWhere('proposals.meetingId = :meetingId', {
+            .andWhere('meeting_proposal.meetingId = :meetingId', {
                 meetingId: meetingId,
             })
         return paginateRaw(queryBuilder, options)
@@ -152,12 +155,12 @@ export class ProposalRepository extends Repository<Proposal> {
     }
 
     async getAllProposalByMtgId(meetingId: number): Promise<Proposal[]> {
-        const proposal = await this.createQueryBuilder('proposals')
+        const proposal = await this.createQueryBuilder('meeting_proposal')
             .select()
-            .where('proposals.meetingId = :meetingId', {
+            .where('meeting_proposal.meetingId = :meetingId', {
                 meetingId,
             })
-            .leftJoin('proposals.proposalFiles', 'proposalFiles')
+            .leftJoin('meeting_proposal.proposalFiles', 'proposalFiles')
             .addSelect([
                 'proposalFiles.id',
                 'proposalFiles.url',

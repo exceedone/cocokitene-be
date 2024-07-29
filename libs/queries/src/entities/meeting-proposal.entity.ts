@@ -1,18 +1,21 @@
 import {
     BaseEntity,
     Column,
+    CreateDateColumn,
     DeleteDateColumn,
     Entity,
     JoinColumn,
     ManyToOne,
     OneToMany,
     PrimaryGeneratedColumn,
+    UpdateDateColumn,
 } from 'typeorm'
 import { User } from '@entities/user.entity'
 import { Meeting } from '@entities/meeting.entity'
 import { ProposalType } from '@shares/constants/proposal.const'
-import { ProposalFile } from '@entities/proposal-file'
-@Entity('proposals')
+import { ProposalFile } from '@entities/proposal-file.entity'
+
+@Entity('meeting_proposal')
 export class Proposal extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number
@@ -76,6 +79,12 @@ export class Proposal extends BaseEntity {
 
     @Column({ nullable: false, name: 'creator_id', type: 'integer', width: 11 })
     creatorId: number
+
+    @CreateDateColumn({ name: 'created_at' })
+    createdAt: Date
+
+    @UpdateDateColumn({ name: 'updated_at' })
+    updatedAt: Date
 
     @DeleteDateColumn()
     deletedAt: Date

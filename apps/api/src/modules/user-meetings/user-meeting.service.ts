@@ -1,5 +1,5 @@
 import { CreateUserMeetingDto } from '@dtos/user-meeting.dto'
-import { UserMeeting } from '@entities/user-meeting.entity'
+import { UserMeeting } from '@entities/meeting-participant.entity'
 import {
     forwardRef,
     HttpException,
@@ -7,7 +7,7 @@ import {
     Inject,
     Injectable,
 } from '@nestjs/common'
-import { UserMeetingRepository } from '@repositories/user-meeting.repository'
+import { UserMeetingRepository } from '@repositories/meeting-participant.repository'
 import { UserMeetingStatusEnum } from '@shares/constants/meeting.const'
 import { httpErrors } from '@shares/exception-filter'
 import { UserService } from '@api/modules/users/user.service'

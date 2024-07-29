@@ -18,11 +18,11 @@ export class Message extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number
 
-    @Column({ nullable: false, name: 'meeting_id', type: 'integer', width: 11 })
-    meetingId: number
-
     @Column({ nullable: false, name: 'sender_id', type: 'integer', width: 11 })
     senderId: number
+
+    @Column({ nullable: false, name: 'meeting_id', type: 'integer', width: 11 })
+    meetingId: number
 
     @Column({
         nullable: true,
@@ -70,12 +70,12 @@ export class Message extends BaseEntity {
     @OneToMany(() => Message, (message) => message.replyMessage)
     replies: Message[]
 
+    @OneToMany(() => Reaction, (reaction) => reaction.message)
+    reactions: Reaction[]
+
     @CreateDateColumn({ name: 'created_at' })
     createdAt: Date
 
     @UpdateDateColumn({ name: 'updated_at' })
     updatedAt: Date
-
-    @OneToMany(() => Reaction, (reaction) => reaction.message)
-    reactions: Reaction[]
 }

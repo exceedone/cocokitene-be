@@ -4,7 +4,7 @@ import { TransactionRepository } from '@repositories/transaction.repository'
 import { MEETING_EVENT, TRANSACTION_STATUS } from '@shares/constants'
 import { Injectable } from '@nestjs/common'
 import { MeetingRepository } from '@repositories/meeting.repository'
-import { ProposalRepository } from '@repositories/proposal.repository'
+import { ProposalRepository } from '@repositories/meeting-proposal.repository'
 
 @Injectable()
 export class MeetingCrawler extends BaseCrawler {

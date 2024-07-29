@@ -9,9 +9,9 @@ import {
 import { MeetingFileDto } from './meeting-file.dto'
 import { Type } from 'class-transformer'
 import { ProposalDto } from './proposal.dto'
-import { CandidateDto } from './candidate.dto'
 import { UserMeetingDto } from '@dtos/user-meeting.dto'
 import { StatusMeeting } from '@shares/constants/meeting.const'
+import { PersonnelVotingDto } from './personnel-voting.dto'
 
 export class CreateBoardMeetingDto {
     @IsNotEmpty()
@@ -105,13 +105,13 @@ export class CreateBoardMeetingDto {
     //executiveOfficerElection
     @ApiProperty({
         required: true,
-        type: [CandidateDto],
+        type: [PersonnelVotingDto],
     })
     @ValidateNested({
         each: true,
     })
-    @Type(() => CandidateDto)
-    candidates: CandidateDto[]
+    @Type(() => PersonnelVotingDto)
+    personnelVoting: PersonnelVotingDto[]
 
     @ApiProperty({
         required: true,
@@ -225,16 +225,17 @@ export class UpdateBoardMeetingDto {
     @Type(() => ProposalDto)
     elections?: ProposalDto[]
 
+    //executiveOfficerElection
     @IsOptional()
     @ApiProperty({
         required: false,
-        type: [CandidateDto],
+        type: [PersonnelVotingDto],
     })
     @ValidateNested({
         each: true,
     })
-    @Type(() => CandidateDto)
-    candidates?: CandidateDto[]
+    @Type(() => PersonnelVotingDto)
+    personnelVoting?: PersonnelVotingDto[]
 
     @IsOptional()
     @ApiProperty({

@@ -11,7 +11,7 @@ import {
 import { User } from '@entities/user.entity'
 import { Role } from '@entities/role.entity'
 
-@Entity('user_roles')
+@Entity('user_role')
 export class UserRole extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number
@@ -21,6 +21,12 @@ export class UserRole extends BaseEntity {
 
     @Column({ nullable: false, name: 'role_id', type: 'integer', width: 11 })
     roleId: number
+
+    @CreateDateColumn({ name: 'created_at' })
+    createdAt: Date
+
+    @UpdateDateColumn({ name: 'updated_at' })
+    updatedAt: Date
 
     @ManyToOne(() => User, (user) => user.userRole)
     @JoinColumn({
@@ -33,10 +39,4 @@ export class UserRole extends BaseEntity {
         name: 'role_id',
     })
     role: Role
-
-    @CreateDateColumn({ name: 'created_at' })
-    createdAt: Date
-
-    @UpdateDateColumn({ name: 'updated_at' })
-    updatedAt: Date
 }

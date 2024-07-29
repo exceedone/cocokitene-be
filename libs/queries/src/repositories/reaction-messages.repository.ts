@@ -26,7 +26,7 @@ export class ReactionMessagesRepository extends Repository<Reaction> {
         updatedReactionMessageDto: UpdateReactionMessageDto,
     ): Promise<Reaction> {
         const { userId, reactionIconId, messageId } = updatedReactionMessageDto
-        await this.createQueryBuilder('reaction_messages')
+        await this.createQueryBuilder('reaction_message')
             .update(Reaction)
             .set({
                 userId: userId,

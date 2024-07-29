@@ -6,7 +6,7 @@ import {
     GetAllNormalRolesDto,
 } from '@dtos/role.dto'
 import { Pagination } from 'nestjs-typeorm-paginate'
-import { RoleEnum } from '@shares/constants'
+import { PermissionEnum, RoleEnum } from '@shares/constants'
 import {
     forwardRef,
     HttpException,
@@ -18,6 +18,7 @@ import { CompanyService } from '@api/modules/companys/company.service'
 import { httpErrors, messageLog } from '@shares/exception-filter'
 import { RolePermissionService } from '@api/modules/role-permissions/role-permission.service'
 import { Logger } from 'winston'
+import { PermissionRepository } from '@repositories/permission.repository'
 @Injectable()
 export class RoleService {
     constructor(
@@ -26,6 +27,8 @@ export class RoleService {
         private readonly companyService: CompanyService,
         @Inject(forwardRef(() => RolePermissionService))
         private readonly rolePermissionService: RolePermissionService,
+        private readonly permissionRepository: PermissionRepository,
+
         @Inject('winston')
         private readonly logger: Logger,
     ) {}
@@ -116,14 +119,25 @@ export class RoleService {
             companyId,
             description,
         )
-        await Promise.all([
-            ...idPermissions.map((idPermission) =>
-                this.rolePermissionService.createRolePermission({
-                    roleId: createdRole.id,
-                    permissionId: idPermission,
-                }),
-            ),
-        ])
+
+        //Hash permission Basic for created role
+        const permissionBasic =
+            await this.permissionRepository.getPermissionByPermissionName(
+                PermissionEnum.BASIC_PERMISSION,
+            )
+
+        await this.rolePermissionService.createRolePermission({
+            roleId: createdRole.id,
+            permissionId: permissionBasic.id,
+        }),
+            await Promise.all([
+                ...idPermissions.map((idPermission) =>
+                    this.rolePermissionService.createRolePermission({
+                        roleId: createdRole.id,
+                        permissionId: idPermission,
+                    }),
+                ),
+            ])
         this.logger.info(
             `${messageLog.CREATE_ROLE_SUCCESS.message} ${createdRole.roleName}`,
         )

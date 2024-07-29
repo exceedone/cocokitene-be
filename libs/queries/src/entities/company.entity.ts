@@ -12,9 +12,9 @@ import {
 import { CompanyStatus } from './company-status.entity'
 import { Plan } from './plan.entity'
 import { Role } from './role.entity'
-import { RoleMtg } from '@entities/role-mtg.entity'
+import { RoleMtg } from '@entities/meeting-role.entity'
 
-@Entity('companys')
+@Entity('company')
 export class Company extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number
@@ -38,7 +38,7 @@ export class Company extends BaseEntity {
     @Column({
         name: 'description',
         type: 'varchar',
-        length: 255,
+        length: 5000,
         nullable: true,
     })
     description: string
@@ -59,7 +59,7 @@ export class Company extends BaseEntity {
 
     @Column({
         nullable: false,
-        name: 'representative_user',
+        name: 'representative',
         type: 'varchar',
         length: 255,
     })
@@ -106,12 +106,6 @@ export class Company extends BaseEntity {
     })
     dateOfCorporation: Date
 
-    @CreateDateColumn({ name: 'created_at' })
-    createdAt: Date
-
-    @UpdateDateColumn({ name: 'updated_at' })
-    updatedAt: Date
-
     @Column({
         nullable: true,
         name: 'company_logo',
@@ -122,9 +116,9 @@ export class Company extends BaseEntity {
 
     @Column({
         nullable: true,
+        name: 'business_type',
         type: 'varchar',
         length: 255,
-        name: 'business_type',
     })
     businessType: string
 
@@ -145,4 +139,10 @@ export class Company extends BaseEntity {
 
     @OneToMany(() => RoleMtg, (roleMtg) => roleMtg.company)
     roleMtg: RoleMtg[]
+
+    @CreateDateColumn({ name: 'created_at' })
+    createdAt: Date
+
+    @UpdateDateColumn({ name: 'updated_at' })
+    updatedAt: Date
 }

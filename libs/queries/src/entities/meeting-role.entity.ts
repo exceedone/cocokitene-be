@@ -11,11 +11,11 @@ import {
     UpdateDateColumn,
 } from 'typeorm'
 import { Company } from '@entities/company.entity'
-import { MeetingRoleMtg } from '@entities/meeting-role-mtg.entity'
-import { UserMeeting } from '@entities/user-meeting.entity'
+import { MeetingRoleMtg } from '@entities/meeting-role-relations.entity'
+import { UserMeeting } from '@entities/meeting-participant.entity'
 import { TypeRoleMeeting } from '@shares/constants'
 
-@Entity('role_mtg')
+@Entity('meeting_role')
 @Unique(['roleName', 'companyId'])
 export class RoleMtg extends BaseEntity {
     @PrimaryGeneratedColumn()
@@ -33,7 +33,7 @@ export class RoleMtg extends BaseEntity {
     @Column({
         name: 'description',
         type: 'varchar',
-        length: 255,
+        length: 1000,
         nullable: true,
     })
     description: string
@@ -49,17 +49,17 @@ export class RoleMtg extends BaseEntity {
     @Column({ nullable: false, name: 'company_id', type: 'integer', width: 11 })
     companyId: number
 
-    @ManyToOne(() => Company)
-    @JoinColumn({
-        name: 'company_id',
-    })
-    company: Company
-
     @CreateDateColumn({ name: 'created_at' })
     createdAt: Date
 
     @UpdateDateColumn({ name: 'updated_at' })
     updatedAt: Date
+
+    @ManyToOne(() => Company)
+    @JoinColumn({
+        name: 'company_id',
+    })
+    company: Company
 
     @OneToMany(() => MeetingRoleMtg, (meetingRoleMtg) => meetingRoleMtg.roleMtg)
     meetingRoleMtg: MeetingRoleMtg[]

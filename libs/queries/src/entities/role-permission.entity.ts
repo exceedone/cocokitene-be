@@ -12,7 +12,7 @@ import {
 import { Role } from '@entities/role.entity'
 import { Permission } from '@entities/permission.entity'
 
-@Entity('role_permissions')
+@Entity('role_permission')
 @Unique(['roleId', 'permissionId'])
 export class RolePermission extends BaseEntity {
     @PrimaryGeneratedColumn()
@@ -29,20 +29,6 @@ export class RolePermission extends BaseEntity {
     })
     permissionId: number
 
-    @ManyToOne(() => Role, (role) => role.rolePermissions)
-    @JoinColumn({
-        name: 'role_id',
-    })
-    role: Role
-
-    @ManyToOne(() => Permission, (permission) => permission.rolePermissions, {
-        eager: true,
-    })
-    @JoinColumn({
-        name: 'permission_id',
-    })
-    permission: Permission
-
     @Column({
         name: 'description',
         type: 'varchar',
@@ -56,4 +42,18 @@ export class RolePermission extends BaseEntity {
 
     @UpdateDateColumn({ name: 'updated_at' })
     updatedAt: Date
+
+    @ManyToOne(() => Permission, (permission) => permission.rolePermissions, {
+        eager: true,
+    })
+    @JoinColumn({
+        name: 'permission_id',
+    })
+    permission: Permission
+
+    @ManyToOne(() => Role, (role) => role.rolePermissions)
+    @JoinColumn({
+        name: 'role_id',
+    })
+    role: Role
 }

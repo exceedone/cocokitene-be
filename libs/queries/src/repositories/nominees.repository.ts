@@ -1,26 +1,23 @@
 import { Repository } from 'typeorm'
-import { Candidate } from '@entities/candidate.entity'
+import { Candidate } from '@entities/nominees.entity'
 import { CustomRepository } from '@shares/decorators'
 import { CandidateUpdateDto, CreateCandidateDto } from '@dtos/candidate.dto'
+
 @CustomRepository(Candidate)
 export class CandidateRepository extends Repository<Candidate> {
     async createCandidate(
         createCandidate: CreateCandidateDto,
     ): Promise<Candidate> {
         const {
-            title,
             candidateName,
-            type,
-            meetingId,
+            personnelVotingId,
             creatorId,
             notVoteYetQuantity,
         } = createCandidate
 
         const createdCandidate = await this.create({
-            title,
             candidateName,
-            type,
-            meetingId,
+            personnelVotingId,
             creatorId,
             notVoteYetQuantity,
         })
@@ -32,7 +29,7 @@ export class CandidateRepository extends Repository<Candidate> {
             where: {
                 id: candidateId,
             },
-            relations: ['meeting'],
+            relations: ['personnelVoting'],
         })
         return candidate
     }
@@ -42,46 +39,38 @@ export class CandidateRepository extends Repository<Candidate> {
         candidateUpdateDto: CandidateUpdateDto,
     ): Promise<Candidate> {
         const {
-            title,
             candidateName,
-            type,
-            meetingId,
             votedQuantity,
             unVotedQuantity,
             notVoteYetQuantity,
         } = candidateUpdateDto
 
-        await this.createQueryBuilder('candidate')
+        await this.createQueryBuilder('nominees')
             .update(Candidate)
             .set({
-                title: title,
                 candidateName: candidateName,
-                type: type,
-                meetingId: meetingId,
                 unVotedQuantity: unVotedQuantity,
                 votedQuantity: votedQuantity,
                 notVoteYetQuantity: notVoteYetQuantity,
             })
-            .where('candidate.id = :candidateId', { candidateId })
+            .where('nominees.id = :nomineeId', { nomineeId: candidateId })
             .execute()
         const candidate = await this.getCandidateById(candidateId)
         return candidate
     }
 
     async getAllCandidateByMeetingId(meetingId: number): Promise<Candidate[]> {
+        console.log(meetingId)
         const candidates = await this.find({
-            where: {
-                meetingId: meetingId,
-            },
+            // where: {
+            //     meetingId: meetingId,
+            // },
             select: {
                 id: true,
-                title: true,
                 candidateName: true,
-                type: true,
                 votedQuantity: true,
                 unVotedQuantity: true,
                 notVoteYetQuantity: true,
-                meetingId: true,
                 creatorId: true,
                 deletedAt: true,
             },

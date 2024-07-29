@@ -11,7 +11,7 @@ import {
     PrimaryGeneratedColumn,
     UpdateDateColumn,
 } from 'typeorm'
-@Entity('meeting_files')
+@Entity('meeting_file')
 export class MeetingFile extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number
@@ -30,14 +30,14 @@ export class MeetingFile extends BaseEntity {
     })
     fileType: FileTypes
 
-    @DeleteDateColumn()
-    deletedAt: Date
-
     @CreateDateColumn({ name: 'created_at' })
     createdAt: Date
 
     @UpdateDateColumn({ name: 'updated_at' })
     updatedAt: Date
+
+    @DeleteDateColumn()
+    deletedAt: Date
 
     @ManyToOne(() => Meeting, (meeting) => meeting.meetingFiles)
     @JoinColumn({ name: 'meeting_id' })

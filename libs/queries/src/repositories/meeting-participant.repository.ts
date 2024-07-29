@@ -1,6 +1,6 @@
 import { Like, Repository } from 'typeorm'
 import { CustomRepository } from '@shares/decorators'
-import { UserMeeting } from '@entities/user-meeting.entity'
+import { UserMeeting } from '@entities/meeting-participant.entity'
 import { CreateUserMeetingDto } from '@dtos/user-meeting.dto'
 import { UserMeetingStatusEnum } from '@shares/constants/meeting.const'
 
@@ -161,11 +161,13 @@ export class UserMeetingRepository extends Repository<UserMeeting> {
     async getAllParticipantInviteMeeting(
         meetingId: number,
     ): Promise<UserMeeting[]> {
-        const participants = await this.createQueryBuilder('user_meetings')
-            .select(['user_meetings.id'])
-            .leftJoin('user_meetings.user', 'user')
+        const participants = await this.createQueryBuilder(
+            'meeting_participant',
+        )
+            .select(['meeting_participant.id'])
+            .leftJoin('meeting_participant.user', 'user')
             .addSelect(['user.id', 'user.email'])
-            .where('user_meetings.meetingId = :meetingId', {
+            .where('meeting_participant.meetingId = :meetingId', {
                 meetingId: meetingId,
             })
             .getMany()

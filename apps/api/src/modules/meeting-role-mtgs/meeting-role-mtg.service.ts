@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common'
-import { MeetingRoleMtgRepository } from '@repositories/meeting-role-mtg.repository'
+import { MeetingRoleMtgRepository } from '@repositories/meeting-role-relations.repository'
 import { CreateMeetingRoleMtgDto } from '@dtos/meeting-role-mtg.dto'
-import { MeetingRoleMtg } from '@entities/meeting-role-mtg.entity'
+import { MeetingRoleMtg } from '@entities/meeting-role-relations.entity'
 
 @Injectable()
 export class MeetingRoleMtgService {

@@ -8,22 +8,22 @@ import { HttpException, HttpStatus } from '@nestjs/common'
 export class PlanRepository extends Repository<Plan> {
     async getAllPlans(options: GetAllPlanDto): Promise<Pagination<Plan>> {
         const { page, limit, searchQuery, sortOrder } = options
-        const queryBuilder = this.createQueryBuilder('plans_mst').select([
-            'plans_mst.id',
-            'plans_mst.planName',
-            'plans_mst.description',
-            'plans_mst.maxStorage',
-            'plans_mst.maxMeeting',
-            'plans_mst.price',
-            'plans_mst.maxShareholderAccount',
+        const queryBuilder = this.createQueryBuilder('plan_mst').select([
+            'plan_mst.id',
+            'plan_mst.planName',
+            'plan_mst.description',
+            'plan_mst.maxStorage',
+            'plan_mst.maxMeeting',
+            'plan_mst.price',
+            'plan_mst.maxShareholderAccount',
         ])
         if (searchQuery) {
-            queryBuilder.andWhere('plans_mst.planName like :planName', {
+            queryBuilder.andWhere('plan_mst.planName like :planName', {
                 planName: `%${searchQuery}%`,
             })
         }
         if (sortOrder) {
-            queryBuilder.orderBy('plans_mst.updated_at', sortOrder)
+            queryBuilder.orderBy('plan_mst.updated_at', sortOrder)
         }
         return paginate(queryBuilder, { page, limit })
     }
@@ -33,7 +33,7 @@ export class PlanRepository extends Repository<Plan> {
         updatePlanDto: UpdatePlanDto,
     ): Promise<Plan> {
         try {
-            await this.createQueryBuilder('plans_mst')
+            await this.createQueryBuilder('plan_mst')
                 .update(Plan)
                 .set({
                     planName: updatePlanDto.planName,
@@ -43,7 +43,7 @@ export class PlanRepository extends Repository<Plan> {
                     price: updatePlanDto.price,
                     maxShareholderAccount: updatePlanDto.maxShareholderAccount,
                 })
-                .where('plans_mst.id = :planId', { planId })
+                .where('plan_mst.id = :planId', { planId })
                 .execute()
 
             const plan = await this.findOne({

@@ -13,7 +13,7 @@ import { Company } from '@entities/company.entity'
 import { RolePermission } from './role-permission.entity'
 import { UserRole } from '@entities/user-role.entity'
 
-@Entity('roles')
+@Entity('role')
 export class Role extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number
@@ -29,7 +29,7 @@ export class Role extends BaseEntity {
     @Column({
         name: 'description',
         type: 'varchar',
-        length: 255,
+        length: 1000,
         nullable: true,
     })
     description: string
@@ -37,17 +37,17 @@ export class Role extends BaseEntity {
     @Column({ nullable: false, name: 'company_id', type: 'integer', width: 11 })
     companyId: number
 
-    @ManyToOne(() => Company)
-    @JoinColumn({
-        name: 'company_id',
-    })
-    company: Company
-
     @CreateDateColumn({ name: 'created_at' })
     createdAt: Date
 
     @UpdateDateColumn({ name: 'updated_at' })
     updatedAt: Date
+
+    @ManyToOne(() => Company)
+    @JoinColumn({
+        name: 'company_id',
+    })
+    company: Company
 
     @OneToMany(() => RolePermission, (rolePermission) => rolePermission.role)
     rolePermissions: RolePermission[]

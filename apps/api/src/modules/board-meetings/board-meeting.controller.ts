@@ -77,7 +77,10 @@ export class BoardMeetingController {
 
     @Get('/:id')
     @UseGuards(JwtAuthGuard)
-    @Permission(PermissionEnum.DETAIL_BOARD_MEETING)
+    @Permission(
+        PermissionEnum.DETAIL_BOARD_MEETING,
+        PermissionEnum.EDIT_BOARD_MEETING,
+    )
     @HttpCode(HttpStatus.OK)
     @ApiBearerAuth()
     async getBoardMeetingById(
@@ -120,7 +123,7 @@ export class BoardMeetingController {
         return boardMeeting
     }
 
-    //Send Email to Board of Board Meeting
+    // Send Email to Board of Board Meeting
     @Post('/send-email/board-meeting/:id')
     @UseGuards(JwtAuthGuard)
     @HttpCode(HttpStatus.OK)
@@ -135,9 +138,10 @@ export class BoardMeetingController {
 
         return 'Email sent to Board successfully'
     }
+
     @Get('/:id/dataHash')
     @UseGuards(JwtAuthGuard)
-    @Permission(PermissionEnum.CHECK_DATA_BOARD_MEETING)
+    @Permission(PermissionEnum.BOARD_MEETING)
     @ApiBearerAuth()
     @HttpCode(HttpStatus.OK)
     async getDataHashByMeetingId(
