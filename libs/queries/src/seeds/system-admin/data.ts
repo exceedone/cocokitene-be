@@ -23,4 +23,12 @@ export const systemAdminData: InertSertSystemAdminDto[] = [
         resetPasswordToken: 'j2GBoY23PgLr8N1iDEz6',
         resetPasswordExpireTime: new Date('2023-12-31T23:59:59'),
     },
+    {
+        username: 'System Demo',
+        email: 'demo@cocokitene.co',
+        password:
+            '$2b$10$UfgMemnWAZ5N8.3L4SW0QuVPjEe1nCe0OUM.kl2dm9hCn/ulnYkOq',
+        resetPasswordToken: 'j2GBoY23PgLr8N1iDEz6',
+        resetPasswordExpireTime: new Date('2023-12-31T23:59:59'),
+    },
 ]
