@@ -1,5 +1,5 @@
 import { CreateProposalFileDto, ProposalFileDto } from '@dtos/proposal-file.dto'
-import { ProposalFile } from '@entities/proposal-file'
+import { ProposalFile } from '@entities/proposal-file.entity'
 import { CustomRepository } from '@shares/decorators'
 import { Repository } from 'typeorm'
 
@@ -21,12 +21,12 @@ export class ProposalFileRepository extends Repository<ProposalFile> {
         proposalFileId: number,
         proposalFileDto: ProposalFileDto,
     ): Promise<ProposalFile> {
-        await this.createQueryBuilder('proposal_files')
+        await this.createQueryBuilder('proposal_file')
             .update(ProposalFile)
             .set({
                 url: proposalFileDto.url,
             })
-            .where('proposal_files.id = :proposalFileId', { proposalFileId })
+            .where('proposal_file.id = :proposalFileId', { proposalFileId })
             .execute()
         const proposalFile = await this.findOne({
             where: {

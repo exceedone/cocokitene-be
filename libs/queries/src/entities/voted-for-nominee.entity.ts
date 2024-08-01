@@ -1,19 +1,21 @@
 import {
     BaseEntity,
     Column,
+    CreateDateColumn,
     DeleteDateColumn,
     Entity,
     JoinColumn,
     ManyToOne,
     PrimaryGeneratedColumn,
     Unique,
+    UpdateDateColumn,
 } from 'typeorm'
 import { User } from '@entities/user.entity'
-import { Candidate } from './candidate.entity'
+import { Candidate } from './nominees.entity'
 import { VoteProposalResult } from '@shares/constants/proposal.const'
 
-@Entity('voting_candidate')
-@Unique(['userId', 'votedForCandidateId'])
+@Entity('voted_for_nominee')
+@Unique(['userId', 'votedForCandidateId', 'result'])
 export class VotingCandidate extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number
@@ -23,7 +25,7 @@ export class VotingCandidate extends BaseEntity {
 
     @Column({
         nullable: false,
-        name: 'voted_for_candidate_id',
+        name: 'nominees_id',
         type: 'integer',
         width: 11,
     })
@@ -37,6 +39,20 @@ export class VotingCandidate extends BaseEntity {
     })
     result: VoteProposalResult
 
+    @Column({
+        nullable: false,
+        name: 'quantity_share',
+        type: 'integer',
+        width: 11,
+    })
+    quantityShare: number
+
+    @CreateDateColumn({ name: 'created_at' })
+    createdAt: Date
+
+    @UpdateDateColumn({ name: 'updated_at' })
+    updatedAt: Date
+
     @DeleteDateColumn()
     deletedAt: Date
 
@@ -48,7 +64,7 @@ export class VotingCandidate extends BaseEntity {
 
     @ManyToOne(() => Candidate)
     @JoinColumn({
-        name: 'voted_for_candidate_id',
+        name: 'nominees_id',
     })
     votedForCandidate: Candidate
 }

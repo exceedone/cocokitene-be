@@ -126,7 +126,7 @@ export class AuthController {
     @UseGuards(JwtAuthGuard)
     @HttpCode(HttpStatus.OK)
     @ApiBearerAuth()
-    @Permission(PermissionEnum.EDIT_PROFILE)
+    @Permission(PermissionEnum.BASIC_PERMISSION)
     async createUser(
         @Body() changePasswordDto: ChangePasswordDto,
         @UserScope() user: User,

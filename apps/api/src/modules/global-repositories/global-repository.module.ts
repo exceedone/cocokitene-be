@@ -5,10 +5,10 @@ import { MeetingFileRepository } from '@repositories/meeting-file.repository'
 import { MeetingRepository } from '@repositories/meeting.repository'
 import { PlanRepository } from '@repositories/plan.repository'
 import { ProposalFileRepository } from '@repositories/proposal-file.repository'
-import { ProposalRepository } from '@repositories/proposal.repository'
+import { ProposalRepository } from '@repositories/meeting-proposal.repository'
 import { RoleRepository } from '@repositories/role.repository'
 import { SystemAdminRepository } from '@repositories/system-admin.repository'
-import { UserMeetingRepository } from '@repositories/user-meeting.repository'
+import { UserMeetingRepository } from '@repositories/meeting-participant.repository'
 import { UserRoleRepository } from '@repositories/user-role.repository'
 import { UserStatusRepository } from '@repositories/user-status.repository'
 import { UserRepository } from '@repositories/user.repository'
@@ -18,16 +18,17 @@ import { TypeOrmExModule } from '@shares/modules'
 import { PermissionRepository } from '@repositories/permission.repository'
 import { RolePermissionRepository } from '@repositories/role-permission.repository'
 import { TransactionRepository } from '@repositories/transaction.repository'
-import { VotingCandidateRepository } from '@repositories/voting-candidate.repository'
+import { VotingCandidateRepository } from '@repositories/voting-board-members.repository'
 import { ElectionRepository } from '@repositories/election.repository'
-import { CandidateRepository } from '@repositories/candidate.repository'
-import { MeetingRoleMtgRepository } from '@repositories/meeting-role-mtg.repository'
-import { RoleMtgRepository } from '@repositories/role-mtg.repository'
+import { CandidateRepository } from '@repositories/nominees.repository'
+import { MeetingRoleMtgRepository } from '@repositories/meeting-role-relations.repository'
+import { RoleMtgRepository } from '@repositories/meeting-role.repository'
 import { MessageRepository } from '@repositories/message.repository'
 import { ChatPermissionRepository } from '@repositories/chat-permission.repository'
 import { ReactionMessagesRepository } from '@repositories/reaction-messages.repository'
 import { ReactionIconRepository } from '@repositories/reaction-icon.repository'
-import { UserSeenMessageRepository } from '@repositories/user-seen-message.repository'
+import { UserSeenMessageRepository } from '@repositories/seen-messages.repository'
+import { PersonnelVotingRepository } from '@repositories/personnel-voting.repository'
 
 const commonRepositories = [
     UserRepository,
@@ -59,6 +60,7 @@ const commonRepositories = [
     ReactionMessagesRepository,
     ReactionIconRepository,
     UserSeenMessageRepository,
+    PersonnelVotingRepository,
 ]
 
 @Global()

@@ -30,16 +30,18 @@ import { Logger } from 'winston'
 import { CandidateService } from '../candidate/candidate.service'
 import { MeetingFileService } from '../meeting-files/meeting-file.service'
 import { MeetingRoleMtgService } from '../meeting-role-mtgs/meeting-role-mtg.service'
-import { ProposalItemDetailMeeting } from '../meetings/meeting.interface'
+import {
+    CandidateItemDetailMeeting,
+    personnelVotingDetailMeeting,
+    ProposalItemDetailMeeting,
+} from '../meetings/meeting.interface'
 import { ProposalService } from '../proposals/proposal.service'
 import { UserMeetingService } from '../user-meetings/user-meeting.service'
 import { VotingCandidateService } from '../voting-candidate/voting-candidate.service'
 import { VotingService } from '../votings/voting.service'
-import {
-    CandidateItemDetailMeeting,
-    DetailBoardMeetingResponse,
-} from './board-meeting.interface'
+import { DetailBoardMeetingResponse } from './board-meeting.interface'
 import { ChatPermissionService } from '../chat-permission/chat-permission.service'
+import { PersonnelVotingService } from '../personnel-voting/personnel-voting.service'
 
 @Injectable()
 export class BoardMeetingService {
@@ -55,6 +57,7 @@ export class BoardMeetingService {
         private readonly votingService: VotingService,
         private readonly votingCandidateService: VotingCandidateService,
         private readonly chatPermissionService: ChatPermissionService,
+        private readonly personnelVotingService: PersonnelVotingService,
 
         @Inject('winston')
         private readonly logger: Logger,
@@ -154,7 +157,7 @@ export class BoardMeetingService {
             meetingInvitations,
             managementAndFinancials,
             elections,
-            candidates,
+            personnelVoting,
             participants,
         } = createBoardMeetingDto
 
@@ -208,15 +211,17 @@ export class BoardMeetingService {
                         notVoteYetQuantity: totalVoter,
                     }),
                 ),
-                ...candidates.map((candidate) =>
-                    this.candidateService.createCandidate({
-                        title: candidate.title,
-                        candidateName: candidate.candidateName,
-                        type: candidate.type,
-                        meetingId: createdBoardMeeting.id,
-                        creatorId: creatorId,
-                        notVoteYetQuantity: totalVoter,
-                    }),
+                ...personnelVoting.map((personnelVoting) =>
+                    this.personnelVotingService.createPersonnelVoting(
+                        {
+                            title: personnelVoting.title,
+                            type: personnelVoting.type,
+                            meetingId: createdBoardMeeting.id,
+                            creatorId: creatorId,
+                            candidate: personnelVoting.candidate,
+                        },
+                        totalVoter,
+                    ),
                 ),
                 ...participants.map(async (item) => {
                     await Promise.all([
@@ -348,8 +353,6 @@ export class BoardMeetingService {
         const isParticipant = participants
             .flatMap((participant) => participant.userParticipants)
             .some((parti) => parti.userId == userId)
-        console.log('canUserCreateMeeting: ', canUserCreateBoardMeeting)
-        console.log('Is Participants: ', isParticipant)
 
         if (!isParticipant && !canUserCreateBoardMeeting) {
             throw new HttpException(
@@ -431,35 +434,43 @@ export class BoardMeetingService {
         }
 
         // handle vote candidate result with current user
-        const listCandidate: CandidateItemDetailMeeting[] = []
-        for (const candidate of boardMeeting.candidates) {
-            const existedVotingCandidate =
-                await this.votingCandidateService.findVotingByUserIdAndCandidateId(
-                    userId,
-                    candidate.id,
-                )
+        const listPersonnelVoting: personnelVotingDetailMeeting[] = []
+        for (const personnelVoting of boardMeeting.personnelVoting) {
+            const listCandidate: CandidateItemDetailMeeting[] = []
+            for (const candidate of personnelVoting.candidate) {
+                const existedVotingCandidate =
+                    await this.votingCandidateService.findVotingByUserIdAndCandidateId(
+                        userId,
+                        candidate.id,
+                    )
 
-            if (
-                !existedVotingCandidate ||
-                existedVotingCandidate.result === VoteProposalResult.NO_IDEA
-            ) {
-                listCandidate.push({
-                    ...candidate,
-                    voteResult: VoteProposalResult.NO_IDEA,
-                } as CandidateItemDetailMeeting)
-            } else if (
-                existedVotingCandidate.result === VoteProposalResult.VOTE
-            ) {
-                listCandidate.push({
-                    ...candidate,
-                    voteResult: VoteProposalResult.VOTE,
-                } as CandidateItemDetailMeeting)
-            } else {
-                listCandidate.push({
-                    ...candidate,
-                    voteResult: VoteProposalResult.UNVOTE,
-                } as CandidateItemDetailMeeting)
+                if (
+                    !existedVotingCandidate ||
+                    existedVotingCandidate.result === VoteProposalResult.NO_IDEA
+                ) {
+                    listCandidate.push({
+                        ...candidate,
+                        voteResult: VoteProposalResult.NO_IDEA,
+                    } as CandidateItemDetailMeeting)
+                } else if (
+                    existedVotingCandidate.result === VoteProposalResult.VOTE
+                ) {
+                    listCandidate.push({
+                        ...candidate,
+                        voteResult: VoteProposalResult.VOTE,
+                    } as CandidateItemDetailMeeting)
+                } else {
+                    listCandidate.push({
+                        ...candidate,
+                        voteResult: VoteProposalResult.UNVOTE,
+                    } as CandidateItemDetailMeeting)
+                }
             }
+
+            listPersonnelVoting.push({
+                ...personnelVoting,
+                candidate: listCandidate,
+            })
         }
 
         return {
@@ -468,7 +479,7 @@ export class BoardMeetingService {
             boardsTotal: boardTotal,
             boardsJoined: boardJoinedTotal,
             proposals: listProposals,
-            candidates: listCandidate,
+            personnelVoting: listPersonnelVoting,
         }
     }
 
@@ -542,7 +553,7 @@ export class BoardMeetingService {
             meetingInvitations,
             managementAndFinancials,
             elections,
-            candidates,
+            personnelVoting,
             participants,
         } = updateBoardMeetingDto
 
@@ -594,11 +605,11 @@ export class BoardMeetingService {
                 totalVoter,
             ),
 
-            this.candidateService.updateListCandidateBoardMtg(
+            this.personnelVotingService.updateListPersonnelVotingBoardMtg(
                 companyId,
                 meetingId,
                 userId,
-                candidates,
+                personnelVoting,
                 boardIdActiveRemoveMeeting,
                 totalVoter,
             ),

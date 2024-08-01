@@ -36,6 +36,15 @@ export class User extends BaseEntity {
     })
     email: string
 
+    @Column({
+        name: 'wallet_address',
+        type: 'varchar',
+        length: 255,
+        nullable: true,
+        unique: true,
+    })
+    walletAddress: string
+
     @Column({ name: 'password', type: 'varchar', length: 255, nullable: true })
     password: string
 
@@ -52,15 +61,6 @@ export class User extends BaseEntity {
         name: 'reset_password_expire_time',
     })
     resetPasswordExpireTime: Date
-
-    @Column({
-        name: 'wallet_address',
-        type: 'varchar',
-        length: 255,
-        nullable: true,
-        unique: true,
-    })
-    walletAddress: string
 
     @Column({ name: 'avartar', type: 'varchar', length: 255, nullable: true })
     avatar: string
@@ -93,6 +93,20 @@ export class User extends BaseEntity {
     })
     defaultAvatarHashColor: string
 
+    @Column({
+        nullable: true,
+        name: 'phone_number',
+        type: 'varchar',
+        length: 255,
+    })
+    phone: string
+
+    @Column({
+        nullable: true,
+        name: 'active_time',
+    })
+    activeTime: Date
+
     @CreateDateColumn({ name: 'created_at' })
     createdAt: Date
 
@@ -110,20 +124,6 @@ export class User extends BaseEntity {
         name: 'company_id',
     })
     company: Company
-
-    @Column({
-        nullable: true,
-        name: 'phone_number',
-        type: 'varchar',
-        length: 255,
-    })
-    phone: string
-
-    @Column({
-        nullable: true,
-        name: 'active_time',
-    })
-    activeTime: Date
 
     @OneToMany(() => UserRole, (userRole) => userRole.user)
     userRole: UserRole[]

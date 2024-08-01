@@ -30,7 +30,7 @@ export class RoleController {
     @HttpCode(HttpStatus.OK)
     @ApiBearerAuth()
     @UseGuards(JwtAuthGuard)
-    @Permission(PermissionEnum.LIST_ROLES_NORMAL)
+    @Permission(PermissionEnum.LIST_ACCOUNT, PermissionEnum.LIST_SHAREHOLDERS)
     async getAllNormalRoles(
         @Query() getAllNormalRolesDto: GetAllNormalRolesDto,
         @UserScope() user: User,
@@ -47,7 +47,7 @@ export class RoleController {
     @HttpCode(HttpStatus.OK)
     @ApiBearerAuth()
     @UseGuards(JwtAuthGuard)
-    @Permission(PermissionEnum.LIST_ROLES_INTERNAL)
+    @Permission(PermissionEnum.SETTING_PERMISSION_FOR_ROLES)
     async getAllInternalRoleInCompany(
         @Query() getAllInternalRoleDto: GetAllInternalRoleDto,
         @UserScope() user: User,
@@ -64,7 +64,7 @@ export class RoleController {
     @UseGuards(JwtAuthGuard)
     @HttpCode(HttpStatus.CREATED)
     @ApiBearerAuth()
-    @Permission(PermissionEnum.CREATE_ROLE)
+    @Permission(PermissionEnum.SETTING_PERMISSION_FOR_ROLES)
     async createRoleHasPermissionInCompany(
         @Body() roleDto: RoleDto,
         @UserScope() user: User,

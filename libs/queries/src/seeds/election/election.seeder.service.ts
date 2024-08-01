@@ -29,12 +29,15 @@ export class ElectionSeederService {
     }
 
     async seedElection() {
-        const savePromises = electionData.map((election) =>
-            this.saveOneElection(election),
-        )
+        // const savePromises = electionData.map((election) =>
+        //     this.saveOneElection(election),
+        // )
 
         Logger.debug('election______start__seeding__election')
-        await Promise.all(savePromises)
+        electionData.map(async (election) => {
+            await this.saveOneElection(election)
+        })
+        // await Promise.all(savePromises)
         Logger.log('election______end__seeding__election')
     }
 }

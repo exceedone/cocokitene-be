@@ -5,9 +5,9 @@ import {
     Inject,
     Injectable,
 } from '@nestjs/common'
-import { RoleMtgRepository } from '@repositories/role-mtg.repository'
+import { RoleMtgRepository } from '@repositories/meeting-role.repository'
 import { RoleMtgEnum, TypeRoleMeeting } from '@shares/constants'
-import { RoleMtg } from '@entities/role-mtg.entity'
+import { RoleMtg } from '@entities/meeting-role.entity'
 import { httpErrors, messageLog } from '@shares/exception-filter'
 import { Logger } from 'winston'
 import {

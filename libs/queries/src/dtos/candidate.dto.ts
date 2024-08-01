@@ -7,14 +7,6 @@ export class CreateCandidateDto {
     @IsString()
     @ApiProperty({
         required: true,
-        example: 'The Manifesto',
-    })
-    title: string
-
-    @IsNotEmpty()
-    @IsString()
-    @ApiProperty({
-        required: true,
         example: 'NVA',
     })
     candidateName: string
@@ -25,21 +17,7 @@ export class CreateCandidateDto {
         required: true,
         example: 1,
     })
-    type: number
-
-    @IsNumber()
-    @ApiProperty({
-        required: true,
-        example: 1,
-    })
-    meetingId: number
-
-    @IsNumber()
-    @ApiProperty({
-        required: true,
-        example: 1,
-    })
-    creatorId: number
+    personnelVotingId: number
 
     @IsNumber()
     @ApiProperty({
@@ -47,12 +25,19 @@ export class CreateCandidateDto {
         example: 178,
     })
     notVoteYetQuantity: number
+
+    @IsNumber()
+    @ApiProperty({
+        required: true,
+        example: 1,
+    })
+    creatorId: number
 }
 
 export class CandidateDto extends OmitType(CreateCandidateDto, [
-    'meetingId',
     'creatorId',
     'notVoteYetQuantity',
+    'personnelVotingId',
 ]) {
     @IsOptional()
     @IsNumber()
@@ -87,14 +72,6 @@ export class CandidateUpdateDto {
     @IsString()
     @ApiProperty({
         required: false,
-        example: 'The Manifesto',
-    })
-    title?: string
-
-    @IsOptional()
-    @IsString()
-    @ApiProperty({
-        required: false,
         example: 'NVA',
     })
     candidateName?: string
@@ -105,15 +82,7 @@ export class CandidateUpdateDto {
         required: false,
         example: 1,
     })
-    type?: number
-
-    @IsOptional()
-    @IsNumber()
-    @ApiProperty({
-        required: false,
-        example: 1,
-    })
-    meetingId?: number
+    personnelVotingId?: number
 
     @IsOptional()
     @IsNumber()

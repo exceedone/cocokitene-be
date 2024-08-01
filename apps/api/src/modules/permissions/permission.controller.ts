@@ -12,7 +12,7 @@ export class PermissionController {
     @Get('/normal-permission')
     @HttpCode(HttpStatus.OK)
     @ApiBearerAuth()
-    @Permission(PermissionEnum.LIST_PERMISSIONS)
+    @Permission(PermissionEnum.SETTING_PERMISSION_FOR_ROLES)
     async getAllNormalPermissions(
         @Query() getAllPermissionDto: GetAllPermissionDto,
     ) {
@@ -26,7 +26,7 @@ export class PermissionController {
     @Get('/internal-permission')
     @HttpCode(HttpStatus.OK)
     @ApiBearerAuth()
-    @Permission(PermissionEnum.LIST_PERMISSIONS)
+    @Permission(PermissionEnum.SETTING_PERMISSION_FOR_ROLES)
     async getAllInternalPermissions(
         @Query() getAllPermissionDto: GetAllPermissionDto,
     ) {

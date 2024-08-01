@@ -17,7 +17,7 @@ export class JwtAuthGuard implements CanActivate {
 
     async canActivate(context: ExecutionContext): Promise<boolean> {
         try {
-            const permissionKey = this.reflector.get<string>(
+            const permissionKey = this.reflector.get<string[]>(
                 PERMISSION_KEY,
                 context.getHandler(),
             )
@@ -36,7 +36,12 @@ export class JwtAuthGuard implements CanActivate {
             const token = bearer[1]
             const payload = await verifyAccessTokenJWT(token)
             const userPermissions = _.get(payload, 'permissionKeys', [])
-            if (payload && userPermissions.includes(permissionKey)) {
+            if (
+                payload &&
+                permissionKey.some((permission) =>
+                    userPermissions.includes(permission),
+                )
+            ) {
                 request.user = payload
                 return true
             }

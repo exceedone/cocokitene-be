@@ -1,5 +1,5 @@
 import { Repository } from 'typeorm'
-import { MeetingRoleMtg } from '@entities/meeting-role-mtg.entity'
+import { MeetingRoleMtg } from '@entities/meeting-role-relations.entity'
 import { CustomRepository } from '@shares/decorators'
 import { CreateMeetingRoleMtgDto } from '@dtos/meeting-role-mtg.dto'
 

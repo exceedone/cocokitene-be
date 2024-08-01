@@ -319,8 +319,7 @@ export class CompanyService {
             ...listPermissions.map((permission) => {
                 if (
                     permission.key !==
-                        PermissionEnum.SETTING_PERMISSION_FOR_ROLES &&
-                    permission.key !== PermissionEnum.CREATE_ROLE
+                    PermissionEnum.SETTING_PERMISSION_FOR_ROLES
                 ) {
                     this.rolePermissionService.createRolePermission({
                         permissionId: permission.id,

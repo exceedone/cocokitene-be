@@ -12,16 +12,18 @@ import { MeetingRepository } from '@repositories/meeting.repository'
 import { MeetingFileService } from '@api/modules/meeting-files/meeting-file.service'
 import {
     calculateVoter,
+    CandidateItemDetailMeeting,
     DetailMeetingResponse,
     ListFileOfMeeting,
     ParticipantMeeting,
+    personnelVotingDetailMeeting,
     ProposalItemDetailMeeting,
 } from '@api/modules/meetings/meeting.interface'
 import { ProposalService } from '@api/modules/proposals/proposal.service'
 import { UserMeetingService } from '@api/modules/user-meetings/user-meeting.service'
 import { Meeting } from '@entities/meeting.entity'
-import { UserMeeting } from '@entities/user-meeting.entity'
-import { UserMeetingRepository } from '@repositories/user-meeting.repository'
+import { UserMeeting } from '@entities/meeting-participant.entity'
+import { UserMeetingRepository } from '@repositories/meeting-participant.repository'
 import {
     MeetingHash,
     MeetingType,
@@ -51,11 +53,12 @@ import { Logger } from 'winston'
 import { MeetingRoleMtgService } from '@api/modules/meeting-role-mtgs/meeting-role-mtg.service'
 import { RoleMtgService } from '@api/modules/role-mtgs/role-mtg.service'
 import { ChatPermissionService } from '@api/modules/chat-permission/chat-permission.service'
-import { CandidateRepository } from '@repositories/candidate.repository'
-import { ProposalRepository } from '@repositories/proposal.repository'
+import { CandidateRepository } from '@repositories/nominees.repository'
+import { ProposalRepository } from '@repositories/meeting-proposal.repository'
 import { VotingCandidateService } from '../voting-candidate/voting-candidate.service'
 import { hashMd5 } from '@shares/utils/md5'
 import { dateTimeToEpochTime } from '@shares/utils'
+import { PersonnelVotingService } from '../personnel-voting/personnel-voting.service'
 
 @Injectable()
 export class MeetingService {
@@ -78,6 +81,7 @@ export class MeetingService {
         private readonly proposalRepository: ProposalRepository,
         @Inject(forwardRef(() => VotingCandidateService))
         private readonly votingCandidateService: VotingCandidateService,
+        private readonly personnelVotingService: PersonnelVotingService,
         @Inject('winston')
         private readonly logger: Logger,
     ) {}
@@ -239,6 +243,7 @@ export class MeetingService {
             meetingInvitations,
             resolutions,
             amendmentResolutions,
+            personnelVoting,
             participants,
         } = createMeetingDto
         const shareholders = participants
@@ -294,6 +299,19 @@ export class MeetingService {
                         creatorId: creatorId,
                         notVoteYetQuantity: totalShares,
                     }),
+                ),
+
+                ...personnelVoting.map((personnelVote) =>
+                    this.personnelVotingService.createPersonnelVoting(
+                        {
+                            title: personnelVote.title,
+                            type: personnelVote.type,
+                            meetingId: createdMeeting.id,
+                            creatorId: creatorId,
+                            candidate: personnelVote.candidate,
+                        },
+                        totalShares,
+                    ),
                 ),
 
                 ...participants.map(async (item) => {
@@ -369,6 +387,8 @@ export class MeetingService {
             )
         }
 
+        // console.log('Meeting: ', meeting)
+
         const meetingRoleMtgs =
             await this.meetingRoleMtgService.getMeetingRoleMtgByMeetingId(
                 meetingId,
@@ -417,8 +437,6 @@ export class MeetingService {
         const isParticipant = participants
             .flatMap((participant) => participant.userParticipants)
             .some((parti) => parti.userId == userId)
-        console.log('canUserCreateMeeting: ', canUserCreateMeeting)
-        console.log('Is Participants: ', isParticipant)
 
         if (!isParticipant && !canUserCreateMeeting) {
             throw new HttpException(
@@ -517,6 +535,51 @@ export class MeetingService {
             }
         }
 
+        //Handle Voting Candidate result with current User
+        const listPersonnelVoting: personnelVotingDetailMeeting[] = []
+        for (const personnelVoting of meeting.personnelVoting) {
+            const listCandidate: CandidateItemDetailMeeting[] = []
+            for (const candidate of personnelVoting.candidate) {
+                const existedVotingCandidate =
+                    await this.votingCandidateService.findVotingByUserIdAndCandidateId(
+                        userId,
+                        candidate.id,
+                    )
+
+                if (
+                    !existedVotingCandidate ||
+                    existedVotingCandidate.result === VoteProposalResult.NO_IDEA
+                ) {
+                    listCandidate.push({
+                        ...candidate,
+                        voteResult: VoteProposalResult.NO_IDEA,
+                        votedQuantityShare: null,
+                    } as CandidateItemDetailMeeting)
+                } else if (
+                    existedVotingCandidate.result === VoteProposalResult.VOTE
+                ) {
+                    listCandidate.push({
+                        ...candidate,
+                        voteResult: VoteProposalResult.VOTE,
+                        votedQuantityShare:
+                            existedVotingCandidate.quantityShare,
+                    } as CandidateItemDetailMeeting)
+                } else {
+                    listCandidate.push({
+                        ...candidate,
+                        voteResult: VoteProposalResult.UNVOTE,
+                        votedQuantityShare:
+                            existedVotingCandidate.quantityShare,
+                    } as CandidateItemDetailMeeting)
+                }
+            }
+            listPersonnelVoting.push({
+                ...personnelVoting,
+                candidate: listCandidate,
+            })
+            console.log('listCandidate: ', listCandidate)
+        }
+
         return {
             ...meeting,
             participants,
@@ -525,6 +588,7 @@ export class MeetingService {
             joinedMeetingShares,
             totalMeetingShares,
             proposals: listProposals,
+            personnelVoting: listPersonnelVoting,
         }
     }
 
@@ -598,6 +662,7 @@ export class MeetingService {
             meetingInvitations,
             resolutions,
             amendmentResolutions,
+            personnelVoting,
             participants,
         } = updateMeetingDto
 
@@ -650,6 +715,15 @@ export class MeetingService {
 
         const totalShares: number = totalShareOld + totalShareAdd
 
+        //Get Shareholder(Active) out meeting
+        const usersToRemoves = (
+            await this.userMeetingService.getListUserToRemoveInMeeting(
+                meetingId,
+                shareholders,
+                roleMtgShareholderId,
+            )
+        ).map((participant) => participant.id)
+
         const listMeetingFiles = [...meetingMinutes, ...meetingInvitations]
         const listProposals = [...resolutions, ...amendmentResolutions]
         const roleMtgInMtgs = participants.map((item) => item.roleMtgId)
@@ -677,6 +751,15 @@ export class MeetingService {
                 totalShares,
                 shareholders,
                 roleMtgShareholderId,
+            ),
+
+            this.personnelVotingService.updateListPersonnelVoting(
+                companyId,
+                meetingId,
+                userId,
+                personnelVoting,
+                usersToRemoves,
+                totalShares,
             ),
 
             await Promise.all([

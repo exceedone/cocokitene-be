@@ -7,8 +7,8 @@ import {
     UserMeetingStatusEnum,
 } from '@shares/constants/meeting.const'
 import { MeetingRepository } from '@repositories/meeting.repository'
-import { UserMeetingRepository } from '@repositories/user-meeting.repository'
-import { ProposalRepository } from '@repositories/proposal.repository'
+import { UserMeetingRepository } from '@repositories/meeting-participant.repository'
+import { ProposalRepository } from '@repositories/meeting-proposal.repository'
 import { TransactionRepository } from '@repositories/transaction.repository'
 import {
     CONTRACT_TYPE,
@@ -28,11 +28,11 @@ import { VotingRepository } from '@repositories/voting.repository'
 import { MeetingFileRepository } from '@repositories/meeting-file.repository'
 import { Logger } from 'winston'
 import { messageBLCLog } from '@shares/exception-filter/message-log-blc-const'
-import { CandidateRepository } from '@repositories/candidate.repository'
-import { VotingCandidateRepository } from '@repositories/voting-candidate.repository'
+import { CandidateRepository } from '@repositories/board-members.repository'
+import { VotingCandidateRepository } from '@repositories/voting-board-members.repository'
 import { hashMd5 } from '@shares/utils/md5'
-import { MeetingRoleMtgRepository } from '@repositories/meeting-role-mtg.repository'
-import { RoleMtgRepository } from '@repositories/role-mtg.repository'
+import { MeetingRoleMtgRepository } from '@repositories/meeting-role-relations.repository'
+import { RoleMtgRepository } from '@repositories/meeting-role.repository'
 
 @Injectable()
 export class TransactionService {

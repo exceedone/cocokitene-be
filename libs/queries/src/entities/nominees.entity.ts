@@ -1,32 +1,27 @@
 import {
     BaseEntity,
     Column,
+    CreateDateColumn,
     DeleteDateColumn,
     Entity,
     JoinColumn,
     ManyToOne,
+    OneToMany,
     PrimaryGeneratedColumn,
+    UpdateDateColumn,
 } from 'typeorm'
-import { Meeting } from '@entities/meeting.entity'
 import { User } from '@entities/user.entity'
-import { Election } from './election.entity'
+import { PersonnelVoting } from './personnel-voting.entity'
+import { VotingCandidate } from './voted-for-nominee.entity'
 
-@Entity('candidate')
+@Entity('nominees')
 export class Candidate extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number
 
     @Column({
-        name: 'title',
-        type: 'varchar',
-        length: 255,
         nullable: false,
-    })
-    title: string
-
-    @Column({
-        nullable: false,
-        name: 'candidate_name',
+        name: 'name',
         type: 'varchar',
         length: 255,
     })
@@ -34,11 +29,11 @@ export class Candidate extends BaseEntity {
 
     @Column({
         nullable: false,
-        name: 'type',
+        name: 'personnel_voting_id',
         type: 'integer',
         width: 11,
     })
-    type: number
+    personnelVotingId: number
 
     @Column({
         nullable: true,
@@ -64,30 +59,41 @@ export class Candidate extends BaseEntity {
     })
     notVoteYetQuantity: number
 
-    @Column({ nullable: false, name: 'meeting_id', type: 'integer', width: 11 })
-    meetingId: number
-
-    @ManyToOne(() => Election)
+    @ManyToOne(
+        () => PersonnelVoting,
+        (personnelVoting) => personnelVoting.candidate,
+    )
     @JoinColumn({
-        name: 'type',
+        name: 'personnel_voting_id',
     })
-    typeElection: Election
+    personnelVoting: PersonnelVoting
 
-    @ManyToOne(() => Meeting)
-    @JoinColumn({
-        name: 'meeting_id',
+    @Column({
+        nullable: false,
+        name: 'creator_user',
+        type: 'integer',
+        width: 11,
     })
-    meeting: Meeting
-
-    @Column({ nullable: false, name: 'creator_id', type: 'integer', width: 11 })
     creatorId: number
 
     @ManyToOne(() => User)
     @JoinColumn({
-        name: 'creator_id',
+        name: 'creator_user',
     })
     creator: User
 
+    @CreateDateColumn({ name: 'created_at' })
+    createdAt: Date
+
+    @UpdateDateColumn({ name: 'updated_at' })
+    updatedAt: Date
+
     @DeleteDateColumn()
     deletedAt: Date
+
+    @OneToMany(
+        () => VotingCandidate,
+        (votingCandidate) => votingCandidate.votedForCandidate,
+    )
+    votedForCandidate: VotingCandidate[]
 }

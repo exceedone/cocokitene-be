@@ -29,33 +29,33 @@ export class CompanyRepository extends Repository<Company> {
         options: GetAllCompanyDto,
     ): Promise<Pagination<Company>> {
         const { page, limit, searchQuery, sortOrder } = options
-        const queryBuilder = this.createQueryBuilder('companys')
+        const queryBuilder = this.createQueryBuilder('company')
             .select([
-                'companys.id',
-                'companys.companyName',
-                'companys.representativeUser',
+                'company.id',
+                'company.companyName',
+                'company.representativeUser',
             ])
             .leftJoin(
-                'company_statuses',
+                'company_status_mst',
                 'companyStatus',
-                'companyStatus.id = companys.statusId',
+                'companyStatus.id = company.statusId',
             )
-            .leftJoin('plans_mst', 'plan', 'plan.id = companys.planId')
-            .leftJoin('meetings', 'meeting', 'companys.id = meeting.companyId')
-            .leftJoin('users', 'user', 'user.companyId = companys.id')
+            .leftJoin('plan_mst', 'plan', 'plan.id = company.planId')
+            .leftJoin('meetings', 'meeting', 'company.id = meeting.companyId')
+            .leftJoin('users', 'user', 'user.companyId = company.id')
             .addSelect(`COUNT(DISTINCT  meeting.id)`, 'totalCreatedMTGs')
             .addSelect(`plan.planName`, 'planName')
             .addSelect(`companyStatus.status`, 'companyStatus')
             .addSelect(`COUNT(DISTINCT user.id) `, 'totalCreatedAccount')
-            .groupBy('companys.id')
+            .groupBy('company.id')
 
         if (searchQuery) {
-            queryBuilder.andWhere('(companys.companyName like :companyName)', {
+            queryBuilder.andWhere('(company.companyName like :companyName)', {
                 companyName: `%${searchQuery}%`,
             })
         }
         if (sortOrder) {
-            queryBuilder.orderBy('companys.updatedAt', sortOrder)
+            queryBuilder.orderBy('company.updatedAt', sortOrder)
         }
         return paginateRaw(queryBuilder, { page, limit })
     }
@@ -64,7 +64,7 @@ export class CompanyRepository extends Repository<Company> {
         updateCompanyDto: UpdateCompanyDto,
     ): Promise<Company> {
         try {
-            await this.createQueryBuilder('companys')
+            await this.createQueryBuilder('company')
                 .update(Company)
                 .set({
                     companyName: updateCompanyDto.companyName,
@@ -81,7 +81,7 @@ export class CompanyRepository extends Repository<Company> {
                     planId: updateCompanyDto.planId,
                     representativeUser: updateCompanyDto.representativeUser,
                 })
-                .where('companys.id = :companyId', { companyId })
+                .where('company.id = :companyId', { companyId })
                 .execute()
 
             const company = await this.findOne({

@@ -176,8 +176,8 @@ export class UserRepository extends Repository<User> {
 
     async getSuperAdminCompany(companyId: number): Promise<User> {
         const superAdmin = await this.createQueryBuilder('users')
-            .leftJoin('user_roles', 'userRole', 'users.id = userRole.userId')
-            .leftJoin('roles', 'role', 'userRole.roleId = role.id')
+            .leftJoin('user_role', 'userRole', 'users.id = userRole.userId')
+            .leftJoin('role', 'role', 'userRole.roleId = role.id')
 
             .leftJoinAndSelect('users.userStatus', 'userStatus')
             .where('role.roleName = :roleName', { roleName: 'SUPER_ADMIN' })

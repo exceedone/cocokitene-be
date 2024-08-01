@@ -1,5 +1,5 @@
 import { Repository } from 'typeorm'
-import { VotingCandidate } from '@entities/voting-candidate.entity'
+import { VotingCandidate } from '@entities/voted-for-nominee.entity'
 import { CustomRepository } from '@shares/decorators'
 import { CreateVoteCandidateDto } from '@dtos/voting-candidate.dto'
 
@@ -8,12 +8,14 @@ export class VotingCandidateRepository extends Repository<VotingCandidate> {
     async createVotingCandidate(
         createVoteCandidateDto: CreateVoteCandidateDto,
     ): Promise<VotingCandidate> {
-        const { userId, votedForCandidateId, result } = createVoteCandidateDto
+        const { userId, votedForCandidateId, result, quantityShare } =
+            createVoteCandidateDto
 
         const createVotingCandidate = await this.create({
             userId: userId,
             votedForCandidateId: votedForCandidateId,
             result: result,
+            quantityShare: quantityShare,
         })
         await createVotingCandidate.save()
         return createVotingCandidate

@@ -6,7 +6,7 @@ import {
     PrimaryGeneratedColumn,
     UpdateDateColumn,
 } from 'typeorm'
-@Entity('plans_mst')
+@Entity('plan_mst')
 export class Plan extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number
@@ -23,7 +23,7 @@ export class Plan extends BaseEntity {
     @Column({
         name: 'description',
         type: 'varchar',
-        length: 255,
+        length: 1000,
         nullable: true,
     })
     description: string
@@ -54,7 +54,7 @@ export class Plan extends BaseEntity {
 
     @Column({
         nullable: true,
-        name: 'max_shareholder_account',
+        name: 'max_account_number',
         type: 'integer',
         width: 11,
     })

@@ -57,17 +57,17 @@ export class RoleRepository extends Repository<Role> {
         companyId: number,
     ): Promise<Pagination<Role>> {
         const { page, limit, searchQuery } = options
-        const queryBuilder = this.createQueryBuilder('roles')
-            .select(['roles.id', 'roles.roleName', 'roles.description'])
-            .where('roles.roleName != :role', {
+        const queryBuilder = this.createQueryBuilder('role')
+            .select(['role.id', 'role.roleName', 'role.description'])
+            .where('role.roleName != :role', {
                 role: 'SUPER_ADMIN',
             })
-            .andWhere('roles.companyId = :companyId', {
+            .andWhere('role.companyId = :companyId', {
                 companyId: companyId,
             })
 
         if (searchQuery) {
-            queryBuilder.andWhere('(roles.roleName like :roleName)', {
+            queryBuilder.andWhere('(role.roleName like :roleName)', {
                 roleName: `%${searchQuery}%`,
             })
         }
@@ -79,14 +79,14 @@ export class RoleRepository extends Repository<Role> {
         companyId: number,
     ): Promise<Role[]> {
         const { searchQuery } = getAllInternalRoleDto
-        const queryBuilder = this.createQueryBuilder('roles')
-            .select(['roles.id', 'roles.roleName', 'roles.description'])
-            .where('roles.companyId = :companyId', {
+        const queryBuilder = this.createQueryBuilder('role')
+            .select(['role.id', 'role.roleName', 'role.description'])
+            .where('role.companyId = :companyId', {
                 companyId: companyId,
             })
 
         if (searchQuery) {
-            queryBuilder.andWhere('roles.roleName like :searchQuery', {
+            queryBuilder.andWhere('role.roleName like :searchQuery', {
                 searchQuery: `%${searchQuery}%`,
             })
         }

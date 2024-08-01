@@ -1,4 +1,4 @@
-import { Proposal } from '@entities/proposal.entity'
+import { Proposal } from '@entities/meeting-proposal.entity'
 import {
     BaseEntity,
     Column,
@@ -10,7 +10,7 @@ import {
     PrimaryGeneratedColumn,
     UpdateDateColumn,
 } from 'typeorm'
-@Entity('proposal_files')
+@Entity('proposal_file')
 export class ProposalFile extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number
@@ -26,14 +26,14 @@ export class ProposalFile extends BaseEntity {
     })
     proposalId: number
 
-    @DeleteDateColumn()
-    deletedAt: Date
-
     @CreateDateColumn({ name: 'created_at' })
     createdAt: Date
 
     @UpdateDateColumn({ name: 'updated_at' })
     updatedAt: Date
+
+    @DeleteDateColumn()
+    deletedAt: Date
 
     @ManyToOne(() => Proposal, (proposal) => proposal.proposalFiles)
     @JoinColumn({ name: 'proposal_id' })

@@ -43,14 +43,14 @@ export class MeetingRepository extends Repository<Meeting> {
             .distinct(true)
         if (canUserCreateMeeting) {
             queryBuilder.leftJoin(
-                'user_meetings',
+                'meeting_participant',
                 'userMeeting',
                 'userMeeting.meetingId = meetings.id AND userMeeting.userId = :userId',
                 { userId },
             )
         } else {
             queryBuilder.innerJoin(
-                'user_meetings',
+                'meeting_participant',
                 'userMeeting',
                 'userMeeting.meetingId = meetings.id AND userMeeting.userId = :userId',
                 { userId },
@@ -69,6 +69,14 @@ export class MeetingRepository extends Repository<Meeting> {
             .where('meetings.companyId= :companyId', {
                 companyId: companyId,
             })
+
+            .addSelect(
+                `(CASE 
+                WHEN userMeeting.status THEN true
+                ELSE false 
+            END)`,
+                'isParticipant',
+            )
 
         if (searchQuery) {
             queryBuilder.andWhere('(meetings.title like :searchQuery)', {
@@ -172,14 +180,6 @@ export class MeetingRepository extends Repository<Meeting> {
         id: number,
         companyId: number,
     ): Promise<Meeting> {
-        // const meeting = await this.findOne({
-        //     where: {
-        //         id,
-        //         companyId,
-        //     },
-        //     relations: ['creator', 'meetingFiles', 'proposals'],
-        // })
-
         const meeting = await this.createQueryBuilder('meeting')
             .select()
             .where('meeting.id = :id', {
@@ -199,6 +199,15 @@ export class MeetingRepository extends Repository<Meeting> {
             ])
             .leftJoinAndSelect('proposals.proposalFiles', 'proposalFiles')
             // .addSelect(['proposalFiles.url', 'proposalFiles.id'])
+            .leftJoinAndSelect('meeting.personnelVoting', 'personnelVoting')
+            .leftJoinAndSelect('personnelVoting.candidate', 'candidate')
+            .leftJoin('personnelVoting.typeElection', 'typeElection')
+            .addSelect([
+                'typeElection.id',
+                'typeElection.status',
+                'typeElection.description',
+            ])
+
             .getOne()
 
         return meeting
@@ -327,13 +336,15 @@ export class MeetingRepository extends Repository<Meeting> {
                 'creator.defaultAvatarHashColor',
             ])
             .leftJoinAndSelect('proposals.proposalFiles', 'proposalFiles')
-            .leftJoinAndSelect('meeting.candidates', 'candidate')
-            .leftJoin('candidate.typeElection', 'typeElection')
+            .leftJoinAndSelect('meeting.personnelVoting', 'personnelVoting')
+            .leftJoinAndSelect('personnelVoting.candidate', 'candidate')
+            .leftJoin('personnelVoting.typeElection', 'typeElection')
             .addSelect([
                 'typeElection.id',
                 'typeElection.status',
                 'typeElection.description',
             ])
+
             .getOne()
 
         return boardMeeting

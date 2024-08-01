@@ -12,7 +12,7 @@ import { User } from './user.entity'
 import { Meeting } from './meeting.entity'
 import { Message } from './message.entity'
 
-@Entity('user_seen_message')
+@Entity('seen_messages')
 export class UserSeenMessage extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number
@@ -35,7 +35,7 @@ export class UserSeenMessage extends BaseEntity {
 
     @Column({
         nullable: true,
-        name: 'last_message_id_seen',
+        name: 'last_message_id',
         type: 'integer',
         width: 11,
     })
@@ -61,7 +61,7 @@ export class UserSeenMessage extends BaseEntity {
 
     @ManyToOne(() => Message)
     @JoinColumn({
-        name: 'last_message_id_seen',
+        name: 'last_message_id',
     })
     messageIdSeen: Message
 }

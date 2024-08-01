@@ -11,9 +11,9 @@ import {
     PrimaryGeneratedColumn,
     UpdateDateColumn,
 } from 'typeorm'
-import { RoleMtg } from '@entities/role-mtg.entity'
+import { RoleMtg } from '@entities/meeting-role.entity'
 
-@Entity('user_meetings')
+@Entity('meeting_participant')
 export class UserMeeting extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number
@@ -50,6 +50,12 @@ export class UserMeeting extends BaseEntity {
     })
     quantityShare: number
 
+    @CreateDateColumn({ name: 'created_at' })
+    createdAt: Date
+
+    @UpdateDateColumn({ name: 'updated_at' })
+    updatedAt: Date
+
     @ManyToOne(() => User)
     @JoinColumn({
         name: 'user_id',
@@ -65,10 +71,4 @@ export class UserMeeting extends BaseEntity {
     @ManyToOne(() => RoleMtg)
     @JoinColumn({ name: 'role_mtg_id' })
     roleMtg: RoleMtg
-
-    @CreateDateColumn({ name: 'created_at' })
-    createdAt: Date
-
-    @UpdateDateColumn({ name: 'updated_at' })
-    updatedAt: Date
 }

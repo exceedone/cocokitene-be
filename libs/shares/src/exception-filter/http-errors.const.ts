@@ -410,4 +410,10 @@ export const httpErrors = {
         message: 'Update last message you seen failed',
         code: 'CHAT_00000',
     },
+
+    //Voting Candidates in PersonnelVoting
+    QUANTITY_SHARE_WRONG: {
+        message: 'Quantity share voted is greater than allow',
+        code: 'VOTING_CANDIDATE_PERSONNEL_00000',
+    },
 }

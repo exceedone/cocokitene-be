@@ -7,7 +7,7 @@ import {
     PrimaryGeneratedColumn,
     UpdateDateColumn,
 } from 'typeorm'
-@Entity('company_statuses')
+@Entity('company_status_mst')
 export class CompanyStatus extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number

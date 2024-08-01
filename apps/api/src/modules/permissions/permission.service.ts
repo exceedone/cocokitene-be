@@ -15,22 +15,18 @@ export class PermissionService {
             await this.permissionRepository.getAllPermissions(
                 getAllPermissionDto,
             )
-        const [permissionRoleInternal, permissionRoleNormal] =
-            await Promise.all([
-                this.permissionRepository.getPermissionByPermissionName(
-                    PermissionEnum.LIST_ROLES_INTERNAL,
-                ),
-                this.permissionRepository.getPermissionByPermissionName(
-                    PermissionEnum.LIST_ROLES_NORMAL,
-                ),
-            ])
+        const [permissionBasic] = await Promise.all([
+            this.permissionRepository.getPermissionByPermissionName(
+                PermissionEnum.BASIC_PERMISSION,
+            ),
+            // this.permissionRepository.getPermissionByPermissionName(
+            //     PermissionEnum.LIST_ROLES_NORMAL,
+            // ),
+        ])
 
         const filteredNormalPermissions = normalPermissions.filter(
             (permission) => {
-                return (
-                    permission.id !== permissionRoleInternal.id &&
-                    permission.id !== permissionRoleNormal.id
-                )
+                return permission.id !== permissionBasic.id
             },
         )
 
@@ -50,28 +46,9 @@ export class PermissionService {
     async getAllPermissionsBase(): Promise<Permission[]> {
         const permissions = await Promise.all(
             [
-                PermissionEnum.LIST_ACCOUNT,
                 PermissionEnum.SHAREHOLDERS_MTG,
-                PermissionEnum.DETAIL_PROFILE,
-                PermissionEnum.EDIT_PROFILE,
+                PermissionEnum.BASIC_PERMISSION,
                 PermissionEnum.DETAIL_MEETING,
-            ].map((permissionName) =>
-                this.permissionRepository.getPermissionByPermissionName(
-                    permissionName,
-                ),
-            ),
-        )
-
-        return permissions
-    }
-
-    async getPermissionsBaseForRoleBoard(): Promise<Permission[]> {
-        const permissions = await Promise.all(
-            [
-                PermissionEnum.EDIT_ACCOUNT,
-                PermissionEnum.LIST_SHAREHOLDERS,
-                PermissionEnum.BOARD_MEETING,
-                PermissionEnum.DETAIL_BOARD_MEETING,
             ].map((permissionName) =>
                 this.permissionRepository.getPermissionByPermissionName(
                     permissionName,
@@ -84,7 +61,26 @@ export class PermissionService {
 
     async getPermissionsBaseForRoleShareholder(): Promise<Permission[]> {
         const permissions = await Promise.all(
-            [PermissionEnum.LIST_SHAREHOLDERS].map((permissionName) =>
+            [PermissionEnum.LIST_SHAREHOLDERS, PermissionEnum.LIST_ACCOUNT].map(
+                (permissionName) =>
+                    this.permissionRepository.getPermissionByPermissionName(
+                        permissionName,
+                    ),
+            ),
+        )
+
+        return permissions
+    }
+
+    async getPermissionsBaseForRoleBoard(): Promise<Permission[]> {
+        const permissions = await Promise.all(
+            [
+                PermissionEnum.LIST_ACCOUNT,
+                PermissionEnum.EDIT_ACCOUNT,
+                PermissionEnum.LIST_SHAREHOLDERS,
+                PermissionEnum.BOARD_MEETING,
+                PermissionEnum.DETAIL_BOARD_MEETING,
+            ].map((permissionName) =>
                 this.permissionRepository.getPermissionByPermissionName(
                     permissionName,
                 ),

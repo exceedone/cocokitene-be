@@ -5,6 +5,10 @@ import { PermissionEnum } from '@shares/constants/permission.const'
 export class InsertPermissionDto extends PartialType(Permission) {}
 export const permissionData: InsertPermissionDto[] = [
     {
+        key: PermissionEnum.BASIC_PERMISSION,
+        description: 'the basic permission for all role in system',
+    },
+    {
         key: PermissionEnum.LIST_ACCOUNT,
         description:
             'the user with this right can see a list users in the system',
@@ -48,37 +52,9 @@ export const permissionData: InsertPermissionDto[] = [
         description: 'the user with this right can send email to shareholders',
     },
     {
-        key: PermissionEnum.LIST_ROLES_NORMAL,
-        description:
-            'the user with this right can see list role normal of user in the system',
-    },
-    {
-        key: PermissionEnum.LIST_ROLES_INTERNAL,
-        description:
-            'the user with this right can see list role internal of user in the system',
-    },
-    {
-        key: PermissionEnum.LIST_PERMISSIONS,
-        description:
-            'the user with this right can see list permission of user in the system',
-    },
-    {
         key: PermissionEnum.SETTING_PERMISSION_FOR_ROLES,
         description:
             'the user with this right can set up list permission for each role in the company',
-    },
-    {
-        key: PermissionEnum.CREATE_ROLE,
-        description:
-            'the user with this right can create role of user in the system',
-    },
-    {
-        key: PermissionEnum.DETAIL_PROFILE,
-        description: 'the user with this right can see detail profile',
-    },
-    {
-        key: PermissionEnum.EDIT_PROFILE,
-        description: 'the user with this right can update their own profile',
     },
     {
         key: PermissionEnum.LIST_SHAREHOLDERS,
@@ -116,21 +92,7 @@ export const permissionData: InsertPermissionDto[] = [
             'the user with this right can see detail board meeting in the my company',
     },
     {
-        key: PermissionEnum.LIST_ROLE_MTG,
-        description:
-            'the user with this right can see list role_mtg in the my company',
-    },
-    {
         key: PermissionEnum.SEND_MAIL_TO_BOARD,
         description: 'the user with this right can send email to boards',
-    },
-    {
-        key: PermissionEnum.CHECK_DATA_MEETING,
-        description:
-            'the user with this right can check data of shareholder Meeting',
-    },
-    {
-        key: PermissionEnum.CHECK_DATA_BOARD_MEETING,
-        description: 'the user with this right can check data of Board Meeting',
     },
 ]

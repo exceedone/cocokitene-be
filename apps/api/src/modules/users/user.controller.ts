@@ -81,7 +81,7 @@ export class UserController {
 
     @Get('/:id')
     @UseGuards(JwtAuthGuard)
-    @Permission(PermissionEnum.DETAIL_ACCOUNT)
+    @Permission(PermissionEnum.DETAIL_ACCOUNT, PermissionEnum.EDIT_ACCOUNT)
     @HttpCode(HttpStatus.OK)
     @ApiBearerAuth()
     async getUserById(@Param('id') userId: number, @UserScope() user: User) {
@@ -131,7 +131,7 @@ export class UserController {
 
     @Patch('/profile/:userId')
     @UseGuards(JwtAuthGuard)
-    @Permission(PermissionEnum.EDIT_PROFILE)
+    @Permission(PermissionEnum.BASIC_PERMISSION)
     @ApiBearerAuth()
     @HttpCode(HttpStatus.OK)
     async updateOwnProfile(
@@ -149,7 +149,7 @@ export class UserController {
     //profile
     @Get('/profile/:id')
     @UseGuards(JwtAuthGuard)
-    @Permission(PermissionEnum.DETAIL_PROFILE)
+    @Permission(PermissionEnum.BASIC_PERMISSION)
     @HttpCode(HttpStatus.OK)
     @ApiBearerAuth()
     async getProfileOwnById(

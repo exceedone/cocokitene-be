@@ -32,19 +32,20 @@ export class Seeder {
     ) {}
     async seed() {
         Logger.log('START_SEEDING__DATA')
+        await this.seedSystemAdmin()
         await this.seedEmoji()
         await this.seedChatPermission()
         await this.seedElection()
         await this.seedPlan()
         await this.seedCompanyStatus()
-        // await this.seedCompany()
         await this.seedPermission()
+        await this.seedUserStatus()
+
+        // await this.seedCompany()
         // await this.seedRole()
         // await this.seedRolePermission()
-        await this.seedUserStatus()
         // await this.seedUser()
         // await this.seedUserRole()
-        await this.seedSystemAdmin()
         Logger.log('END___SEEDING__DATA')
     }
 

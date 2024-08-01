@@ -1,15 +1,17 @@
 import {
     BaseEntity,
     Column,
+    CreateDateColumn,
     DeleteDateColumn,
     Entity,
     JoinColumn,
     ManyToOne,
     PrimaryGeneratedColumn,
     Unique,
+    UpdateDateColumn,
 } from 'typeorm'
 import { User } from '@entities/user.entity'
-import { Proposal } from '@entities/proposal.entity'
+import { Proposal } from '@entities/meeting-proposal.entity'
 import { VoteProposalResult } from '@shares/constants/proposal.const'
 @Entity('votings')
 @Unique(['userId', 'proposalId'])
@@ -35,6 +37,12 @@ export class Voting extends BaseEntity {
         width: 11,
     })
     proposalId: number
+
+    @CreateDateColumn({ name: 'created_at' })
+    createdAt: Date
+
+    @UpdateDateColumn({ name: 'updated_at' })
+    updatedAt: Date
 
     @DeleteDateColumn()
     deletedAt: Date

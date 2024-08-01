@@ -1,22 +1,24 @@
 import {
     BaseEntity,
     Column,
+    CreateDateColumn,
     Entity,
     JoinColumn,
     ManyToOne,
     OneToMany,
     OneToOne,
     PrimaryGeneratedColumn,
+    UpdateDateColumn,
 } from 'typeorm'
 import { Company } from '@entities/company.entity'
 import { User } from '@entities/user.entity'
 import { MeetingFile } from '@entities/meeting-file.entity'
-import { Proposal } from '@entities/proposal.entity'
+import { Proposal } from '@entities/meeting-proposal.entity'
 import { MeetingType, StatusMeeting } from '@shares/constants/meeting.const'
-import { Candidate } from './candidate.entity'
-import { MeetingRoleMtg } from '@entities/meeting-role-mtg.entity'
+import { MeetingRoleMtg } from '@entities/meeting-role-relations.entity'
 import { ChatPermission } from '@entities/chat-permission.entity'
 import { Transaction } from './transaction.entity'
+import { PersonnelVoting } from './personnel-voting.entity'
 
 @Entity('meetings')
 export class Meeting extends BaseEntity {
@@ -111,8 +113,11 @@ export class Meeting extends BaseEntity {
     @OneToMany(() => Proposal, (proposal) => proposal.meeting)
     proposals: Proposal[]
 
-    @OneToMany(() => Candidate, (candidate) => candidate.meeting)
-    candidates: Candidate[]
+    @OneToMany(
+        () => PersonnelVoting,
+        (personnelVoting) => personnelVoting.meeting,
+    )
+    personnelVoting: PersonnelVoting[]
 
     @OneToMany(() => MeetingRoleMtg, (meetingRoleMtg) => meetingRoleMtg.meeting)
     meetingRoleMtg: MeetingRoleMtg[]
@@ -125,4 +130,10 @@ export class Meeting extends BaseEntity {
 
     @OneToOne(() => Transaction, (transaction) => transaction.meeting)
     transaction: Transaction
+
+    @CreateDateColumn({ name: 'created_at' })
+    createdAt: Date
+
+    @UpdateDateColumn({ name: 'updated_at' })
+    updatedAt: Date
 }

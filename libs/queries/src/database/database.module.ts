@@ -22,14 +22,15 @@ import {
     Voting,
     VotingCandidate,
     UserSeenMessage,
+    PersonnelVoting,
 } from '@entities/index'
 import { Module } from '@nestjs/common'
 import { ConfigModule, ConfigService } from '@nestjs/config'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { Meeting } from '@entities/meeting.entity'
-import { UserMeeting } from '@entities/user-meeting.entity'
+import { UserMeeting } from '@entities/meeting-participant.entity'
 import { MeetingFile } from '@entities/meeting-file.entity'
-import { ProposalFile } from '@entities/proposal-file'
+import { ProposalFile } from '@entities/proposal-file.entity'
 import { Emoji } from '@entities/reaction-icon.entity'
 
 @Module({
@@ -72,6 +73,7 @@ import { Emoji } from '@entities/reaction-icon.entity'
                     Message,
                     Emoji,
                     UserSeenMessage,
+                    PersonnelVoting,
                 ],
                 timezone: 'Z',
                 synchronize: configService.get('database.synchronize'),
