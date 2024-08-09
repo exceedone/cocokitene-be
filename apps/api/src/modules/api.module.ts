@@ -37,6 +37,7 @@ import { ReactionMessageModule } from './reaction_messages/reaction-message.modu
 import { UserSeenMessageModule } from './user-seen-message/user-seen-message.module'
 import { TransactionModule } from './transaction/transaction.module'
 import { PersonnelVotingModule } from './personnel-voting/personnel-voting.module'
+import { DashBoardModule } from './dash-board/dash-board.module'
 
 @Module({
     imports: [
@@ -78,6 +79,7 @@ import { PersonnelVotingModule } from './personnel-voting/personnel-voting.modul
         UserSeenMessageModule,
         TransactionModule,
         PersonnelVotingModule,
+        DashBoardModule,
     ],
     controllers: [ApiController],
     providers: [ApiService],

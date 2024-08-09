@@ -182,7 +182,7 @@ export const httpErrors = {
         code: 'USER_ATTENDANCE_00000',
     },
     USER_NOT_YET_ATTENDANCE: {
-        message: 'user have not participated in the meeting,. Please try again',
+        message: 'User have not participated in the meeting. Please try again',
         code: 'USER_ATTENDANCE_00001',
     },
     //voting
@@ -415,5 +415,11 @@ export const httpErrors = {
     QUANTITY_SHARE_WRONG: {
         message: 'Quantity share voted is greater than allow',
         code: 'VOTING_CANDIDATE_PERSONNEL_00000',
+    },
+
+    //Create System Notification Failed\
+    CREATE_SYS_NOTIFICATION_FAILED: {
+        message: 'Create System notification failed',
+        code: 'SYSTEM_NOTIFICATION_00000',
     },
 }

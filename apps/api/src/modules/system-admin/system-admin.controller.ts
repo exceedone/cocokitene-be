@@ -25,6 +25,13 @@ import { GetAllPlanDto, UpdatePlanDto, CreatePlanDto } from '@dtos/plan.dto'
 import { SystemAdminGuard } from '@shares/guards/systemadmin.guard'
 import { GetAllUserStatusDto } from '@dtos/user-status.dto'
 import { EmailService } from '@api/modules/emails/email.service'
+import {
+    createSystemNotificationDto,
+    getAllSysNotificationDto,
+    updateSystemNotificationDto,
+} from '@dtos/system-notification.dto'
+import { UserScope } from '@shares/decorators/user.decorator'
+import { SystemAdmin } from '@entities/system-admin.entity'
 
 @Controller('system-admin')
 @ApiTags('system-admin')
@@ -177,5 +184,65 @@ export class SystemAdminController {
     ) {
         await this.emailService.sendEmailRegisterCompany(registerCompanyDto)
         return 'Emails  register information company send to system admin successfully'
+    }
+
+    @Get('/statistical')
+    @HttpCode(HttpStatus.OK)
+    @ApiBearerAuth()
+    @UseGuards(SystemAdminGuard)
+    async statisticalCompany() {
+        const statistical = await this.systemAdminService.statisticalCompany()
+
+        return statistical
+    }
+
+    @Get('/system-notification')
+    @HttpCode(HttpStatus.OK)
+    @ApiBearerAuth()
+    @UseGuards(SystemAdminGuard)
+    async getAllSysNotification(
+        @Query() getAllSysNotification: getAllSysNotificationDto,
+    ) {
+        const sysNotification = this.systemAdminService.getAllSysNotification(
+            getAllSysNotification,
+        )
+
+        return sysNotification
+    }
+
+    @Post('/system-notification')
+    @HttpCode(HttpStatus.OK)
+    @ApiBearerAuth()
+    @UseGuards(SystemAdminGuard)
+    async createSystemNotification(
+        @Body() createSysNotificationDto: createSystemNotificationDto,
+        @UserScope() system: SystemAdmin,
+    ) {
+        const sysNotification =
+            await this.systemAdminService.createSysNotification(
+                createSysNotificationDto,
+                system.id,
+            )
+
+        return sysNotification
+    }
+
+    @Patch('/system-notification/:id')
+    @UseGuards(SystemAdminGuard)
+    @ApiBearerAuth()
+    @HttpCode(HttpStatus.OK)
+    async updateSystemNotification(
+        @Param('id') sysNotificationId: number,
+        @Body() updateSysNotification: updateSystemNotificationDto,
+        @UserScope() system: SystemAdmin,
+    ) {
+        const systemId = system.id
+
+        const updatedPlan = await this.systemAdminService.updateSysNotification(
+            sysNotificationId,
+            updateSysNotification,
+            systemId,
+        )
+        return updatedPlan
     }
 }

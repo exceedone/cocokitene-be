@@ -3,7 +3,7 @@ import { CompanyStatusEnum } from '@shares/constants/company.const'
 import { CustomRepository } from '@shares/decorators'
 import { Repository } from 'typeorm'
 import { GetAllCompanyStatusDto } from '@dtos/company.dto'
-import { paginate, Pagination } from 'nestjs-typeorm-paginate'
+import { paginate, paginateRaw, Pagination } from 'nestjs-typeorm-paginate'
 
 @CustomRepository(CompanyStatus)
 export class CompanyStatusRepository extends Repository<CompanyStatus> {
@@ -44,5 +44,22 @@ export class CompanyStatusRepository extends Repository<CompanyStatus> {
             },
         })
         return companyStatus
+    }
+
+    async getAllCompanyByStatusId(
+        options: GetAllCompanyStatusDto,
+    ): Promise<Pagination<CompanyStatus>> {
+        const { page, limit } = options
+        const queryBuilder = await this.createQueryBuilder('company_status_mst')
+            .select(['company_status_mst.status', 'company_status_mst.id'])
+            .leftJoin(
+                'company',
+                'companies',
+                'company_status_mst.id = companies.statusId',
+            )
+            .addSelect(`COUNT(DISTINCT companies.id)`, 'totalCompany')
+            .groupBy('company_status_mst.id')
+
+        return paginateRaw(queryBuilder, { page, limit })
     }
 }

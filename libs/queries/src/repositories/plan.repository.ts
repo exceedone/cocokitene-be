@@ -2,7 +2,7 @@ import { Plan } from '@entities/plan.entity'
 import { CustomRepository } from '@shares/decorators'
 import { Repository } from 'typeorm'
 import { CreatePlanDto, GetAllPlanDto, UpdatePlanDto } from '@dtos/plan.dto'
-import { paginate, Pagination } from 'nestjs-typeorm-paginate'
+import { paginate, paginateRaw, Pagination } from 'nestjs-typeorm-paginate'
 import { HttpException, HttpStatus } from '@nestjs/common'
 @CustomRepository(Plan)
 export class PlanRepository extends Repository<Plan> {
@@ -66,5 +66,18 @@ export class PlanRepository extends Repository<Plan> {
         })
         await plan.save()
         return plan
+    }
+
+    async countCompanyUsePlan(
+        options: GetAllPlanDto,
+    ): Promise<Pagination<Plan>> {
+        const { page, limit } = options
+        const queryBuilder = this.createQueryBuilder('plan_mst')
+            .select(['plan_mst.id', 'plan_mst.planName'])
+            .leftJoin('company', 'companies', 'plan_mst.id = companies.planId')
+            .addSelect(`COUNT(DISTINCT companies.id)`, 'totalCompany')
+            .groupBy('plan_mst.id')
+
+        return paginateRaw(queryBuilder, { page, limit })
     }
 }

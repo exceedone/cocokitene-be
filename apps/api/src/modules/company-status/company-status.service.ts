@@ -23,4 +23,14 @@ export class CompanyStatusService {
             await this.companyStatusRepository.getCompanyStatusById(statusId)
         return companyStatus
     }
+
+    async getAllCompanyByStatusId() {
+        const companyStatus =
+            await this.companyStatusRepository.getAllCompanyByStatusId({
+                page: 1,
+                limit: 10,
+            })
+
+        return companyStatus
+    }
 }

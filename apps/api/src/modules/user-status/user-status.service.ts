@@ -19,4 +19,14 @@ export class UserStatusService {
     async getStatusById(statusId: number): Promise<UserStatus> {
         return await this.userStatusRepository.getUserStatusById(statusId)
     }
+
+    async getAllUserByStatusId(): Promise<Pagination<UserStatus>> {
+        const userStatuses =
+            await this.userStatusRepository.countUserByStatusId({
+                page: 1,
+                limit: 10,
+            })
+
+        return userStatuses
+    }
 }

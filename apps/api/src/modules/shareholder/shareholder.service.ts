@@ -109,9 +109,10 @@ export class ShareholderService {
 
         let existedShareholder1: User
         if (updateShareholderDto.walletAddress) {
-            existedShareholder1 = await this.userService.getUserByWalletAddressExactly(
-                updateShareholderDto.walletAddress,
-            )
+            existedShareholder1 =
+                await this.userService.getUserByWalletAddressExactly(
+                    updateShareholderDto.walletAddress,
+                )
             if (
                 existedShareholder1 &&
                 existedShareholder1.walletAddress !==

@@ -25,12 +25,12 @@ export class CandidateController {
         private readonly votingCandidate: VotingCandidateService,
     ) {}
 
-    @Post('/vote/:candidateId')
+    @Post('/vote-board/:candidateId')
     @UseGuards(JwtAuthGuard)
     @Permission(PermissionEnum.DETAIL_BOARD_MEETING)
     @ApiBearerAuth()
     @HttpCode(HttpStatus.OK)
-    async voteCandidate(
+    async voteBoardCandidate(
         @Param('candidateId') candidateId: number,
         @Query() voteCandidateDto: VoteCandidateDto,
         @UserScope() user: User,
@@ -43,6 +43,28 @@ export class CandidateController {
             candidateId,
             voteCandidateDto,
         )
+        return candidate
+    }
+
+    @Post('/vote-shareholder/:candidateId')
+    @UseGuards(JwtAuthGuard)
+    @Permission(PermissionEnum.DETAIL_BOARD_MEETING)
+    @ApiBearerAuth()
+    @HttpCode(HttpStatus.OK)
+    async voteCandidateShareholderMtg(
+        @Param('candidateId') candidateId: number,
+        @Query() voteCandidateDto: VoteCandidateDto,
+        @UserScope() user: User,
+    ) {
+        const userId = user?.id
+        const companyId = user?.companyId
+        const candidate =
+            await this.votingCandidate.voteCandidateInShareholderMtg(
+                companyId,
+                userId,
+                candidateId,
+                voteCandidateDto,
+            )
         return candidate
     }
 }

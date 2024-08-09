@@ -215,7 +215,7 @@ export class UserRepository extends Repository<User> {
             })
             return updatedSuperAdminCompany
         } catch (error) {
-            throw error
+            // throw error
             throw new HttpException(
                 { message: error.message },
                 HttpStatus.INTERNAL_SERVER_ERROR,

@@ -23,6 +23,7 @@ import {
     VotingCandidate,
     UserSeenMessage,
     PersonnelVoting,
+    SystemNotification,
 } from '@entities/index'
 import { Module } from '@nestjs/common'
 import { ConfigModule, ConfigService } from '@nestjs/config'
@@ -74,6 +75,7 @@ import { Emoji } from '@entities/reaction-icon.entity'
                     Emoji,
                     UserSeenMessage,
                     PersonnelVoting,
+                    SystemNotification,
                 ],
                 timezone: 'Z',
                 synchronize: configService.get('database.synchronize'),

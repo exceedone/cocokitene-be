@@ -151,7 +151,9 @@ export class CompanyService {
                 )
             }
         }
-        superAdmin = await this.userService.getUserByEmailExactly(superAdminEmail)
+        superAdmin = await this.userService.getUserByEmailExactly(
+            superAdminEmail,
+        )
         if (superAdmin) {
             this.logger.error(
                 `${messageLog.CREATE_COMPANY_FAILED_DUPLICATE.code} ${messageLog.CREATE_COMPANY_FAILED_DUPLICATE.message} ${superAdminEmail}`,

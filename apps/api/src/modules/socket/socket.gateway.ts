@@ -177,7 +177,7 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
         // @ConnectedSocket() client: Socket,
     ) {
         const { meetingId, to, reactionIconId, from } = createReactionMessageDto
-        console.log('createReactionMessageDto----', createReactionMessageDto)
+        // console.log('createReactionMessageDto----', createReactionMessageDto)
         const createdReactionMessage =
             await this.reactionMessageService.createReactionMessage(
                 createReactionMessageDto,
@@ -220,8 +220,6 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
                     permissionChatId,
                 )
 
-            console.log({ userId, meetingId, companyId, permissionChatId })
-            console.log('meetingPermissionChat: ', meetingPermissionChat)
             this.server.emit(
                 `permission_chat_meeting/${meetingId}`,
                 meetingPermissionChat,

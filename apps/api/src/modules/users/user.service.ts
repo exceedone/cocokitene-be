@@ -203,7 +203,7 @@ export class UserService {
         //update user
         let existedUser1: User
         if (updateUserDto.walletAddress) {
-            existedUser1 = await this.getUserByWalletAddress(
+            existedUser1 = await this.getUserByWalletAddressExactly(
                 updateUserDto.walletAddress,
             )
             if (
@@ -216,7 +216,7 @@ export class UserService {
                 )
             }
         }
-        existedUser1 = await this.getUserByEmail(updateUserDto.email)
+        existedUser1 = await this.getUserByEmailExactly(updateUserDto.email)
         if (existedUser1 && existedUser1.email !== existedUser.email) {
             throw new HttpException(
                 httpErrors.DUPLICATE_EMAIL_USER,
@@ -508,7 +508,9 @@ export class UserService {
             }
         }
 
-        existedUser1 = await this.getUserByEmailExactly(updateOwnProfileDto.email)
+        existedUser1 = await this.getUserByEmailExactly(
+            updateOwnProfileDto.email,
+        )
         if (existedUser1 && existedUser1.email !== existedUser.email) {
             throw new HttpException(
                 httpErrors.DUPLICATE_EMAIL_USER,

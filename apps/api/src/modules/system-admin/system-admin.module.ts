@@ -8,6 +8,7 @@ import { CompanyStatusModule } from '../company-status/company-status.module'
 import { RoleModule } from '@api/modules/roles/role.module'
 import { UserStatusModule } from '@api/modules/user-status/user-status.module'
 import { EmailModule } from '@api/modules/emails/email.module'
+import { SystemNotificationModule } from '../system-notification/system-notification.module'
 
 @Module({
     imports: [
@@ -16,7 +17,7 @@ import { EmailModule } from '@api/modules/emails/email.module'
         PlanModule,
         CompanyStatusModule,
         RoleModule,
-
+        SystemNotificationModule,
         UserStatusModule,
         forwardRef(() => EmailModule),
     ],

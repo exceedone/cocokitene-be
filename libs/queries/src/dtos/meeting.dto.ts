@@ -316,3 +316,41 @@ export class UpdateMeetingDto {
     @Type(() => UserMeetingDto)
     participants?: UserMeetingDto[]
 }
+
+export class GetAllMeetingInDayDto extends GetAllDto {
+    @IsOptional()
+    @IsEnum(Sort_By_Field)
+    @ApiProperty({
+        required: false,
+        example: Sort_By_Field.START_TIME,
+        default: Sort_By_Field.START_TIME,
+        enum: Sort_By_Field,
+    })
+    sortField?: Sort_By_Field
+
+    @IsOptional()
+    @IsEnum(Sort_By_Order)
+    @ApiProperty({
+        required: false,
+        example: Sort_By_Order.ASC,
+        default: Sort_By_Order.ASC,
+        enum: Sort_By_Order,
+    })
+    sortOrder?: Sort_By_Order
+
+    @IsNotEmpty()
+    @ApiProperty({
+        required: true,
+        example: new Date(),
+    })
+    date: Date
+}
+
+export class StatisticMeetingInMonthDto {
+    @IsNotEmpty()
+    @ApiProperty({
+        required: true,
+        example: new Date(),
+    })
+    date: Date
+}
