@@ -138,7 +138,7 @@ export class CompanyService {
 
         let superAdmin: User
         if (superAdminWalletAddress) {
-            superAdmin = await this.userService.getUserByWalletAddress(
+            superAdmin = await this.userService.getUserByWalletAddressExactly(
                 superAdminWalletAddress,
             )
             if (superAdmin) {
@@ -151,7 +151,7 @@ export class CompanyService {
                 )
             }
         }
-        superAdmin = await this.userService.getUserByEmail(superAdminEmail)
+        superAdmin = await this.userService.getUserByEmailExactly(superAdminEmail)
         if (superAdmin) {
             this.logger.error(
                 `${messageLog.CREATE_COMPANY_FAILED_DUPLICATE.code} ${messageLog.CREATE_COMPANY_FAILED_DUPLICATE.message} ${superAdminEmail}`,

@@ -303,10 +303,28 @@ export class UserService {
         return existedUser
     }
 
+    async getUserByEmailExactly(email: string): Promise<User> {
+        const existedUser = await this.userRepository.findOne({
+            where: {
+                email: email,
+            },
+        })
+        return existedUser
+    }
+
     async getUserByWalletAddress(walletAddress: string): Promise<User> {
         const existedUser = await this.userRepository.findOne({
             where: {
                 walletAddress: Like(`%${walletAddress}%`),
+            },
+        })
+        return existedUser
+    }
+
+    async getUserByWalletAddressExactly(walletAddress: string): Promise<User> {
+        const existedUser = await this.userRepository.findOne({
+            where: {
+                walletAddress: walletAddress,
             },
         })
         return existedUser
@@ -331,7 +349,7 @@ export class UserService {
         let defaultPassword = ''
         let exitedUser: User
         if (createUserDto.walletAddress) {
-            exitedUser = await this.getUserByWalletAddress(
+            exitedUser = await this.getUserByWalletAddressExactly(
                 createUserDto.walletAddress,
             )
             if (exitedUser) {
@@ -344,7 +362,7 @@ export class UserService {
                 )
             }
         }
-        exitedUser = await this.getUserByEmail(createUserDto.email)
+        exitedUser = await this.getUserByEmailExactly(createUserDto.email)
         if (exitedUser) {
             this.logger.error(
                 `${messageLog.CREATE_ACCOUNT_FAILED_DUPLICATE.code} ${messageLog.CREATE_ACCOUNT_FAILED_DUPLICATE.message} ${createUserDto.email}`,
@@ -476,7 +494,7 @@ export class UserService {
 
         let existedUser1: User
         if (updateOwnProfileDto.walletAddress) {
-            existedUser1 = await this.getUserByWalletAddress(
+            existedUser1 = await this.getUserByWalletAddressExactly(
                 updateOwnProfileDto.walletAddress,
             )
             if (
@@ -490,7 +508,7 @@ export class UserService {
             }
         }
 
-        existedUser1 = await this.getUserByEmail(updateOwnProfileDto.email)
+        existedUser1 = await this.getUserByEmailExactly(updateOwnProfileDto.email)
         if (existedUser1 && existedUser1.email !== existedUser.email) {
             throw new HttpException(
                 httpErrors.DUPLICATE_EMAIL_USER,
