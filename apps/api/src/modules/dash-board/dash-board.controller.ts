@@ -10,6 +10,7 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger'
 import { PermissionEnum } from '@shares/constants'
 import {
     GetAllMeetingInDayDto,
+    GetStaticInMonthDto,
     StatisticMeetingInMonthDto,
 } from '@dtos/meeting.dto'
 import { UserScope } from '@shares/decorators/user.decorator'
@@ -73,5 +74,24 @@ export class DashBoardController {
         )
 
         return sysNotification
+    }
+
+    @Get('/meeting-in-month')
+    @HttpCode(HttpStatus.OK)
+    @ApiBearerAuth()
+    @UseGuards(JwtAuthGuard)
+    @Permission(PermissionEnum.BASIC_PERMISSION)
+    async getAllMeetingInMonth(
+        @Query() getAllMeetingInMonth: GetStaticInMonthDto,
+        @UserScope() user: User,
+    ) {
+        const { month, year } = getAllMeetingInMonth
+
+        const meetingInMonth = this.dashBoardService.getAllMeetingInMonth(
+            month,
+            year,
+            user,
+        )
+        return meetingInMonth
     }
 }

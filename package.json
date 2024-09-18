@@ -7,7 +7,7 @@
   "license": "UNLICENSED",
   "scripts": {
     "prebuild": "rimraf dist",
-    "build": "\"nest build api\" \"nest build cronjob\" \"nest build queries\" \"nest build share\"",
+    "build": "concurrently \"nest build api\" \"nest build cronjob\" \"nest build queries\" \"nest build share\"",
     "format": "prettier --write \"apps/**/*.ts\" \"libs/**/*.ts\"",
     "format:lint-staged": "lint-staged",
     "start": "nest start",
@@ -45,6 +45,7 @@
     "bcrypt": "^5.1.1",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.0",
+    "concurrently": "^7.5.0",
     "jsonwebtoken": "^9.0.2",
     "md5": "^2.3.0",
     "moment": "^2.29.4",

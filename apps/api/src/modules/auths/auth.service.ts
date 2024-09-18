@@ -10,6 +10,7 @@ import {
     SystemAdminLoginResponseData,
 } from '@api/modules/auths/auth.interface'
 import {
+    CompanyStatusEnum,
     TOKEN_VERIFY_EMAIL_EXPIRE_IN_MILISECOND,
     UserStatusEnum,
 } from '@shares/constants'
@@ -84,6 +85,13 @@ export class AuthService {
             )
         }
 
+        if (user.company.companyStatus.status !== CompanyStatusEnum.ACTIVE) {
+            throw new HttpException(
+                httpErrors.COMPANY_STATUS_INACTIVE,
+                HttpStatus.FORBIDDEN,
+            )
+        }
+
         if (user.userStatus.status !== UserStatusEnum.ACTIVE) {
             this.logger.info(
                 `${messageLog.LOGIN_USER_INACTIVE.message} ${walletAddress}`,
@@ -147,6 +155,7 @@ export class AuthService {
                 avatar: user.avatar,
                 permissionKeys,
                 status: user.userStatus,
+                defaultAvatarHashColor: user.defaultAvatarHashColor,
             }
 
             accessToken = generateAccessJWT(userData, {
@@ -407,11 +416,19 @@ export class AuthService {
             email,
             companyId: company.id,
         })
+
         if (!user) {
             // this.logger.error('[DAPP] Login false. Please check (email or WallerAddress)',)
             throw new HttpException(
                 httpErrors.USER_WRONG_LOGIN,
                 HttpStatus.NOT_FOUND,
+            )
+        }
+
+        if (user.company.companyStatus.status !== CompanyStatusEnum.ACTIVE) {
+            throw new HttpException(
+                httpErrors.COMPANY_STATUS_INACTIVE,
+                HttpStatus.FORBIDDEN,
             )
         }
 

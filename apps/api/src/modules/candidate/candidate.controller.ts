@@ -22,7 +22,7 @@ import { VotingCandidateService } from '../voting-candidate/voting-candidate.ser
 export class CandidateController {
     constructor(
         private readonly candidateService: CandidateService,
-        private readonly votingCandidate: VotingCandidateService,
+        private readonly votingCandidateService: VotingCandidateService,
     ) {}
 
     @Post('/vote-board/:candidateId')
@@ -37,18 +37,19 @@ export class CandidateController {
     ) {
         const userId = user?.id
         const companyId = user?.companyId
-        const candidate = await this.votingCandidate.voteCandidate(
+        const candidate = await this.votingCandidateService.voteCandidate(
             companyId,
             userId,
             candidateId,
             voteCandidateDto,
         )
+
         return candidate
     }
 
     @Post('/vote-shareholder/:candidateId')
     @UseGuards(JwtAuthGuard)
-    @Permission(PermissionEnum.DETAIL_BOARD_MEETING)
+    @Permission(PermissionEnum.DETAIL_MEETING)
     @ApiBearerAuth()
     @HttpCode(HttpStatus.OK)
     async voteCandidateShareholderMtg(
@@ -59,7 +60,7 @@ export class CandidateController {
         const userId = user?.id
         const companyId = user?.companyId
         const candidate =
-            await this.votingCandidate.voteCandidateInShareholderMtg(
+            await this.votingCandidateService.voteCandidateInShareholderMtg(
                 companyId,
                 userId,
                 candidateId,

@@ -57,10 +57,10 @@ export class CompanyService {
     async getAllCompanys(
         getAllCompanyDto: GetAllCompanyDto,
     ): Promise<Pagination<Company>> {
-        const companys = await this.companyRepository.getAllCompanys(
+        const companies = await this.companyRepository.getAllCompanys(
             getAllCompanyDto,
         )
-        return companys
+        return companies
     }
 
     async getCompanyById(companyId: number): Promise<Company> {
@@ -70,6 +70,15 @@ export class CompanyService {
             },
             relations: ['companyStatus'],
         })
+
+        const countCreatedOfCompany =
+            await this.companyRepository.countCreatedOfCompany(companyId)
+
+        ;(company as any).totalCreateMeeting =
+            countCreatedOfCompany.totalCreatedMTGs
+        ;(company as any).totalCreatedAccount =
+            countCreatedOfCompany.totalCreatedAccount
+
         return company
     }
 

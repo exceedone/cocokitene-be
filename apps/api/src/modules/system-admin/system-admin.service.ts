@@ -216,13 +216,19 @@ export class SystemAdminService {
         return systemAdmins
     }
 
-    async statisticalCompany() {
+    async statisticalCompany(month: number, year: number) {
         const companyStatuses =
-            await this.companyStatusService.getAllCompanyByStatusId()
+            await this.companyStatusService.getAllCompanyByStatusId(month, year)
 
-        const userStatuses = await this.userStatusService.getAllUserByStatusId()
+        const userStatuses = await this.userStatusService.getAllUserByStatusId(
+            month,
+            year,
+        )
 
-        const servicePlan = await this.planService.countCompanyUseServicePlan()
+        const servicePlan = await this.planService.countCompanyUseServicePlan(
+            month,
+            year,
+        )
 
         return {
             companyStatuses: companyStatuses.items,

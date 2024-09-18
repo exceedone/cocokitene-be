@@ -28,6 +28,15 @@ export class VotingCandidateRepository extends Repository<VotingCandidate> {
             where: {
                 votedForCandidateId: candidateId,
             },
+            select: {
+                id: true,
+                userId: true,
+                votedForCandidateId: true,
+                result: true,
+                quantityShare: true,
+                createdAt: true,
+                deletedAt: true,
+            },
         })
         return votingCandidate
     }

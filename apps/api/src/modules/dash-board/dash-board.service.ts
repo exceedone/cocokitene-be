@@ -47,7 +47,7 @@ export class DashBoardService {
         user: User,
     ) {
         const shareholderMeetingInMonth =
-            await this.meetingService.getMeetingInMonth(
+            await this.meetingService.getMeetingCreatedInMonth(
                 statisticMeetingInDayQuery,
                 user,
                 MeetingType.SHAREHOLDER_MEETING,
@@ -85,11 +85,12 @@ export class DashBoardService {
                 },
             )
 
-        const boardMeetingInMonth = await this.meetingService.getMeetingInMonth(
-            statisticMeetingInDayQuery,
-            user,
-            MeetingType.BOARD_MEETING,
-        )
+        const boardMeetingInMonth =
+            await this.meetingService.getMeetingCreatedInMonth(
+                statisticMeetingInDayQuery,
+                user,
+                MeetingType.BOARD_MEETING,
+            )
 
         const filterUniqueBoard = boardMeetingInMonth
             .flatMap((meeting) => meeting.participant)
@@ -146,5 +147,28 @@ export class DashBoardService {
             )
 
         return sysNotification
+    }
+
+    async getAllMeetingInMonth(
+        month: number,
+        year: number,
+        user: User,
+    ): Promise<Meeting[]> {
+        const userId = user.id
+        const companyId = user.companyId
+
+        const permissionKeys: string[] = (user as any).permissionKeys || []
+        const canUserCreateMeeting = permissionKeys.includes(
+            PermissionEnum.CREATE_MEETING,
+        )
+
+        const meetingInMonth = this.meetingService.getMeetingInMonth(
+            month,
+            year,
+            userId,
+            companyId,
+            canUserCreateMeeting,
+        )
+        return meetingInMonth
     }
 }

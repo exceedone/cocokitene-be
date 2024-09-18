@@ -156,7 +156,20 @@ export class ProposalRepository extends Repository<Proposal> {
 
     async getAllProposalByMtgId(meetingId: number): Promise<Proposal[]> {
         const proposal = await this.createQueryBuilder('meeting_proposal')
-            .select()
+            .select([
+                'meeting_proposal.id',
+                'meeting_proposal.title',
+                'meeting_proposal.description',
+                'meeting_proposal.oldDescription',
+                'meeting_proposal.type',
+                'meeting_proposal.votedQuantity',
+                'meeting_proposal.unVotedQuantity',
+                'meeting_proposal.notVoteYetQuantity',
+                'meeting_proposal.meetingId',
+                'meeting_proposal.creatorId',
+                'meeting_proposal.createdAt',
+                'meeting_proposal.deletedAt',
+            ])
             .where('meeting_proposal.meetingId = :meetingId', {
                 meetingId,
             })

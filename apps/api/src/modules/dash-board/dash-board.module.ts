@@ -33,6 +33,10 @@ export class DashBoardModule implements NestModule {
                     path: '/api/dash-board/system-notification',
                     method: RequestMethod.GET,
                 },
+                {
+                    path: '/api/dash-board/meeting-in-month',
+                    method: RequestMethod.GET,
+                },
             )
             .forRoutes(DashBoardController)
     }

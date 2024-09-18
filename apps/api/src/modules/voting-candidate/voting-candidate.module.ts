@@ -6,6 +6,7 @@ import { VotingCandidateService } from './voting-candidate.service'
 import { MeetingRoleMtgModule } from '../meeting-role-mtgs/meeting-role-mtg.module'
 import { CandidateModule } from '../candidate/candidate.module'
 import { RoleMtgModule } from '../role-mtgs/role-mtg.module'
+import { SocketModule } from '../socket/socket.module'
 
 @Module({
     imports: [
@@ -15,6 +16,7 @@ import { RoleMtgModule } from '../role-mtgs/role-mtg.module'
         MeetingRoleMtgModule,
         forwardRef(() => MeetingModule),
         RoleMtgModule,
+        forwardRef(() => SocketModule),
     ],
     providers: [VotingCandidateService],
     exports: [VotingCandidateService],

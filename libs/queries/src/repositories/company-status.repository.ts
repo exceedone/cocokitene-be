@@ -47,6 +47,8 @@ export class CompanyStatusRepository extends Repository<CompanyStatus> {
     }
 
     async getAllCompanyByStatusId(
+        month: number,
+        year: number,
         options: GetAllCompanyStatusDto,
     ): Promise<Pagination<CompanyStatus>> {
         const { page, limit } = options
@@ -55,7 +57,7 @@ export class CompanyStatusRepository extends Repository<CompanyStatus> {
             .leftJoin(
                 'company',
                 'companies',
-                'company_status_mst.id = companies.statusId',
+                `company_status_mst.id = companies.statusId AND MONTH(companies.createdAt) = ${month} AND YEAR(companies.createdAt) = ${year}`,
             )
             .addSelect(`COUNT(DISTINCT companies.id)`, 'totalCompany')
             .groupBy('company_status_mst.id')

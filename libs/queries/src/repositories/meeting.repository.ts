@@ -418,7 +418,7 @@ export class MeetingRepository extends Repository<Meeting> {
                     'isParticipant',
                 )
             queryBuilder.andWhere(
-                'DATE(meetings.startTime) <= :newDate AND DATE_ADD(DATE(meetings.endTime), INTERVAL 1 DAY) - INTERVAL 1 SECOND >= :newDate',
+                'DATE_FORMAT(meetings.startTime,"%Y-%m-%d 00:00:00") <= :newDate AND DATE_ADD(DATE(meetings.endTime), INTERVAL 1 DAY) - INTERVAL 1 SECOND >= :newDate',
                 {
                     newDate: newDate,
                 },
@@ -430,7 +430,7 @@ export class MeetingRepository extends Repository<Meeting> {
         }
     }
 
-    async getMeetingInMonth(
+    async getMeetingCreatedInMonth(
         companyId: number,
         type: MeetingType,
         options: StatisticMeetingInMonthDto,
@@ -480,5 +480,53 @@ export class MeetingRepository extends Repository<Meeting> {
         } catch (error) {
             console.log('Query Meeting in Month Failed: ', error)
         }
+    }
+
+    async getMeetingInMonth(
+        month: number,
+        year: number,
+        userId: number,
+        companyId: number,
+        canUserCreateMeeting: boolean,
+    ): Promise<Pagination<Meeting>> {
+        const queryBuilder = this.createQueryBuilder('meetings')
+            .select([
+                'meetings.id',
+                'meetings.startTime',
+                'meetings.endTime',
+                'meetings.companyId',
+                'meetings.type',
+            ])
+            .distinct(true)
+        if (canUserCreateMeeting) {
+            queryBuilder.leftJoin(
+                'meeting_participant',
+                'userMeeting',
+                'userMeeting.meetingId = meetings.id AND userMeeting.userId = :userId',
+                { userId },
+            )
+        } else {
+            queryBuilder.innerJoin(
+                'meeting_participant',
+                'userMeeting',
+                'userMeeting.meetingId = meetings.id AND userMeeting.userId = :userId',
+                { userId },
+            )
+        }
+        queryBuilder.where('meetings.companyId= :companyId', {
+            companyId: companyId,
+        })
+        queryBuilder.andWhere(
+            '(MONTH(meetings.startTime) = :month AND YEAR(meetings.startTime) = :year) OR (MONTH(meetings.endTime) = :month AND YEAR(meetings.endTime) = :year)',
+            {
+                month: month,
+                year: year,
+            },
+        )
+
+        return paginateRaw(queryBuilder, {
+            limit: 100,
+            page: 1,
+        })
     }
 }

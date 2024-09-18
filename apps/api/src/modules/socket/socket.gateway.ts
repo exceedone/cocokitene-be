@@ -16,6 +16,7 @@ import { messageChatInformation } from './socket.interface'
 import { ChangePermissionChatInMeetingDto } from '@dtos/chat-permission.dto'
 import { MeetingService } from '../meetings/meeting.service'
 import { UserSeenMessageService } from '../user-seen-message/user-seen-message.service'
+import { forwardRef, Inject } from '@nestjs/common'
 
 @WebSocketGateway({
     namespace: '/',
@@ -30,6 +31,7 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
         private readonly messageService: MessageService,
         private readonly reactionMessageService: ReactionMessageService,
         private readonly reactionIconService: ReactionIconService,
+        @Inject(forwardRef(() => MeetingService))
         private readonly meetingService: MeetingService,
         private readonly userSeenMessageService: UserSeenMessageService,
     ) {}

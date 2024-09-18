@@ -108,6 +108,10 @@ export const httpErrors = {
         message: 'Company create failed. Please try again',
         code: 'COMPANY_00002',
     },
+    COMPANY_STATUS_INACTIVE: {
+        message: 'COMPANY_STATUS_INACTIVE',
+        code: 'COMPANY_00003',
+    },
     //company-role
     COMPANY_ROLE_CREATE_FAILED: {
         message: 'Company_role create failed. Please try again',
@@ -130,7 +134,6 @@ export const httpErrors = {
         message: 'Role Meeting already existed. Please try again.',
         code: 'ROLE_MTG_00004',
     },
-
     // meeting file error
     MEETING_FILE_CREATE_FAILED: {
         message: 'Create meeting file failed. Please try again',

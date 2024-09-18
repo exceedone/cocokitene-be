@@ -21,6 +21,7 @@ import { VoteProposalResult } from '@shares/constants/proposal.const'
 import { Logger } from 'winston'
 import { VoteCandidateInPersonnel } from '@dtos/personnel-voting.dto'
 import { RoleMtgService } from '../role-mtgs/role-mtg.service'
+import { SocketGateway } from '../socket/socket.gateway'
 
 @Injectable()
 export class VotingCandidateService {
@@ -34,6 +35,9 @@ export class VotingCandidateService {
         @Inject(forwardRef(() => MeetingService))
         private readonly meetingService: MeetingService,
         private readonly roleMtgService: RoleMtgService,
+
+        @Inject(forwardRef(() => SocketGateway))
+        private readonly socketGateway: SocketGateway,
 
         @Inject('winston')
         private readonly logger: Logger,
@@ -179,9 +183,19 @@ export class VotingCandidateService {
                     voteCandidateDto,
                     1,
                 )
+
+                this.socketGateway.server.emit(
+                    `voting-candidate-board-meeting/${meetingId}`,
+                    {
+                        ...updateCountVoteExistedCandidate,
+                        voterId: userId,
+                    },
+                )
+
                 this.logger.info(
                     `[DAPP] User ID : ${userId} ${messageLog.VOTING_CANDIDATE_OF_MEETING_SUCCESS.message} ${candidate.id}`,
                 )
+
                 return updateCountVoteExistedCandidate
             } else {
                 let createVotingCandidate: VotingCandidate
@@ -208,6 +222,15 @@ export class VotingCandidateService {
                     }
                     await createVotingCandidate.save()
                     await candidate.save()
+
+                    this.socketGateway.server.emit(
+                        `voting-candidate-board-meeting/${meetingId}`,
+                        {
+                            ...candidate,
+                            voterId: userId,
+                        },
+                    )
+
                     this.logger.info(
                         `[DAPP] User ID : ${userId} ${messageLog.VOTING_CANDIDATE_OF_MEETING_SUCCESS.message} ${candidate.id}`,
                     )
@@ -314,6 +337,14 @@ export class VotingCandidateService {
                 this.logger.info(
                     `[DAPP] User ID : ${userId} ${messageLog.VOTING_CANDIDATE_OF_MEETING_SUCCESS.message} ${candidate.id}`,
                 )
+                this.socketGateway.server.emit(
+                    `voting-candidate-shareholder-meeting/${meetingId}`,
+                    {
+                        ...candidate,
+                        voterId: userId,
+                    },
+                )
+
                 return updateCountVoteExistedCandidate
             } else {
                 let createVotingCandidate: VotingCandidate
@@ -342,6 +373,14 @@ export class VotingCandidateService {
                     await candidate.save()
                     this.logger.info(
                         `[DAPP] User ID : ${userId} ${messageLog.VOTING_CANDIDATE_OF_MEETING_SUCCESS.message} ${candidate.id}`,
+                    )
+
+                    this.socketGateway.server.emit(
+                        `voting-candidate-shareholder-meeting/${meetingId}`,
+                        {
+                            ...candidate,
+                            voterId: userId,
+                        },
                     )
 
                     return candidate
@@ -437,7 +476,7 @@ export class VotingCandidateService {
 
     async getAllVotingByCandidateId(
         candidateId: number,
-    ): Promise<VoteCandidateDto[]> {
+    ): Promise<VotingCandidate[]> {
         const voteOfCandidate =
             await this.votingCandidateRepository.getListVotedByCandidateId(
                 candidateId,

@@ -6,10 +6,12 @@ import {
     HttpCode,
     HttpStatus,
     Query,
-    // UseGuards,
+    UseGuards,
 } from '@nestjs/common'
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger'
-// import { JwtAuthGuard } from '@share/guards/jwt-auth.guard';
+import { PermissionEnum } from '@shares/constants'
+import { Permission } from '@shares/decorators/permission.decorator'
+import { JwtAuthGuard } from '@shares/guards/jwt-auth.guard'
 
 @Controller('s3')
 @ApiTags('s3')
@@ -17,7 +19,8 @@ export class S3Controller {
     constructor(private readonly s3Service: S3Service) {}
 
     @Get()
-    // @UseGuards(JwtAuthGuard)
+    @UseGuards(JwtAuthGuard)
+    @Permission(PermissionEnum.BASIC_PERMISSION)
     @HttpCode(HttpStatus.OK)
     @ApiBearerAuth()
     async getPresignedUrl(@Query() getPresignedUrlDto: GetPresignedUrlDto) {

@@ -61,6 +61,7 @@ import { VotingCandidateService } from '../voting-candidate/voting-candidate.ser
 import { hashMd5 } from '@shares/utils/md5'
 import { dateTimeToEpochTime } from '@shares/utils'
 import { PersonnelVotingService } from '../personnel-voting/personnel-voting.service'
+import { PersonnelVotingRepository } from '@repositories/personnel-voting.repository'
 
 @Injectable()
 export class MeetingService {
@@ -84,6 +85,7 @@ export class MeetingService {
         @Inject(forwardRef(() => VotingCandidateService))
         private readonly votingCandidateService: VotingCandidateService,
         private readonly personnelVotingService: PersonnelVotingService,
+        private readonly personnelVotingRepository: PersonnelVotingRepository,
         @Inject('winston')
         private readonly logger: Logger,
     ) {}
@@ -950,8 +952,13 @@ export class MeetingService {
 
         const listMeetingProposals =
             await this.proposalRepository.getAllProposalByMtgId(meetingId)
-        const listMeetingCandidates =
-            await this.candidateRepository.getAllCandidateByMeetingId(meetingId)
+        const listMeetingPersonnelVoting =
+            await this.personnelVotingRepository.getAllPersonnelVotingByMtgId(
+                meetingId,
+            )
+        const listMeetingCandidates = listMeetingPersonnelVoting
+            .flatMap((personnelVoting) => personnelVoting.candidate)
+            .sort((a, b) => a.id - b.id)
 
         const listVoteProposals = []
         const listVoteCandidate = []
@@ -962,18 +969,14 @@ export class MeetingService {
                     await this.votingService.getAllVotingByProposalId(
                         proposal.id,
                     )
-                listVoteOfProposal.map((vote) => {
-                    listVoteProposals.push(vote)
-                })
+                listVoteProposals.push(...listVoteOfProposal)
             }),
             ...listMeetingCandidates.map(async (candidate) => {
                 const listVoteOfCandidate =
                     await this.votingCandidateService.getAllVotingByCandidateId(
                         candidate.id,
                     )
-                listVoteOfCandidate.map((voteCandidate) => {
-                    listVoteCandidate.push(voteCandidate)
-                })
+                listVoteCandidate.push(...listVoteOfCandidate)
             }),
         ])
 
@@ -985,7 +988,7 @@ export class MeetingService {
         listMeetingFile.sort((a, b) => a.meetingFileId - b.meetingFileId)
         listMeetingProposals.sort((a, b) => a.id - b.id)
         listVoteProposals.sort((a, b) => a.id - b.id)
-        listMeetingCandidates.sort((a, b) => a.id - b.id)
+        listMeetingPersonnelVoting.sort((a, b) => a.id - b.id)
         listVoteCandidate.sort((a, b) => a.id - b.id)
         listParticipantOfMeeting.sort((a, b) => a.id - b.id)
 
@@ -1018,7 +1021,7 @@ export class MeetingService {
         )
         const hash_proposalVote = hashMd5(JSON.stringify(listVoteProposals))
         const hash_candidateMeeting = hashMd5(
-            JSON.stringify(listMeetingCandidates),
+            JSON.stringify(listMeetingPersonnelVoting),
         )
         const hash_candidateVote = hashMd5(JSON.stringify(listVoteCandidate))
         const hash_participantMeeting = hashMd5(
@@ -1041,7 +1044,7 @@ export class MeetingService {
                 fileMeeting: listMeetingFile,
                 proposalMeeting: listMeetingProposals,
                 proposalVote: listVoteProposals,
-                candidateMeeting: listMeetingCandidates,
+                personnelVoting: listMeetingPersonnelVoting,
                 candidateVote: listVoteCandidate,
                 participantMeeting: listParticipantOfMeeting,
             }),
@@ -1261,22 +1264,41 @@ export class MeetingService {
         }
     }
 
-    async getMeetingInMonth(
+    async getMeetingCreatedInMonth(
         statisticMeetingInMonthDto: StatisticMeetingInMonthDto,
         user: User,
         type: MeetingType,
     ): Promise<Meeting[]> {
         try {
             const companyId = user.companyId
-            const meetings = await this.meetingRepository.getMeetingInMonth(
-                companyId,
-                type,
-                statisticMeetingInMonthDto,
-            )
+            const meetings =
+                await this.meetingRepository.getMeetingCreatedInMonth(
+                    companyId,
+                    type,
+                    statisticMeetingInMonthDto,
+                )
 
             return meetings
         } catch (error) {
             console.log('error-----:', error)
         }
+    }
+
+    async getMeetingInMonth(
+        month: number,
+        year: number,
+        userId: number,
+        companyId: number,
+        canUserCreateMeeting: boolean,
+    ): Promise<Meeting[]> {
+        const meetingInMonth = await this.meetingRepository.getMeetingInMonth(
+            month,
+            year,
+            userId,
+            companyId,
+            canUserCreateMeeting,
+        )
+
+        return meetingInMonth.items
     }
 }

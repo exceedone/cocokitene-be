@@ -9,10 +9,12 @@ import { TransactionRepository } from '@repositories/transaction.repository'
 import { VotingRepository } from '@repositories/voting.repository'
 import { MeetingFileRepository } from '@repositories/meeting-file.repository'
 import { MyLoggerModule } from '@api/modules/loggers/logger.module'
-import { CandidateRepository } from '@repositories/board-members.repository'
+import { CandidateRepository } from '@repositories/nominees.repository'
 import { VotingCandidateRepository } from '@repositories/voting-board-members.repository'
 import { MeetingRoleMtgRepository } from '@repositories/meeting-role-relations.repository'
 import { RoleMtgRepository } from '@repositories/meeting-role.repository'
+import { PersonnelVotingRepository } from '@repositories/personnel-voting.repository'
+import { S3Module } from '@api/modules/s3/s3.module'
 
 const Repositories = TypeOrmExModule.forCustomRepository([
     UserMeetingRepository,
@@ -26,10 +28,11 @@ const Repositories = TypeOrmExModule.forCustomRepository([
     VotingCandidateRepository,
     MeetingRoleMtgRepository,
     RoleMtgRepository,
+    PersonnelVotingRepository,
 ])
 
 @Module({
-    imports: [Repositories, MyLoggerModule],
+    imports: [Repositories, MyLoggerModule, S3Module],
     providers: [TransactionService],
     exports: [TransactionService],
 })

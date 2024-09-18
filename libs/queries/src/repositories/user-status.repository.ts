@@ -44,12 +44,18 @@ export class UserStatusRepository extends Repository<UserStatus> {
     }
 
     async countUserByStatusId(
+        month: number,
+        year: number,
         options: GetAllUserStatusDto,
     ): Promise<Pagination<UserStatus>> {
         const { page, limit } = options
         const queryBuilder = this.createQueryBuilder('user_statuses')
             .select(['user_statuses.id', 'user_statuses.status'])
-            .leftJoin('users', 'user', 'user_statuses.id = user.statusId')
+            .leftJoin(
+                'users',
+                'user',
+                `user_statuses.id = user.statusId AND MONTH(user.createdAt) = ${month} AND YEAR(user.createdAt) = ${year}`,
+            )
             .addSelect(`COUNT(DISTINCT user.id)`, 'totalUser')
             .groupBy('user_statuses.id')
 

@@ -69,4 +69,40 @@ export class PersonnelVotingRepository extends Repository<PersonnelVoting> {
 
         return personnelVoting
     }
+
+    async getAllPersonnelVotingByMtgId(
+        meetingId: number,
+    ): Promise<PersonnelVoting[]> {
+        const personnelVoting = await this.createQueryBuilder(
+            'personnel_voting',
+        )
+            .select([
+                'personnel_voting.id',
+                'personnel_voting.title',
+                'personnel_voting.type',
+                'personnel_voting.meetingId',
+                'personnel_voting.typeElection',
+                'personnel_voting.creatorId',
+                'personnel_voting.createdAt',
+                'personnel_voting.deletedAt',
+            ])
+            .where('personnel_voting.meetingId = :meetingId', {
+                meetingId: meetingId,
+            })
+            .leftJoin('personnel_voting.candidate', 'candidates')
+            .addSelect([
+                'candidates.id',
+                'candidates.candidateName',
+                'candidates.personnelVotingId',
+                'candidates.votedQuantity',
+                'candidates.unVotedQuantity',
+                'candidates.notVoteYetQuantity',
+                'candidates.unVotedQuantity',
+                'candidates.createdAt',
+                'candidates.deletedAt',
+            ])
+            .getMany()
+
+        return personnelVoting
+    }
 }

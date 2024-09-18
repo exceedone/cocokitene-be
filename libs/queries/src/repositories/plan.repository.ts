@@ -69,12 +69,18 @@ export class PlanRepository extends Repository<Plan> {
     }
 
     async countCompanyUsePlan(
+        month: number,
+        year: number,
         options: GetAllPlanDto,
     ): Promise<Pagination<Plan>> {
         const { page, limit } = options
         const queryBuilder = this.createQueryBuilder('plan_mst')
             .select(['plan_mst.id', 'plan_mst.planName'])
-            .leftJoin('company', 'companies', 'plan_mst.id = companies.planId')
+            .leftJoin(
+                'company',
+                'companies',
+                `plan_mst.id = companies.planId AND MONTH(companies.createdAt) = ${month} AND YEAR(companies.createdAt) = ${year}`,
+            )
             .addSelect(`COUNT(DISTINCT companies.id)`, 'totalCompany')
             .groupBy('plan_mst.id')
 

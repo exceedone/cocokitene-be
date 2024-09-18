@@ -57,4 +57,10 @@ export class CronjobService {
         )
         await this.meetingCrawler.scan(config)
     }
+
+    // @Cron(CronExpression.EVERY_10_SECONDS)
+    @Cron(configuration().backup.cronJobHandleBackupBucketS3toLocal)
+    async handleBackupBucketS3intoLocal() {
+        await this.transactionService.handleBackupS3toLocal()
+    }
 }

@@ -300,4 +300,13 @@ export class PersonnelVotingService {
             console.log('error: ', error)
         }
     }
+
+    async getAllPersonnelVotingByMtgId(meetingId: number) {
+        const personnelVoting =
+            await this.personnelVotingRepository.getAllPersonnelVotingByMtgId(
+                meetingId,
+            )
+
+        return personnelVoting
+    }
 }

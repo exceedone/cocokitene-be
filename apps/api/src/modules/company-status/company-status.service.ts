@@ -24,12 +24,16 @@ export class CompanyStatusService {
         return companyStatus
     }
 
-    async getAllCompanyByStatusId() {
+    async getAllCompanyByStatusId(month: number, year: number) {
         const companyStatus =
-            await this.companyStatusRepository.getAllCompanyByStatusId({
-                page: 1,
-                limit: 10,
-            })
+            await this.companyStatusRepository.getAllCompanyByStatusId(
+                month,
+                year,
+                {
+                    page: 1,
+                    limit: 100,
+                },
+            )
 
         return companyStatus
     }

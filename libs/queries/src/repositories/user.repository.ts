@@ -54,6 +54,9 @@ export class UserRepository extends Repository<User> {
         const user = await this.createQueryBuilder('users')
             .leftJoin('users.userStatus', 'userStatus')
             .addSelect(['userStatus.id', 'userStatus.status'])
+            .leftJoinAndSelect('users.company', 'companyUser')
+            .leftJoin('companyUser.companyStatus', 'companyStatus')
+            .addSelect(['companyStatus.id', 'companyStatus.status'])
             .where('users.walletAddress= :walletAddress', {
                 walletAddress,
             })
@@ -345,6 +348,9 @@ export class UserRepository extends Repository<User> {
         const user = await this.createQueryBuilder('users')
             .leftJoin('users.userStatus', 'userStatus')
             .addSelect(['userStatus.id', 'userStatus.status'])
+            .leftJoinAndSelect('users.company', 'companyUser')
+            .leftJoin('companyUser.companyStatus', 'companyStatus')
+            .addSelect(['companyStatus.id', 'companyStatus.status'])
             .where('users.companyId = :companyId', {
                 companyId,
             })

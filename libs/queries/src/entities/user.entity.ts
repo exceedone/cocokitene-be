@@ -62,7 +62,7 @@ export class User extends BaseEntity {
     })
     resetPasswordExpireTime: Date
 
-    @Column({ name: 'avartar', type: 'varchar', length: 255, nullable: true })
+    @Column({ name: 'avartar', type: 'varchar', length: 1000, nullable: true })
     avatar: string
 
     @Column({ nullable: false, name: 'status_id', type: 'integer', width: 11 })

@@ -83,6 +83,10 @@ interface Configuration {
         receiveChatPrivate: string
         receiveChatPublic: string
     }
+    backup: {
+        folderBackup: string
+        cronJobHandleBackupBucketS3toLocal: string
+    }
 }
 
 export default (): Configuration => ({
@@ -186,5 +190,10 @@ export default (): Configuration => ({
         sendChatPrivate: process.env.CHAT_PRIVATE,
         receiveChatPrivate: process.env.RECEIVE_CHAT_PRIVATE,
         receiveChatPublic: process.env.RECEIVE_CHAT_PUBLIC,
+    },
+    backup: {
+        folderBackup: process.env.FOLDER_BACKUP,
+        cronJobHandleBackupBucketS3toLocal:
+            process.env.CRON_JOB_HANDLE_BACK_UP_BUCKET_S3_TO_LOCAL,
     },
 })

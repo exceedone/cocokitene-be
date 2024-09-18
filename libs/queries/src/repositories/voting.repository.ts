@@ -25,6 +25,14 @@ export class VotingRepository extends Repository<Voting> {
             where: {
                 proposalId: proposalId,
             },
+            select: {
+                id: true,
+                result: true,
+                userId: true,
+                proposalId: true,
+                createdAt: true,
+                deletedAt: true,
+            },
         })
         return votings
     }

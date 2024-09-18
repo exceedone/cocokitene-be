@@ -28,11 +28,17 @@ import { VotingRepository } from '@repositories/voting.repository'
 import { MeetingFileRepository } from '@repositories/meeting-file.repository'
 import { Logger } from 'winston'
 import { messageBLCLog } from '@shares/exception-filter/message-log-blc-const'
-import { CandidateRepository } from '@repositories/board-members.repository'
+import { CandidateRepository } from '@repositories/nominees.repository'
 import { VotingCandidateRepository } from '@repositories/voting-board-members.repository'
 import { hashMd5 } from '@shares/utils/md5'
 import { MeetingRoleMtgRepository } from '@repositories/meeting-role-relations.repository'
 import { RoleMtgRepository } from '@repositories/meeting-role.repository'
+import { PersonnelVotingRepository } from '@repositories/personnel-voting.repository'
+import { S3Service } from '@api/modules/s3/s3.service'
+
+import { join } from 'path'
+import * as fs from 'fs'
+import configuration from '@shares/config/configuration'
 
 @Injectable()
 export class TransactionService {
@@ -47,7 +53,10 @@ export class TransactionService {
         private readonly votingCandidateRepository: VotingCandidateRepository,
         private readonly meetingRoleMtgRepository: MeetingRoleMtgRepository,
         private readonly roleMtgRepository: RoleMtgRepository,
+        private readonly personnelVotingRepository: PersonnelVotingRepository,
 
+        //Import s3 Service Backup Aws S3
+        private readonly s3Service: S3Service,
         @Inject('winston')
         private readonly logger: Logger, // private readonly myLoggerService: MyLoggerService,
     ) {}
@@ -57,15 +66,11 @@ export class TransactionService {
         const meetingIdsAppearedInTransaction =
             await this.transactionRepository.getMeetingIdsWithTransactions()
 
-        // console.log('meetingIdsAppearedInTransaction',meetingIdsAppearedInTransaction)
-
         const listMeetingHappened =
             await this.meetingRepository.findMeetingByStatusAndEndTimeVoting(
                 StatusMeeting.HAPPENED,
                 meetingIdsAppearedInTransaction,
             )
-
-        // console.log('listMeetingHappened',listMeetingHappened)
 
         if (!listMeetingHappened || listMeetingHappened.length == 0) {
             // not find meeting have status happened and no appeared in Transaction table
@@ -98,10 +103,14 @@ export class TransactionService {
                     await this.proposalRepository.getAllProposalByMtgId(
                         meeting.id,
                     )
-                const listMeetingCandidates =
-                    await this.candidateRepository.getAllCandidateByMeetingId(
+                const listMeetingPersonnelVoting =
+                    await this.personnelVotingRepository.getAllPersonnelVotingByMtgId(
                         meeting.id,
                     )
+
+                const listMeetingCandidates = listMeetingPersonnelVoting
+                    .flatMap((personnelVoting) => personnelVoting.candidate)
+                    .sort((a, b) => a.id - b.id)
 
                 const listVoteProposals = []
                 const listVoteCandidate = []
@@ -112,18 +121,14 @@ export class TransactionService {
                             await this.votingRepository.getInternalListVotingByProposalId(
                                 proposal.id,
                             )
-                        listVoteOfProposal.map((vote) => {
-                            listVoteProposals.push(vote)
-                        })
+                        listVoteProposals.push(...listVoteOfProposal)
                     }),
                     ...listMeetingCandidates.map(async (candidate) => {
                         const listVoteOfCandidate =
                             await this.votingCandidateRepository.getListVotedByCandidateId(
                                 candidate.id,
                             )
-                        listVoteOfCandidate.map((voteCandidate) => {
-                            listVoteCandidate.push(voteCandidate)
-                        })
+                        listVoteCandidate.push(...listVoteOfCandidate)
                     }),
                 ])
 
@@ -137,7 +142,7 @@ export class TransactionService {
                 )
                 listMeetingProposals.sort((a, b) => a.id - b.id)
                 listVoteProposals.sort((a, b) => a.id - b.id)
-                listMeetingCandidates.sort((a, b) => a.id - b.id)
+                listMeetingPersonnelVoting.sort((a, b) => a.id - b.id)
                 listVoteCandidate.sort((a, b) => a.id - b.id)
                 listParticipantOfMeeting.sort((a, b) => a.id - b.id)
 
@@ -180,7 +185,7 @@ export class TransactionService {
                     JSON.stringify(listVoteProposals),
                 )
                 const hash_candidateMeeting = hashMd5(
-                    JSON.stringify(listMeetingCandidates),
+                    JSON.stringify(listMeetingPersonnelVoting),
                 )
                 const hash_candidateVote = hashMd5(
                     JSON.stringify(listVoteCandidate),
@@ -209,7 +214,7 @@ export class TransactionService {
                         fileMeeting: listMeetingFile,
                         proposalMeeting: listMeetingProposals,
                         proposalVote: listVoteProposals,
-                        candidateMeeting: listMeetingCandidates,
+                        personnelVoting: listMeetingPersonnelVoting,
                         candidateVote: listVoteCandidate,
                         participantMeeting: listParticipantOfMeeting,
                     }),
@@ -479,6 +484,30 @@ export class TransactionService {
             voterJoined: voterJoined,
             totalMeetingVote: totalMeetingVote,
             joinedMeetingVote: joinedMeetingVote,
+        }
+    }
+
+    //Back up S3 to local
+    async handleBackupS3toLocal(): Promise<void> {
+        console.log('Run backup S3------')
+        //Backup S3 into local folder
+        const localFolderBackup = configuration().backup.folderBackup
+        const date = new Date()
+        const folderName = `${date.getFullYear()}${
+            date.getMonth() + 1
+        }${date.getDate()}`
+
+        const folderPath = join(localFolderBackup, folderName)
+
+        //Create localFolder
+        if (!fs.existsSync(folderPath)) {
+            this.s3Service.backupBucketToLocal()
+            // console.log('The Bucket S3 has been successfully downloaded!!!!')
+        } else {
+            // console.log('folder is existed!!!!')
+            console.log(
+                'The Bucket S3 has been downloaded today. Please try again on another day.',
+            )
         }
     }
 }

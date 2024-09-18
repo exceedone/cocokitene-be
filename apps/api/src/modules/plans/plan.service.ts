@@ -127,11 +127,18 @@ export class PlanService {
         }
     }
 
-    async countCompanyUseServicePlan(): Promise<Pagination<Plan>> {
-        const servicePlan = await this.planRepository.countCompanyUsePlan({
-            page: 1,
-            limit: 100,
-        })
+    async countCompanyUseServicePlan(
+        month: number,
+        year: number,
+    ): Promise<Pagination<Plan>> {
+        const servicePlan = await this.planRepository.countCompanyUsePlan(
+            month,
+            year,
+            {
+                page: 1,
+                limit: 100,
+            },
+        )
 
         return servicePlan
     }

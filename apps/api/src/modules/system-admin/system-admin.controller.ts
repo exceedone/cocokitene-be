@@ -32,6 +32,7 @@ import {
 } from '@dtos/system-notification.dto'
 import { UserScope } from '@shares/decorators/user.decorator'
 import { SystemAdmin } from '@entities/system-admin.entity'
+import { GetStaticInMonthDto } from '@dtos/meeting.dto'
 
 @Controller('system-admin')
 @ApiTags('system-admin')
@@ -190,8 +191,13 @@ export class SystemAdminController {
     @HttpCode(HttpStatus.OK)
     @ApiBearerAuth()
     @UseGuards(SystemAdminGuard)
-    async statisticalCompany() {
-        const statistical = await this.systemAdminService.statisticalCompany()
+    async statisticalCompany(@Query() getStaticInMonth: GetStaticInMonthDto) {
+        const { month, year } = getStaticInMonth
+
+        const statistical = await this.systemAdminService.statisticalCompany(
+            month,
+            year,
+        )
 
         return statistical
     }

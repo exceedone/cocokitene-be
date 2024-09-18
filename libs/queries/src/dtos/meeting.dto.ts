@@ -354,3 +354,19 @@ export class StatisticMeetingInMonthDto {
     })
     date: Date
 }
+
+export class GetStaticInMonthDto {
+    @IsNotEmpty()
+    @ApiProperty({
+        required: true,
+        example: new Date().getMonth() + 1,
+    })
+    month: number
+
+    @IsNotEmpty()
+    @ApiProperty({
+        required: true,
+        example: new Date().getFullYear(),
+    })
+    year: number
+}

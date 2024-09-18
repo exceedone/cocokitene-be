@@ -105,4 +105,17 @@ export class CompanyRepository extends Repository<Company> {
         await company.save()
         return company
     }
+
+    async countCreatedOfCompany(companyId: number) {
+        const company = await this.createQueryBuilder('company')
+            .select(['company.id as id'])
+            .where('company.id = :companyId', { companyId })
+            .leftJoin('meetings', 'meeting', 'company.id = meeting.companyId')
+            .leftJoin('users', 'user', 'user.companyId = company.id')
+            .addSelect(`COUNT(DISTINCT  meeting.id)`, 'totalCreatedMTGs')
+            .addSelect(`COUNT(DISTINCT user.id) `, 'totalCreatedAccount')
+            .getRawOne()
+
+        return company
+    }
 }

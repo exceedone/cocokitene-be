@@ -20,6 +20,7 @@ import { Logger } from 'winston'
 import { RoleMtgEnum } from '@shares/constants'
 import { RoleMtgService } from '@api/modules/role-mtgs/role-mtg.service'
 import { MeetingRoleMtgService } from '../meeting-role-mtgs/meeting-role-mtg.service'
+import { SocketGateway } from '../socket/socket.gateway'
 
 @Injectable()
 export class VotingService {
@@ -33,6 +34,10 @@ export class VotingService {
         private readonly meetingService: MeetingService,
         private readonly roleMtgService: RoleMtgService,
         private readonly meetingRoleMtgService: MeetingRoleMtgService,
+
+        @Inject(forwardRef(() => SocketGateway))
+        private readonly socketGateway: SocketGateway,
+
         @Inject('winston')
         private readonly logger: Logger,
     ) {}
@@ -71,6 +76,7 @@ export class VotingService {
                 HttpStatus.NOT_FOUND,
             )
         }
+        // console.log(proposal.type)
 
         if (proposal.meeting.companyId !== companyId) {
             throw new HttpException(
@@ -152,6 +158,15 @@ export class VotingService {
                 this.logger.info(
                     `[DAPP] User ID : ${userId} ${messageLog.VOTING_PROPOSAL_SHAREHOLDER_MEETING_SUCCESS.message} ${existedProposal.id}`,
                 )
+
+                this.socketGateway.server.emit(
+                    `voting-resolution-shareholder-meeting/${meetingId}`,
+                    {
+                        ...updateCountVoteExistedProposal,
+                        voterId: userId,
+                    },
+                )
+
                 return updateCountVoteExistedProposal
             } else {
                 let createdVoting: Voting
@@ -176,6 +191,15 @@ export class VotingService {
                     this.logger.info(
                         `[DAPP] User ID : ${userId} ${messageLog.VOTING_PROPOSAL_SHAREHOLDER_MEETING_SUCCESS.message} ${existedProposal.id}`,
                     )
+
+                    this.socketGateway.server.emit(
+                        `voting-resolution-shareholder-meeting/${meetingId}`,
+                        {
+                            ...existedProposal,
+                            voterId: userId,
+                        },
+                    )
+
                     return existedProposal
                 } catch (error) {
                     this.logger.error(
@@ -384,6 +408,15 @@ export class VotingService {
                 this.logger.info(
                     `[DAPP] User ID : ${userId} ${messageLog.VOTING_PROPOSAL_SHAREHOLDER_MEETING_SUCCESS.message} ${existedProposal.id}`,
                 )
+
+                this.socketGateway.server.emit(
+                    `voting-report-board-meeting/${meetingId}`,
+                    {
+                        ...updateCountVoteExistedProposal,
+                        voterId: userId,
+                    },
+                )
+
                 return updateCountVoteExistedProposal
             } else {
                 let createdVoting: Voting
@@ -408,6 +441,15 @@ export class VotingService {
                     this.logger.info(
                         `[DAPP] User ID : ${userId} ${messageLog.VOTING_PROPOSAL_SHAREHOLDER_MEETING_SUCCESS.message} ${existedProposal.id}`,
                     )
+
+                    this.socketGateway.server.emit(
+                        `voting-report-board-meeting/${meetingId}`,
+                        {
+                            ...existedProposal,
+                            voterId: userId,
+                        },
+                    )
+
                     return existedProposal
                 } catch (error) {
                     this.logger.error(

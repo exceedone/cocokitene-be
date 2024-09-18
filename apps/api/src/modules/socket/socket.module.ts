@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common'
+import { forwardRef, Module } from '@nestjs/common'
 import { SocketGateway } from '@api/modules/socket/socket.gateway'
 import { MessageModule } from '@api/modules/messages/message.module'
 import { ReactionMessageModule } from '../reaction_messages/reaction-message.module'
@@ -11,7 +11,7 @@ import { UserSeenMessageModule } from '../user-seen-message/user-seen-message.mo
         MessageModule,
         ReactionMessageModule,
         ReactionIconModule,
-        MeetingModule,
+        forwardRef(() => MeetingModule),
         UserSeenMessageModule,
     ],
     controllers: [],
