@@ -55,6 +55,7 @@ export class PlanService {
     async updatePlan(
         planId: number,
         updatePlanDto: UpdatePlanDto,
+        systemAdminId: number,
     ): Promise<Plan> {
         let existedPlan = await this.getPlanById(planId)
         if (!existedPlan) {
@@ -76,6 +77,7 @@ export class PlanService {
             existedPlan = await this.planRepository.updatePlan(
                 planId,
                 updatePlanDto,
+                systemAdminId,
             )
             this.logger.info(
                 `${messageLog.UPDATE_SERVICE_PLAN_SUCCESS.message} ${existedPlan.id}`,
@@ -95,7 +97,10 @@ export class PlanService {
         }
     }
 
-    async createPlan(createPlanDto: CreatePlanDto): Promise<Plan> {
+    async createPlan(
+        createPlanDto: CreatePlanDto,
+        systemAdminId: number,
+    ): Promise<Plan> {
         try {
             const planExisted = await this.getPlanByPlanName(
                 createPlanDto.planName,
@@ -111,6 +116,7 @@ export class PlanService {
             }
             const createdPlan = await this.planRepository.createPlan(
                 createPlanDto,
+                systemAdminId,
             )
             this.logger.info(
                 `${messageLog.CREATE_SERVICE_PLAN_SUCCESS.message} ${createdPlan.id}`,
@@ -141,5 +147,21 @@ export class PlanService {
         )
 
         return servicePlan
+    }
+
+    async getAllOptionServicePlan(): Promise<Plan[]> {
+        const optionServicePlan =
+            await this.planRepository.getAllOptionServicePlan()
+
+        return optionServicePlan
+    }
+
+    async getServicePlanFreeTrial(): Promise<Plan> {
+        const servicePlanFreeTrial = await this.planRepository.findOne({
+            where: {
+                price: 0,
+            },
+        })
+        return servicePlanFreeTrial
     }
 }

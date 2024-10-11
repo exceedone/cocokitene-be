@@ -31,6 +31,7 @@ export class PlanRepository extends Repository<Plan> {
     async updatePlan(
         planId: number,
         updatePlanDto: UpdatePlanDto,
+        systemAdminId: number,
     ): Promise<Plan> {
         try {
             await this.createQueryBuilder('plan_mst')
@@ -42,6 +43,7 @@ export class PlanRepository extends Repository<Plan> {
                     maxMeeting: updatePlanDto.maxMeeting,
                     price: updatePlanDto.price,
                     maxShareholderAccount: updatePlanDto.maxShareholderAccount,
+                    updatedSystemId: systemAdminId,
                 })
                 .where('plan_mst.id = :planId', { planId })
                 .execute()
@@ -60,9 +62,13 @@ export class PlanRepository extends Repository<Plan> {
         }
     }
 
-    async createPlan(createPlanDto: CreatePlanDto): Promise<Plan> {
+    async createPlan(
+        createPlanDto: CreatePlanDto,
+        systemAdminId: number,
+    ): Promise<Plan> {
         const plan = await this.create({
             ...createPlanDto,
+            createdSystemId: systemAdminId,
         })
         await plan.save()
         return plan
@@ -85,5 +91,14 @@ export class PlanRepository extends Repository<Plan> {
             .groupBy('plan_mst.id')
 
         return paginateRaw(queryBuilder, { page, limit })
+    }
+
+    async getAllOptionServicePlan(): Promise<Plan[]> {
+        const listOption = await this.createQueryBuilder('plan_mst')
+            .select(['plan_mst.id', 'plan_mst.planName', 'plan_mst.price'])
+            .where('plan_mst.price > 0')
+            .getMany()
+
+        return listOption
     }
 }

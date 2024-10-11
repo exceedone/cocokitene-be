@@ -5,6 +5,7 @@ import { paginateRaw, Pagination } from 'nestjs-typeorm-paginate'
 import { CreateCompanyDto, GetAllCompanyDto } from '@dtos/company.dto'
 import { UpdateCompanyDto } from '@dtos/company.dto'
 import { HttpException, HttpStatus } from '@nestjs/common'
+import { CompanyStatusEnum } from '@shares/constants'
 @CustomRepository(Company)
 export class CompanyRepository extends Repository<Company> {
     async getCompanyByTaxCompany(tax): Promise<Company> {
@@ -62,6 +63,7 @@ export class CompanyRepository extends Repository<Company> {
     async updateCompany(
         companyId: number,
         updateCompanyDto: UpdateCompanyDto,
+        systemAdminId: number,
     ): Promise<Company> {
         try {
             await this.createQueryBuilder('company')
@@ -80,6 +82,7 @@ export class CompanyRepository extends Repository<Company> {
                     statusId: updateCompanyDto.statusId,
                     planId: updateCompanyDto.planId,
                     representativeUser: updateCompanyDto.representativeUser,
+                    updatedSystemId: systemAdminId,
                 })
                 .where('company.id = :companyId', { companyId })
                 .execute()
@@ -98,12 +101,20 @@ export class CompanyRepository extends Repository<Company> {
         }
     }
 
-    async createCompany(createCompanyDto: CreateCompanyDto): Promise<Company> {
-        const company = await this.create({
-            ...createCompanyDto,
-        })
-        await company.save()
-        return company
+    async createCompany(
+        createCompanyDto: CreateCompanyDto,
+        systemAdminId: number,
+    ): Promise<Company> {
+        try {
+            const company = await this.create({
+                ...createCompanyDto,
+                createdSystemId: systemAdminId,
+            })
+            await company.save()
+            return company
+        } catch (error) {
+            console.log('error: ', error)
+        }
     }
 
     async countCreatedOfCompany(companyId: number) {
@@ -117,5 +128,54 @@ export class CompanyRepository extends Repository<Company> {
             .getRawOne()
 
         return company
+    }
+
+    async getAllOptionCompany() {
+        const optionCompany = await this.createQueryBuilder('company')
+            .select(['company.id', 'company.companyName'])
+            .leftJoin(
+                'company_status_mst',
+                'companyStatus',
+                'companyStatus.id = company.statusId',
+            )
+            .where('companyStatus.status = :active', {
+                active: CompanyStatusEnum.ACTIVE,
+            })
+            .leftJoin(
+                'company_service',
+                'companyService',
+                'companyService.companyId = company.id',
+            )
+            .leftJoin(
+                'plan_mst',
+                'planService',
+                'planService.id = companyService.planId',
+            )
+            .addSelect('companyService.planId', 'servicePlanId')
+            .addSelect('companyService.expirationDate', 'expirationDate')
+            .addSelect('planService.price', 'servicePlanPrice')
+            .getRawMany()
+
+        return optionCompany
+    }
+
+    async updateServicePlanForCompany(
+        companyId: number,
+        servicePlanId: number,
+    ) {
+        try {
+            await this.createQueryBuilder('company')
+                .update(Company)
+                .set({
+                    planId: servicePlanId,
+                })
+                .where('company.id = :companyId', { companyId })
+                .execute()
+        } catch (error) {
+            throw new HttpException(
+                { message: error.message },
+                HttpStatus.INTERNAL_SERVER_ERROR,
+            )
+        }
     }
 }

@@ -14,6 +14,7 @@ import {
     CONTRACT_TYPE,
     RoleBoardMtgEnum,
     RoleMtgEnum,
+    StatusSubscription,
     TRANSACTION_STATUS,
 } from '@shares/constants'
 import { httpErrors } from '@shares/exception-filter'
@@ -39,6 +40,12 @@ import { S3Service } from '@api/modules/s3/s3.service'
 import { join } from 'path'
 import * as fs from 'fs'
 import configuration from '@shares/config/configuration'
+import { ServiceSubscriptionRepository } from '@repositories/service-subscription.repository'
+import { CompanyServicePlanRepository } from '@repositories/company-service.repository'
+import { PlanRepository } from '@repositories/plan.repository'
+import { CompanyRepository } from '@repositories/company.repository'
+import { MailerService } from '@nestjs-modules/mailer'
+import { UserRepository } from '@repositories/user.repository'
 
 @Injectable()
 export class TransactionService {
@@ -54,6 +61,14 @@ export class TransactionService {
         private readonly meetingRoleMtgRepository: MeetingRoleMtgRepository,
         private readonly roleMtgRepository: RoleMtgRepository,
         private readonly personnelVotingRepository: PersonnelVotingRepository,
+        private readonly serviceSubscriptionRepository: ServiceSubscriptionRepository,
+        private readonly companyServicePlanRepository: CompanyServicePlanRepository,
+        private readonly planRepository: PlanRepository,
+        private readonly companyRepository: CompanyRepository,
+        private readonly userRepository: UserRepository,
+
+        // @Inject(forwardRef(() => EmailService))
+        private readonly mailerService: MailerService,
 
         //Import s3 Service Backup Aws S3
         private readonly s3Service: S3Service,
@@ -502,12 +517,204 @@ export class TransactionService {
         //Create localFolder
         if (!fs.existsSync(folderPath)) {
             this.s3Service.backupBucketToLocal()
-            // console.log('The Bucket S3 has been successfully downloaded!!!!')
+            // console.log('create folder success!!!')
         } else {
             // console.log('folder is existed!!!!')
             console.log(
                 'The Bucket S3 has been downloaded today. Please try again on another day.',
             )
         }
+    }
+
+    //Apply servicePlan for company when system admin approved  , active date
+    async handleApplyServiceApprovedForCompany(): Promise<void> {
+        console.log(
+            'Run apply servicePlan approved by SystemAdmin when active date!!!',
+        )
+
+        //Get all subscription approved by systemAdmin, not apply and to active date
+        const serviceSubscriptionApply =
+            await this.serviceSubscriptionRepository.getAllServiceSubscriptionApply()
+
+        // Apply service plan approved by systemAdmin for company
+        await Promise.all([
+            ...serviceSubscriptionApply.map(async (serviceSubscription) => {
+                //Get servicePlan of company
+                const servicePlanOfCompany =
+                    await this.companyServicePlanRepository.getCompanyServicePlanByCompanyId(
+                        serviceSubscription.companyId,
+                    )
+
+                //Get service plan company subscription
+                const getServicePlanSubscription =
+                    await this.planRepository.findOne({
+                        where: {
+                            id: serviceSubscription.planId,
+                        },
+                    })
+                if (!getServicePlanSubscription) {
+                    throw new HttpException(
+                        httpErrors.PLAN_NOT_FOUND,
+                        HttpStatus.NOT_FOUND,
+                    )
+                }
+
+                // Apply service plan company subscription
+                const servicePlanOfCompanyApply =
+                    await this.companyServicePlanRepository.updateServicePlanOfCompany(
+                        servicePlanOfCompany.id,
+                        {
+                            companyId: serviceSubscription.companyId,
+                            planId: getServicePlanSubscription.id,
+                            expirationDate: String(
+                                serviceSubscription.expirationDate,
+                            ),
+                            meetingLimit: getServicePlanSubscription.maxMeeting,
+                            accountLimit:
+                                getServicePlanSubscription.maxShareholderAccount,
+                            storageLimit: getServicePlanSubscription.maxStorage,
+                        },
+                    )
+
+                // Update servicePlan id in company table
+                await this.companyRepository.updateServicePlanForCompany(
+                    serviceSubscription.companyId,
+                    getServicePlanSubscription.id,
+                )
+
+                // Change Resolve Flag when apply servicePlan for company
+                await this.serviceSubscriptionRepository.updateStatusApplied(
+                    serviceSubscription.id,
+                    StatusSubscription.APPLIED,
+                )
+
+                console.log(
+                    'Apply Service Subscription for company successfully!!!',
+                    servicePlanOfCompanyApply.companyId,
+                )
+            }),
+        ])
+
+        console.log(
+            'apply servicePlan approved by SystemAdmin when active date--------Done',
+        )
+    }
+
+    // Reminder Renewal ServicePlan nearing expiration
+    async handleReminderRenewalServicePlan() {
+        //Get servicePlan of Company nearing expiration
+        const companyNearingExpirationService =
+            await this.companyServicePlanRepository.getServicePlanNearingExpiration()
+
+        const cc_emails = configuration().email.cc_emails
+
+        companyNearingExpirationService.map(async (companyService) => {
+            const getAllSubscription =
+                await this.serviceSubscriptionRepository.getSubscriptionOfCompanyExtend(
+                    companyService.companyId,
+                    String(companyService.expirationDate),
+                )
+
+            if (getAllSubscription.length == 0) {
+                // Send Email to SupperAdmin Notice extend servicePlan for company
+                //Get current ServicePlan company using
+                const getServicePlanSubscription =
+                    await this.planRepository.findOne({
+                        where: {
+                            id: companyService.planId,
+                        },
+                    })
+                if (!getServicePlanSubscription) {
+                    throw new HttpException(
+                        httpErrors.PLAN_NOT_FOUND,
+                        HttpStatus.NOT_FOUND,
+                    )
+                }
+
+                const superAdminOfCompany =
+                    await this.userRepository.getSuperAdminCompany(
+                        companyService.companyId,
+                    )
+
+                const companyInfo = await this.companyRepository.findOne({
+                    where: {
+                        id: companyService.companyId,
+                    },
+                })
+
+                try {
+                    await this.mailerService.sendMail({
+                        to: superAdminOfCompany?.email ?? '',
+                        cc: cc_emails,
+                        subject: '【重要】有効期限切れのお知らせ',
+                        template: './send-email-reminder-renewal',
+                        context: {
+                            customerName: companyInfo.companyName ?? '',
+                            expiredDate: companyService.expirationDate,
+                            planName: getServicePlanSubscription.planName,
+                        },
+                    })
+
+                    console.log('Send Mail Notice Renew Successfully')
+                } catch (error) {
+                    console.log('error:', error)
+                }
+            }
+        })
+
+        //Send email notice to company has expired servicePlan
+        const companyExpiredService =
+            await this.companyServicePlanRepository.getAllCompanyExpiredService()
+
+        companyExpiredService.map(async (companyExpired) => {
+            const getAllSubscriptionService =
+                await this.serviceSubscriptionRepository.getSubscriptionOfCompanyExtend(
+                    companyExpired.companyId,
+                    String(companyExpired.expirationDate),
+                )
+
+            if (getAllSubscriptionService.length == 0) {
+                // Send email to SupperAdmin notice company has expired servicePlan
+
+                const superAdminOfCompany =
+                    await this.userRepository.getSuperAdminCompany(
+                        companyExpired.companyId,
+                    )
+
+                const companyInfo = await this.companyRepository.findOne({
+                    where: {
+                        id: companyExpired.companyId,
+                    },
+                })
+
+                const expiredDateAfter30 = new Date(
+                    companyExpired.expirationDate,
+                )
+                expiredDateAfter30.setMonth(expiredDateAfter30.getMonth() + 1)
+
+                try {
+                    await this.mailerService.sendMail({
+                        to: superAdminOfCompany?.email ?? '',
+                        cc: cc_emails,
+                        subject: 'サービス停止のお知らせ',
+                        template: './send-email-reminder-expired',
+                        context: {
+                            customerName: companyInfo.companyName ?? '',
+                            expiredDate: companyExpired.expirationDate,
+                            deleteDate: `${expiredDateAfter30.getFullYear()}-${
+                                expiredDateAfter30.getMonth() + 1
+                            }-${expiredDateAfter30
+                                .getDate()
+                                .toString()
+                                .padStart(2, '0')}`,
+                            phoneNumberSystem: '03-5625-0900',
+                        },
+                    })
+                    console.log('Send Mail Successfully')
+                } catch (error) {
+                    console.log('error:', error)
+                }
+            }
+        })
     }
 }

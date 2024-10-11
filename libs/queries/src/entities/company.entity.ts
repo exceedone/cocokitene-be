@@ -13,6 +13,7 @@ import { CompanyStatus } from './company-status.entity'
 import { Plan } from './plan.entity'
 import { Role } from './role.entity'
 import { RoleMtg } from '@entities/meeting-role.entity'
+import { SystemAdmin } from './system-admin.entity'
 
 @Entity('company')
 export class Company extends BaseEntity {
@@ -143,6 +144,34 @@ export class Company extends BaseEntity {
     @CreateDateColumn({ name: 'created_at' })
     createdAt: Date
 
+    @Column({
+        nullable: true,
+        name: 'created_system',
+        type: 'integer',
+        width: 7,
+    })
+    createdSystemId: number
+
     @UpdateDateColumn({ name: 'updated_at' })
     updatedAt: Date
+
+    @Column({
+        nullable: true,
+        name: 'updated_system',
+        type: 'integer',
+        width: 7,
+    })
+    updatedSystemId: number
+
+    @ManyToOne(() => SystemAdmin)
+    @JoinColumn({
+        name: 'created_system',
+    })
+    creator: SystemAdmin
+
+    @ManyToOne(() => SystemAdmin)
+    @JoinColumn({
+        name: 'updated_system',
+    })
+    updater: SystemAdmin
 }

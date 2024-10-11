@@ -3,6 +3,7 @@ import { UserStatusController } from '@api/modules/user-status/user-status.contr
 import { UserStatusService } from '@api/modules/user-status/user-status.service'
 
 @Module({
+    imports: [],
     controllers: [UserStatusController],
     providers: [UserStatusService],
     exports: [UserStatusService],

@@ -9,6 +9,8 @@ import { RoleModule } from '@api/modules/roles/role.module'
 import { UserStatusModule } from '@api/modules/user-status/user-status.module'
 import { EmailModule } from '@api/modules/emails/email.module'
 import { SystemNotificationModule } from '../system-notification/system-notification.module'
+import { ServiceSubscriptionModule } from '../service-subscription/service-subscription.module'
+import { CompanyServicePlanModule } from '../company-service/company-service.module'
 
 @Module({
     imports: [
@@ -20,6 +22,8 @@ import { SystemNotificationModule } from '../system-notification/system-notifica
         SystemNotificationModule,
         UserStatusModule,
         forwardRef(() => EmailModule),
+        ServiceSubscriptionModule,
+        forwardRef(() => CompanyServicePlanModule),
     ],
     controllers: [SystemAdminController],
     providers: [SystemAdminService],

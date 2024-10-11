@@ -62,6 +62,7 @@ import { hashMd5 } from '@shares/utils/md5'
 import { dateTimeToEpochTime } from '@shares/utils'
 import { PersonnelVotingService } from '../personnel-voting/personnel-voting.service'
 import { PersonnelVotingRepository } from '@repositories/personnel-voting.repository'
+import { ServicePlanOfCompanyService } from '../company-service/company-service.service'
 
 @Injectable()
 export class MeetingService {
@@ -86,6 +87,7 @@ export class MeetingService {
         private readonly votingCandidateService: VotingCandidateService,
         private readonly personnelVotingService: PersonnelVotingService,
         private readonly personnelVotingRepository: PersonnelVotingRepository,
+        private readonly servicePlanOfCompanyService: ServicePlanOfCompanyService,
         @Inject('winston')
         private readonly logger: Logger,
     ) {}
@@ -94,7 +96,7 @@ export class MeetingService {
         getAllMeetingDto: GetAllMeetingDto,
         user: User,
         companyId: number,
-    ): Promise<Pagination<Meeting>> {
+    ): Promise<{ meetings: Pagination<Meeting>; allowCreate: boolean }> {
         const listMeetingsResponse =
             await this.meetingRepository.getInternalListMeeting(
                 companyId,
@@ -116,7 +118,23 @@ export class MeetingService {
             canUserCreateMeeting,
             getAllMeetingDto,
         )
-        return meetings
+
+        const servicePlanOfCompany =
+            await this.servicePlanOfCompanyService.getServicePlanOfCompany(
+                companyId,
+            )
+
+        const currentDate = new Date() // CurrentDate
+        const expiredDate = new Date(servicePlanOfCompany.expirationDate)
+        expiredDate.setDate(expiredDate.getDate() + 1)
+
+        return {
+            meetings,
+            allowCreate:
+                servicePlanOfCompany.meetingLimit >
+                    servicePlanOfCompany.meetingCreated &&
+                expiredDate > currentDate,
+        }
     }
 
     async attendanceMeeting(
@@ -209,6 +227,27 @@ export class MeetingService {
         if (!companyId) {
             throw new HttpException(
                 httpErrors.COMPANY_NOT_FOUND,
+                HttpStatus.BAD_REQUEST,
+            )
+        }
+
+        //Check limit service Plan
+        const servicePlanOfCompany =
+            await this.servicePlanOfCompanyService.getServicePlanOfCompany(
+                companyId,
+            )
+
+        const currentDate = new Date() // CurrentDate
+        const expiredDate = new Date(servicePlanOfCompany.expirationDate)
+        expiredDate.setDate(expiredDate.getDate() + 1)
+
+        if (
+            servicePlanOfCompany.meetingCreated >=
+                servicePlanOfCompany.meetingLimit ||
+            currentDate > expiredDate
+        ) {
+            throw new HttpException(
+                httpErrors.SERVICE_PLAN_LIMIT,
                 HttpStatus.BAD_REQUEST,
             )
         }
@@ -358,6 +397,24 @@ export class MeetingService {
                     }),
                 ),
             ])
+        } catch (error) {
+            throw new HttpException(
+                { message: error.message },
+                HttpStatus.INTERNAL_SERVER_ERROR,
+            )
+        }
+
+        try {
+            // Update account created for company
+            await this.servicePlanOfCompanyService.updateCreatedOfServicePlanOfCompany(
+                servicePlanOfCompany.id,
+                {
+                    companyId: servicePlanOfCompany.companyId,
+                    meetingCreated: servicePlanOfCompany.meetingCreated + 1,
+                    accountCreated: servicePlanOfCompany.accountCreated,
+                    storageUsed: servicePlanOfCompany.storageUsed,
+                },
+            )
         } catch (error) {
             throw new HttpException(
                 { message: error.message },
@@ -618,6 +675,23 @@ export class MeetingService {
                 HttpStatus.BAD_REQUEST,
             )
         }
+
+        const servicePlanOfCompany =
+            await this.servicePlanOfCompanyService.getServicePlanOfCompany(
+                companyId,
+            )
+
+        const currentDate = new Date() // CurrentDate
+        const expiredDate = new Date(servicePlanOfCompany.expirationDate)
+        expiredDate.setDate(expiredDate.getDate() + 1)
+
+        if (currentDate > expiredDate) {
+            throw new HttpException(
+                httpErrors.SERVICE_PLAN_EXPIRED,
+                HttpStatus.BAD_REQUEST,
+            )
+        }
+
         let existedMeeting = await this.getMeetingByMeetingIdAndCompanyId(
             meetingId,
             companyId,

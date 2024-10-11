@@ -63,4 +63,16 @@ export class CronjobService {
     async handleBackupBucketS3intoLocal() {
         await this.transactionService.handleBackupS3toLocal()
     }
+
+    // @Cron(CronExpression.EVERY_10_SECONDS)
+    @Cron(configuration().service.cronJobHandleApplyServiceApprovedBySys)
+    async handleApplyServicePlanApprovedBySystem() {
+        await this.transactionService.handleApplyServiceApprovedForCompany()
+    }
+
+    // @Cron(CronExpression.EVERY_10_SECONDS)
+    @Cron(configuration().service.cronJobHandleReminderRenewalServicePlan)
+    async handleReminderRenewalServicePlan() {
+        await this.transactionService.handleReminderRenewalServicePlan()
+    }
 }

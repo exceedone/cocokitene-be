@@ -20,6 +20,7 @@ import { RoleMtgModule } from '@api/modules/role-mtgs/role-mtg.module'
 import { ChatPermissionModule } from '@api/modules/chat-permission/chat-permission.module'
 import { VotingCandidateModule } from '../voting-candidate/voting-candidate.module'
 import { PersonnelVotingModule } from '../personnel-voting/personnel-voting.module'
+import { CompanyServicePlanModule } from '../company-service/company-service.module'
 
 @Module({
     imports: [
@@ -31,11 +32,11 @@ import { PersonnelVotingModule } from '../personnel-voting/personnel-voting.modu
         ChatPermissionModule,
         forwardRef(() => UserModule),
         MeetingRoleMtgModule,
-
         forwardRef(() => VotingModule),
         forwardRef(() => BoardMeetingModule),
         forwardRef(() => VotingCandidateModule),
         forwardRef(() => PersonnelVotingModule),
+        CompanyServicePlanModule,
     ],
     controllers: [MeetingController],
     providers: [MeetingService],

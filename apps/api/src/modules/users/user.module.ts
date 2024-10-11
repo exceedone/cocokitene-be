@@ -6,6 +6,7 @@ import { UserRoleModule } from '@api/modules/user-roles/user-role.module'
 import { EmailModule } from '@api/modules/emails/email.module'
 import { MyLoggerModule } from '@api/modules/loggers/logger.module'
 import { RoleModule } from '../roles/role.module'
+import { CompanyServicePlanModule } from '../company-service/company-service.module'
 
 @Module({
     imports: [
@@ -14,6 +15,7 @@ import { RoleModule } from '../roles/role.module'
         forwardRef(() => EmailModule),
         MyLoggerModule,
         RoleModule,
+        CompanyServicePlanModule,
     ],
     controllers: [UserController],
     providers: [UserService],

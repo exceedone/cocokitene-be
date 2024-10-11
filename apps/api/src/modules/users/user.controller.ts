@@ -103,10 +103,13 @@ export class UserController {
         @UserScope() user: User,
     ) {
         const companyId = user?.companyId
+        const updaterId = user.id
+
         const updateUser = await this.userService.updateUser(
             companyId,
             userId,
             updateUserDto,
+            updaterId,
         )
         return updateUser
     }
@@ -121,10 +124,13 @@ export class UserController {
         @UserScope() user: User,
     ) {
         const companyId = user?.companyId
+        const creatorId = user.id
+
         const createdUser = await this.userService.createUser(
             companyId,
             createUserDto,
             user.email,
+            creatorId,
         )
         return createdUser
     }

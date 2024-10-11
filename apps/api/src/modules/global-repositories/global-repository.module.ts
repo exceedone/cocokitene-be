@@ -30,6 +30,8 @@ import { ReactionIconRepository } from '@repositories/reaction-icon.repository'
 import { UserSeenMessageRepository } from '@repositories/seen-messages.repository'
 import { PersonnelVotingRepository } from '@repositories/personnel-voting.repository'
 import { SystemNotificationRepository } from '@repositories/system-notification.repository'
+import { ServiceSubscriptionRepository } from '@repositories/service-subscription.repository'
+import { CompanyServicePlanRepository } from '@repositories/company-service.repository'
 
 const commonRepositories = [
     UserRepository,
@@ -63,6 +65,8 @@ const commonRepositories = [
     UserSeenMessageRepository,
     PersonnelVotingRepository,
     SystemNotificationRepository,
+    ServiceSubscriptionRepository,
+    CompanyServicePlanRepository,
 ]
 
 @Global()

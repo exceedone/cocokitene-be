@@ -87,6 +87,10 @@ interface Configuration {
         folderBackup: string
         cronJobHandleBackupBucketS3toLocal: string
     }
+    service: {
+        cronJobHandleApplyServiceApprovedBySys: string
+        cronJobHandleReminderRenewalServicePlan: string
+    }
 }
 
 export default (): Configuration => ({
@@ -195,5 +199,11 @@ export default (): Configuration => ({
         folderBackup: process.env.FOLDER_BACKUP,
         cronJobHandleBackupBucketS3toLocal:
             process.env.CRON_JOB_HANDLE_BACK_UP_BUCKET_S3_TO_LOCAL,
+    },
+    service: {
+        cronJobHandleApplyServiceApprovedBySys:
+            process.env.CRON_JOB_HANDLE_APPLY_SERVICE_APPROVED_BY_SYS,
+        cronJobHandleReminderRenewalServicePlan:
+            process.env.CRON_JOB_HANDLE_REMINDER_RENEWAL_SERVICE_PLAN,
     },
 })

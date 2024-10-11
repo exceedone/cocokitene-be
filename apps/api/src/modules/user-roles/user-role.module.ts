@@ -1,9 +1,9 @@
-import { Module } from '@nestjs/common'
+import { forwardRef, Module } from '@nestjs/common'
 import { UserRoleService } from '@api/modules/user-roles/user-role.service'
 import { RoleModule } from '@api/modules/roles/role.module'
 
 @Module({
-    imports: [RoleModule],
+    imports: [forwardRef(() => RoleModule)],
     providers: [UserRoleService],
     exports: [UserRoleService],
 })

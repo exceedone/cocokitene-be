@@ -11,6 +11,7 @@ import { ProposalFileRepository } from '@repositories/proposal-file.repository'
 import { TransactionRepository } from '@repositories/transaction.repository'
 import { BlockModule } from '../block/block.module'
 import { MeetingCrawler } from './meeting-crawler'
+import configuration from '@shares/config/configuration'
 const Repositories = TypeOrmExModule.forCustomRepository([
     UserMeetingRepository,
     MeetingRepository,
@@ -20,7 +21,11 @@ const Repositories = TypeOrmExModule.forCustomRepository([
 ])
 @Module({
     imports: [
-        ConfigModule.forRoot(),
+        ConfigModule.forRoot({
+            isGlobal: true,
+            load: [configuration],
+        }),
+        // ConfigModule.forRoot(),
         ScheduleModule.forRoot(),
         BlockModule,
         Repositories,

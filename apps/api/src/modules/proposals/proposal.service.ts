@@ -60,8 +60,6 @@ export class ProposalService {
                 })
 
             if (files && files.length > 0) {
-                console.log(files)
-
                 await Promise.all([
                     ...files.map((file) =>
                         this.proposalFileService.createProposalFile({

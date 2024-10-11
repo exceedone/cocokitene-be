@@ -110,8 +110,14 @@ export class User extends BaseEntity {
     @CreateDateColumn({ name: 'created_at' })
     createdAt: Date
 
+    @Column({ nullable: true, name: 'creator_id', type: 'integer', width: 11 })
+    creatorId: number
+
     @UpdateDateColumn({ name: 'updated_at' })
     updatedAt: Date
+
+    @Column({ nullable: true, name: 'updater_id', type: 'integer', width: 11 })
+    updaterId: number
 
     @ManyToOne(() => UserStatus)
     @JoinColumn({

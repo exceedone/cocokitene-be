@@ -141,7 +141,7 @@ export class MeetingRepository extends Repository<Meeting> {
 
         if (type == MeetingTime.FUTURE) {
             queryBuilder.andWhere(
-                'meetings.startTime >= :currentDateTime OR (meetings.startTime <= :currentDateTime AND meetings.endTime >= :currentDateTime)',
+                '(meetings.startTime >= :currentDateTime OR (meetings.startTime <= :currentDateTime AND meetings.endTime >= :currentDateTime))',
                 {
                     currentDateTime: currentDateTime,
                 },
@@ -249,7 +249,7 @@ export class MeetingRepository extends Repository<Meeting> {
     async updateMeeting(
         meetingId: number,
         updateMeetingDto: UpdateMeetingDto,
-        creatorId: number,
+        updaterId: number,
         companyId: number,
     ): Promise<Meeting> {
         await this.createQueryBuilder('meetings')
@@ -262,6 +262,7 @@ export class MeetingRepository extends Repository<Meeting> {
                 endVotingTime: updateMeetingDto.endVotingTime,
                 meetingLink: updateMeetingDto.meetingLink,
                 status: updateMeetingDto.status,
+                updaterId: updaterId,
             })
             .where('meetings.id = :meetingId', { meetingId })
             .execute()
@@ -517,7 +518,7 @@ export class MeetingRepository extends Repository<Meeting> {
             companyId: companyId,
         })
         queryBuilder.andWhere(
-            '(MONTH(meetings.startTime) = :month AND YEAR(meetings.startTime) = :year) OR (MONTH(meetings.endTime) = :month AND YEAR(meetings.endTime) = :year)',
+            '((MONTH(meetings.startTime) = :month AND YEAR(meetings.startTime) = :year) OR (MONTH(meetings.endTime) = :month AND YEAR(meetings.endTime) = :year))',
             {
                 month: month,
                 year: year,

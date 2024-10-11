@@ -38,6 +38,8 @@ import { UserSeenMessageModule } from './user-seen-message/user-seen-message.mod
 import { TransactionModule } from './transaction/transaction.module'
 import { PersonnelVotingModule } from './personnel-voting/personnel-voting.module'
 import { DashBoardModule } from './dash-board/dash-board.module'
+import { CompanyServicePlanModule } from './company-service/company-service.module'
+import { ServiceSubscriptionModule } from './service-subscription/service-subscription.module'
 
 @Module({
     imports: [
@@ -80,6 +82,8 @@ import { DashBoardModule } from './dash-board/dash-board.module'
         TransactionModule,
         PersonnelVotingModule,
         DashBoardModule,
+        CompanyServicePlanModule,
+        ServiceSubscriptionModule,
     ],
     controllers: [ApiController],
     providers: [ApiService],

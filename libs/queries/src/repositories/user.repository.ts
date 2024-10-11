@@ -230,6 +230,7 @@ export class UserRepository extends Repository<User> {
         userId: number,
         companyId: number,
         updateUserDto: UpdateUserDto,
+        updaterId: number,
     ): Promise<User> {
         await this.createQueryBuilder('users')
             .update(User)
@@ -241,6 +242,7 @@ export class UserRepository extends Repository<User> {
                 statusId: updateUserDto.statusId,
                 phone: updateUserDto.phone,
                 avatar: updateUserDto.avatar,
+                updaterId: updaterId,
             })
             .where('users.id = :userId', {
                 userId: userId,
@@ -282,12 +284,14 @@ export class UserRepository extends Repository<User> {
     async createUser(
         companyId: number,
         createUserDto: CreateUserDto,
+        creatorId: number,
     ): Promise<User> {
         const user = await this.create({
             ...createUserDto,
             walletAddress: createUserDto.walletAddress || null,
             shareQuantity: createUserDto.shareQuantity || null,
             companyId,
+            creatorId: creatorId,
         })
         await user.save()
         return user
@@ -322,6 +326,7 @@ export class UserRepository extends Repository<User> {
                 email: updateOwnProfileDto.email,
                 phone: updateOwnProfileDto.phone,
                 avatar: updateOwnProfileDto.avatar,
+                updaterId: userId,
             })
             .where('users.id = :userId', {
                 userId: userId,

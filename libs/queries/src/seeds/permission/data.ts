@@ -95,4 +95,8 @@ export const permissionData: InsertPermissionDto[] = [
         key: PermissionEnum.SEND_MAIL_TO_BOARD,
         description: 'the user with this right can send email to boards',
     },
+    {
+        key: PermissionEnum.SUPER_ADMIN_PERMISSION,
+        description: 'permission for only supper admin role',
+    },
 ]

@@ -19,8 +19,8 @@ export const planData: InsertPlanDto[] = [
             'こちらは試用版です、一ヶ月間が切れると自動的に無料版に切り替え',
         maxStorage: 40,
         maxMeeting: 30,
-        price: 0,
-        maxShareholderAccount: 150,
+        price: 100,
+        maxShareholderAccount: 100,
     },
     {
         planName: '無料版',

@@ -36,7 +36,10 @@ export class S3Service {
         this.folderBackup = configuration().backup.folderBackup
     }
 
-    async getPresignedUrls(getPresignedUrlDto: GetPresignedUrlDto): Promise<{
+    async getPresignedUrls(
+        getPresignedUrlDto: GetPresignedUrlDto,
+        companyId: number,
+    ): Promise<{
         uploadUrls: string[]
     }> {
         const { meetingFiles } = getPresignedUrlDto
@@ -46,7 +49,14 @@ export class S3Service {
         for (const { fileName, fileType } of meetingFiles) {
             const bucketParam = {
                 Bucket: this.bucketName,
-                Key: fileType + '/' + Date.now() + '/' + fileName,
+                Key:
+                    companyId +
+                    '/' +
+                    fileType +
+                    '/' +
+                    Date.now() +
+                    '/' +
+                    fileName,
             }
             presignedUrlPromises.push(this.getPresignedUrl(bucketParam))
         }

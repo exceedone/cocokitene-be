@@ -80,6 +80,9 @@ export class Meeting extends BaseEntity {
     @Column({ nullable: false, name: 'creator_id', type: 'integer', width: 11 })
     creatorId: number
 
+    @Column({ nullable: true, name: 'updater_id', type: 'integer', width: 11 })
+    updaterId: number
+
     @Column({
         nullable: true,
         name: 'chat_permission_id',
@@ -107,6 +110,12 @@ export class Meeting extends BaseEntity {
         name: 'creator_id',
     })
     creator: User
+
+    @ManyToOne(() => User)
+    @JoinColumn({
+        name: 'updater_id',
+    })
+    updater: User
 
     @OneToMany(() => MeetingFile, (meetingFile) => meetingFile.meeting)
     meetingFiles: MeetingFile[]

@@ -1,0 +1,37 @@
+<html lang='en'></html>
+    <head>
+        <meta charset='UTF-8' />
+        <meta name='viewport' content='width=device-width, initial-scale=1.0' />
+        <title>サービス停止のお知らせ</title>
+        <style>
+            h3 {font-style: normal;font-weight: normal}
+        </style>
+    </head>
+    <body>
+        <h3>{{customerName}}様</h3>
+
+        <h3
+        >平素より、私たちのサービスをご利用いただき、誠にありがとうございます。</h3>
+        <h3
+        >お客様がサービスを停止されることを確認いたしました。以下の点についてご案内いたします。</h3>
+
+        <ul>
+            <li><strong>サービス停止日:</strong> <strong>{{expiredDate}}</strong></li>
+        </ul>
+
+        <h3>データの取り扱い: </h3>
+        <h3
+        >サービス停止後、お客様は過去のデータを確認するためにシステムにアクセスできますが、<strong>{{deleteDate}}</strong>（1ヶ月後）にはデータが削除されます。</h3>
+        <h3>データの保管が必要な場合は、<strong>{{phoneNumberSystem}}</strong> までご連絡ください。</h3>
+        <br>
+        <h3
+        >ご不明点やご質問がございましたら、どうぞお気軽にお問い合わせください。</h3>
+        <h3>今後ともよろしくお願い申し上げます。</h3>
+        <br />
+        <h3>敬具</h3>
+
+        <h3
+            style='font-weight: bold;'
+        >これは自動返信メールです。返信しないでください</h3>
+    </body>
+</html>

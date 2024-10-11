@@ -51,6 +51,7 @@ import { UserModule } from '../users/user.module'
         RoleMtgModule,
         MeetingRoleMtgModule,
         forwardRef(() => UserModule),
+        // forwardRef(() => CompanyServicePlanModule),
     ],
 
     providers: [EmailService],

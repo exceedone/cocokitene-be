@@ -5,6 +5,7 @@ export interface LoginResponseData {
     accessToken: string
     refreshToken: string
     userData: User
+    serviceIsExpired: boolean
 }
 
 export interface SystemAdminLoginResponseData {

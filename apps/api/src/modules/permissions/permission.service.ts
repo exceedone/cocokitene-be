@@ -15,18 +15,21 @@ export class PermissionService {
             await this.permissionRepository.getAllPermissions(
                 getAllPermissionDto,
             )
-        const [permissionBasic] = await Promise.all([
+        const [permissionBasic, permissionSupperAdmin] = await Promise.all([
             this.permissionRepository.getPermissionByPermissionName(
                 PermissionEnum.BASIC_PERMISSION,
             ),
-            // this.permissionRepository.getPermissionByPermissionName(
-            //     PermissionEnum.LIST_ROLES_NORMAL,
-            // ),
+            this.permissionRepository.getPermissionByPermissionName(
+                PermissionEnum.SUPER_ADMIN_PERMISSION,
+            ),
         ])
 
         const filteredNormalPermissions = normalPermissions.filter(
             (permission) => {
-                return permission.id !== permissionBasic.id
+                return (
+                    permission.id !== permissionBasic.id &&
+                    permission.id !== permissionSupperAdmin.id
+                )
             },
         )
 
@@ -76,7 +79,7 @@ export class PermissionService {
         const permissions = await Promise.all(
             [
                 PermissionEnum.LIST_ACCOUNT,
-                PermissionEnum.EDIT_ACCOUNT,
+                PermissionEnum.DETAIL_ACCOUNT,
                 PermissionEnum.LIST_SHAREHOLDERS,
                 PermissionEnum.BOARD_MEETING,
                 PermissionEnum.DETAIL_BOARD_MEETING,

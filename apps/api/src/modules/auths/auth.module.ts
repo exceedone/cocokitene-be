@@ -5,9 +5,16 @@ import { UserModule } from '@api/modules/users/user.module'
 import { UserRoleModule } from '@api/modules/user-roles/user-role.module'
 import { RoleModule } from '@api/modules/roles/role.module'
 import { EmailModule } from '@api/modules/emails/email.module'
+import { CompanyServicePlanModule } from '../company-service/company-service.module'
 
 @Module({
-    imports: [UserModule, RoleModule, UserRoleModule, EmailModule],
+    imports: [
+        UserModule,
+        RoleModule,
+        UserRoleModule,
+        EmailModule,
+        CompanyServicePlanModule,
+    ],
     controllers: [AuthController],
     providers: [AuthService],
 })

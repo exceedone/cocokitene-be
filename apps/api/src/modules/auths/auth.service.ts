@@ -50,6 +50,7 @@ import {
 } from '@shares/utils'
 import { CompanyRepository } from '@repositories/company.repository'
 import { Logger } from 'winston'
+import { ServicePlanOfCompanyService } from '../company-service/company-service.service'
 
 @Injectable()
 export class AuthService {
@@ -61,6 +62,7 @@ export class AuthService {
         private readonly systemAdminRepository: SystemAdminRepository,
         private readonly emailService: EmailService,
         private readonly companyRepository: CompanyRepository,
+        private readonly servicePlanOfCompanyService: ServicePlanOfCompanyService,
         @Inject('winston')
         private readonly logger: Logger,
     ) {}
@@ -114,14 +116,16 @@ export class AuthService {
         user.nonce = uuid()
         await user.save()
 
-        const { userData, accessToken, refreshToken } =
+        const { userData, accessToken, refreshToken, serviceIsExpired } =
             await this.generateResponseLoginData(user)
+
         this.logger.info(
             `${messageLog.LOGIN_WALLET_ADDRESS_SUCCESS.message}` +
                 userData.walletAddress,
         )
         return {
             userData,
+            serviceIsExpired,
             accessToken,
             refreshToken,
         }
@@ -131,6 +135,7 @@ export class AuthService {
         let accessToken
         let refreshToken
         let userData
+        let serviceIsExpired
 
         try {
             const roleIds = await this.userRoleService.getRoleIdsByUserId(
@@ -169,6 +174,11 @@ export class AuthService {
                     this.configService.get('api.refreshTokenExpireInSec'),
                 ),
             })
+
+            serviceIsExpired =
+                await this.servicePlanOfCompanyService.checkServiceExpired(
+                    user.companyId,
+                )
         } catch (error) {
             throw new HttpException(
                 {
@@ -180,6 +190,7 @@ export class AuthService {
 
         return {
             userData,
+            serviceIsExpired,
             accessToken,
             refreshToken,
         }
@@ -452,13 +463,14 @@ export class AuthService {
                 HttpStatus.FORBIDDEN,
             )
         }
-        const { userData, accessToken, refreshToken } =
+        const { userData, accessToken, refreshToken, serviceIsExpired } =
             await this.generateResponseLoginData(user)
         this.logger.info(
             `${messageLog.LOGIN_EMAIL_SUCCESS.message}` + userData.email,
         )
         return {
             userData,
+            serviceIsExpired,
             accessToken,
             refreshToken,
         }

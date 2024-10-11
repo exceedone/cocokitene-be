@@ -3,9 +3,12 @@ import {
     Column,
     CreateDateColumn,
     Entity,
+    JoinColumn,
+    ManyToOne,
     PrimaryGeneratedColumn,
     UpdateDateColumn,
 } from 'typeorm'
+import { SystemAdmin } from './system-admin.entity'
 @Entity('plan_mst')
 export class Plan extends BaseEntity {
     @PrimaryGeneratedColumn()
@@ -60,9 +63,37 @@ export class Plan extends BaseEntity {
     })
     maxShareholderAccount: number
 
+    @Column({
+        nullable: true,
+        name: 'created_system',
+        type: 'integer',
+        width: 7,
+    })
+    createdSystemId: number
+
     @CreateDateColumn({ name: 'created_at' })
     createdAt: Date
 
+    @Column({
+        nullable: true,
+        name: 'updated_system',
+        type: 'integer',
+        width: 7,
+    })
+    updatedSystemId: number
+
     @UpdateDateColumn({ name: 'updated_at' })
     updatedAt: Date
+
+    @ManyToOne(() => SystemAdmin)
+    @JoinColumn({
+        name: 'created_system',
+    })
+    creator: SystemAdmin
+
+    @ManyToOne(() => SystemAdmin)
+    @JoinColumn({
+        name: 'updated_system',
+    })
+    updater: SystemAdmin
 }

@@ -20,6 +20,7 @@ import { httpErrors } from '@shares/exception-filter'
 import { DetailShareholderReponse } from './shareholder.interface'
 import { UserService } from '../users/user.service'
 import { Logger } from 'winston'
+import { ServicePlanOfCompanyService } from '../company-service/company-service.service'
 @Injectable()
 export class ShareholderService {
     constructor(
@@ -28,6 +29,7 @@ export class ShareholderService {
         private readonly companyService: CompanyService,
         private readonly userRoleService: UserRoleService,
         private readonly userService: UserService,
+        private readonly servicePlanOfCompanyService: ServicePlanOfCompanyService,
         @Inject('winston')
         private readonly logger: Logger,
     ) {}
@@ -94,6 +96,23 @@ export class ShareholderService {
                 HttpStatus.NOT_FOUND,
             )
         }
+
+        const servicePlanOfCompany =
+            await this.servicePlanOfCompanyService.getServicePlanOfCompany(
+                companyId,
+            )
+
+        const currentDate = new Date() // CurrentDate
+        const expiredDate = new Date(servicePlanOfCompany.expirationDate)
+        expiredDate.setDate(expiredDate.getDate() + 1)
+
+        if (currentDate > expiredDate) {
+            throw new HttpException(
+                httpErrors.SERVICE_PLAN_EXPIRED,
+                HttpStatus.BAD_REQUEST,
+            )
+        }
+
         let existedShareholder = await this.shareholderRepository.findOne({
             where: {
                 id: shareholderId,

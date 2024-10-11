@@ -1,0 +1,46 @@
+<html lang='en'>
+    <head>
+        <meta charset='UTF-8' />
+        <meta name='viewport' content='width=device-width, initial-scale=1.0' />
+        <title>【重要】有効期限切れのお知らせ</title>
+        <style>
+            h3 {font-style: normal;font-weight: normal}
+        </style>
+    </head>
+    <body>
+        <h3>{{customerName}}</h3>
+
+        <h3
+        >{{companyName}}様からのプラン更新リクエストを受け付けいたしました。以下の内容をご確認ください。</h3>
+
+        <ul>
+            <li><strong>現在のプラン: </strong>
+                <strong>{{currentPlan}}</strong></li>
+            <li><strong>更新希望プラン: </strong>
+                <strong>{{newServicePlanSubscription}}</strong></li>
+            <li><strong>リクエスト日: </strong><strong
+                >{{requestTime}}</strong></li>
+            <li><strong>起動日: </strong><strong>{{activeDate}}</strong></li>
+            <li><strong>有効期限: </strong><strong>{{expiredDate}}</strong></li>
+        </ul>
+
+        <div><strong>{{companyName}}様へお知らせ：</strong></div>
+        <div><strong
+            >ご依頼内容について、確認後、必要な手続きについての詳細をお知らせいたします。</strong></div>
+        <div><strong
+            >リクエストの変更を完了するためにお支払いをお願いいたします。</strong></div>
+        <div><strong
+            >すでにお支払い済みの場合は、このメッセージを無視してください。</strong></div>
+        <br />
+
+        <h3
+        >ご不明点や追加のリクエストがございましたら、お気軽にご連絡ください。</h3>
+        <h3>今後ともよろしくお願い申し上げます。</h3>
+        <br />
+        <h3>敬具</h3>
+
+        <h3
+            style='font-weight: bold;'
+        >これは自動返信メールです。返信しないでください</h3>
+    </body>
+</html>

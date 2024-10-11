@@ -1,0 +1,47 @@
+<html lang='en'>
+    <head>
+        <meta charset='UTF-8' />
+        <meta name='viewport' content='width=device-width, initial-scale=1.0' />
+        <title>プラン更新完了のお知らせ</title>
+        <style>
+            h3 {font-style: normal;font-weight: normal}
+        </style>
+    </head>
+    <body>
+        <h3>{{customerName}} 様</h3>
+
+        <h3
+        >平素より、私たちのサービスをご利用いただき、誠にありがとうございます。</h3>
+        <h3
+        >このたび、お客様のプラン更新が完了いたしましたので、お知らせいたします。</h3>
+        <br />
+
+        <h3>現時点のプラン：</h3>
+        <ul>
+            <li><strong>プラン名: </strong><strong
+                >{{currentServicePlan}}</strong></li>
+            <li><strong>有効期限： </strong>
+                <strong>{{expireDateCurrentServicePlan}}</strong></li>
+        </ul>
+
+        <h3>更新プラン: </h3>
+        <ul>
+            <li><strong>プラン名: </strong>
+                <strong>{{newServicePlanSubscription}}</strong></li>
+            <li><strong>起動日: </strong> <strong>{{activeDate}}</strong></li>
+            <li><strong>有効期限： </strong>
+                <strong>{{expiredDate}}</strong></li>
+            <li><strong>料金: </strong> <strong>{{totalFree}}</strong></li>
+        </ul>
+
+        <h3
+        >ご利用にあたり、ご不明点やご質問がございましたら、お気軽にお問い合わせください。</h3>
+        <h3>今後とも引き続き、よろしくお願い申し上げます。</h3>
+        <br />
+        <h3>敬具</h3>
+
+        <h3
+            style='font-weight: bold;'
+        >これは自動返信メールです。返信しないでください</h3>
+    </body>
+</html>
