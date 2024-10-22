@@ -12,7 +12,6 @@ export const systemAdminData: InertSertSystemAdminDto[] = [
         email: 'vanla@trithucmoi.co',
         password:
             '$2b$10$Rl4P/bblPxAtTWT5VX.wqeB..Lr8a21YiqeW1B.6oGd4hWcwQlemO',
-        resetPasswordToken: 'j2GBoY23PgLr8N1iDEz6',
         resetPasswordExpireTime: new Date('2023-12-31T23:59:59'),
     },
     {
@@ -20,7 +19,6 @@ export const systemAdminData: InertSertSystemAdminDto[] = [
         email: 'snoro@exceedone.co.jp',
         password:
             '$2b$10$7OtV0XT3jR4S6eZ889WV3.HkRbHeZ8tBLLIU0eaIKYh42ZbzmygRW',
-        resetPasswordToken: 'j2GBoY23PgLr8N1iDEz6',
         resetPasswordExpireTime: new Date('2023-12-31T23:59:59'),
     },
     {
@@ -28,7 +26,6 @@ export const systemAdminData: InertSertSystemAdminDto[] = [
         email: 'demo@cocokitene.co',
         password:
             '$2b$10$UfgMemnWAZ5N8.3L4SW0QuVPjEe1nCe0OUM.kl2dm9hCn/ulnYkOq',
-        resetPasswordToken: 'j2GBoY23PgLr8N1iDEz6',
         resetPasswordExpireTime: new Date('2023-12-31T23:59:59'),
     },
 ]

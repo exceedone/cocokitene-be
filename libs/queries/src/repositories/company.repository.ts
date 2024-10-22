@@ -178,4 +178,21 @@ export class CompanyRepository extends Repository<Company> {
             )
         }
     }
+
+    async updateCompanyCodeForCompany(companyId: number, companyCode: string) {
+        try {
+            await this.createQueryBuilder('company')
+                .update(Company)
+                .set({
+                    companyCode: companyCode,
+                })
+                .where('company.id = :companyId', { companyId })
+                .execute()
+        } catch (error) {
+            throw new HttpException(
+                { message: error.message },
+                HttpStatus.INTERNAL_SERVER_ERROR,
+            )
+        }
+    }
 }

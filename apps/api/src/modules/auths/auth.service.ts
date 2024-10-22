@@ -157,6 +157,7 @@ export class AuthService {
                 email: user.email,
                 companyId: user.companyId,
                 companyName: company.companyName,
+                companyCode: company.companyCode,
                 avatar: user.avatar,
                 permissionKeys,
                 status: user.userStatus,

@@ -14,6 +14,7 @@ import { Plan } from './plan.entity'
 import { Role } from './role.entity'
 import { RoleMtg } from '@entities/meeting-role.entity'
 import { SystemAdmin } from './system-admin.entity'
+import { CompanyCode } from '@shares/constants'
 
 @Entity('company')
 export class Company extends BaseEntity {
@@ -99,6 +100,16 @@ export class Company extends BaseEntity {
         nullable: true,
     })
     fax: string
+
+    @Column({
+        nullable: false,
+        name: 'company_code',
+        type: 'varchar',
+        length: 255,
+        // unique: true,
+        default: CompanyCode.pre + '000',
+    })
+    companyCode: string
 
     @Column({
         name: 'date_of_corporation',

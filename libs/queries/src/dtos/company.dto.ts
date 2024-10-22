@@ -48,7 +48,7 @@ export class UpdateCompanyDto {
     @IsOptional()
     @IsString()
     @ApiProperty({
-        example: 'kiennv@trithucmoi.co',
+        example: 'dev@exceedone.co.jp',
         required: false,
     })
     email?: string
@@ -97,7 +97,7 @@ export class UpdateCompanyDto {
     @IsOptional()
     @IsString()
     @ApiProperty({
-        example: 'kiennv',
+        example: 'dev',
         required: false,
     })
     representativeUser?: string
@@ -204,7 +204,7 @@ export class CreateCompanyDto {
     @IsString()
     @IsNotEmpty()
     @ApiProperty({
-        example: 'Mr Phuong',
+        example: 'Mr Dev',
         required: true,
     })
     representativeUser: string
@@ -254,7 +254,7 @@ export class RegisterCompanyDto {
     @IsString()
     @IsNotEmpty()
     @ApiProperty({
-        example: 'Mr Phuong',
+        example: 'Mr Dev',
         required: true,
     })
     username: string
@@ -262,7 +262,7 @@ export class RegisterCompanyDto {
     @IsString()
     @IsNotEmpty()
     @ApiProperty({
-        example: 'kiennv@trithucmoi.co',
+        example: 'dev@exceedone.co.jp',
         required: true,
     })
     email: string

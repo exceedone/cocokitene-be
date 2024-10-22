@@ -412,6 +412,18 @@ export class UserService {
         let createdUser: User
         let defaultPassword = ''
         let exitedUser: User
+
+        exitedUser = await this.getUserByEmailExactly(createUserDto.email)
+        if (exitedUser) {
+            this.logger.error(
+                `${messageLog.CREATE_ACCOUNT_FAILED_DUPLICATE.code} ${messageLog.CREATE_ACCOUNT_FAILED_DUPLICATE.message} ${createUserDto.email}`,
+            )
+            throw new HttpException(
+                httpErrors.DUPLICATE_EMAIL_USER,
+                HttpStatus.BAD_REQUEST,
+            )
+        }
+
         if (createUserDto.walletAddress) {
             exitedUser = await this.getUserByWalletAddressExactly(
                 createUserDto.walletAddress,
@@ -425,16 +437,6 @@ export class UserService {
                     HttpStatus.BAD_REQUEST,
                 )
             }
-        }
-        exitedUser = await this.getUserByEmailExactly(createUserDto.email)
-        if (exitedUser) {
-            this.logger.error(
-                `${messageLog.CREATE_ACCOUNT_FAILED_DUPLICATE.code} ${messageLog.CREATE_ACCOUNT_FAILED_DUPLICATE.message} ${createUserDto.email}`,
-            )
-            throw new HttpException(
-                httpErrors.DUPLICATE_EMAIL_USER,
-                HttpStatus.BAD_REQUEST,
-            )
         }
 
         try {

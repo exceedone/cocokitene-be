@@ -67,6 +67,14 @@ export class Meeting extends BaseEntity {
 
     @Column({
         nullable: false,
+        type: 'varchar',
+        length: 255,
+        name: 'meeting_code',
+    })
+    meetingCode: string
+
+    @Column({
+        nullable: false,
         name: 'status',
         type: 'enum',
         enum: StatusMeeting,

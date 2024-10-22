@@ -55,14 +55,14 @@ export class LoginByPassword {
     @IsEmail()
     @IsNotEmpty()
     @ApiProperty({
-        example: 'nguyenkien123ns@gmail.com',
+        example: 'dev@exceedone.co.jp',
     })
     email: string
 
     @IsString()
     @IsNotEmpty()
     @ApiProperty({
-        example: 'nguyenkien',
+        example: 'dev',
     })
     password: string
 }
@@ -71,7 +71,7 @@ export class ForgotPasswordDto {
     @IsEmail()
     @IsNotEmpty()
     @ApiProperty({
-        example: 'nguyenkien123ns@gmail.com',
+        example: 'dev@exceedone.co.jp',
     })
     email: string
 }
@@ -87,14 +87,14 @@ export class LoginUserByPassword {
     @IsEmail()
     @IsNotEmpty()
     @ApiProperty({
-        example: 'nguyenkien123ns@gmail.com',
+        example: 'dev@exceedone.co.jp',
     })
     email: string
 
     @IsString()
     @IsNotEmpty()
     @ApiProperty({
-        example: 'nguyenkien',
+        example: 'dev',
     })
     password: string
 }

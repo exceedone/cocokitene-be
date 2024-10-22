@@ -52,11 +52,11 @@ export class SystemAdminController {
     @HttpCode(HttpStatus.OK)
     @ApiBearerAuth()
     @UseGuards(SystemAdminGuard)
-    async getAllCompanys(@Query() getAllCompanyDto: GetAllCompanyDto) {
-        const companys = await this.systemAdminService.getAllCompanys(
+    async getAllCompanies(@Query() getAllCompanyDto: GetAllCompanyDto) {
+        const companies = await this.systemAdminService.getAllCompanys(
             getAllCompanyDto,
         )
-        return companys
+        return companies
     }
 
     @Get('/company/:id')

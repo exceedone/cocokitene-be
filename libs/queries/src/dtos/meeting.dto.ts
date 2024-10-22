@@ -88,6 +88,14 @@ export class CreateMeetingDto {
     @IsNotEmpty()
     @IsString()
     @ApiProperty({
+        example: 'MEETING_123456789',
+        required: true,
+    })
+    meetingCode: string
+
+    @IsNotEmpty()
+    @IsString()
+    @ApiProperty({
         required: true,
         example: '2023-12-20 15:00:00',
     })

@@ -18,7 +18,12 @@ import { httpErrors, messageLog } from '@shares/exception-filter'
 import { UserService } from '@api/modules/users/user.service'
 import { RoleService } from '@api/modules/roles/role.service'
 import { enumToArray } from '@shares/utils/enum'
-import { PermissionEnum, RoleEnum, RoleMtgEnum } from '@shares/constants'
+import {
+    CompanyCode,
+    PermissionEnum,
+    RoleEnum,
+    RoleMtgEnum,
+} from '@shares/constants'
 import { UserRoleService } from '@api/modules/user-roles/user-role.service'
 import { UserStatusService } from '@api/modules/user-status/user-status.service'
 import { PlanService } from '@api/modules/plans/plan.service'
@@ -219,6 +224,11 @@ export class CompanyService {
             this.logger.info(
                 `${messageLog.CREATE_COMPANY_SUCCESS.message} ${createdCompany.id}`,
             )
+
+            await this.companyRepository.updateCompanyCodeForCompany(
+                createdCompany.id,
+                CompanyCode.pre + String(createdCompany.id).padStart(3, '0'),
+            )
         } catch (error) {
             this.logger.error(
                 `${messageLog.CREATE_COMPANY_FAILED.code} ${messageLog.CREATE_COMPANY_FAILED.message}`,
@@ -377,7 +387,8 @@ export class CompanyService {
             ...listPermissions.map((permission) => {
                 if (
                     permission.key !==
-                    PermissionEnum.SETTING_PERMISSION_FOR_ROLES
+                        PermissionEnum.SETTING_PERMISSION_FOR_ROLES &&
+                    permission.key !== PermissionEnum.SUPER_ADMIN_PERMISSION
                 ) {
                     this.rolePermissionService.createRolePermission({
                         permissionId: permission.id,

@@ -38,7 +38,7 @@ export class S3Service {
 
     async getPresignedUrls(
         getPresignedUrlDto: GetPresignedUrlDto,
-        companyId: number,
+        companyCode: string,
     ): Promise<{
         uploadUrls: string[]
     }> {
@@ -46,12 +46,21 @@ export class S3Service {
 
         const presignedUrlPromises = []
 
-        for (const { fileName, fileType } of meetingFiles) {
+        for (const {
+            fileName,
+            fileType,
+            folderType,
+            subFolder,
+        } of meetingFiles) {
             const bucketParam = {
                 Bucket: this.bucketName,
                 Key:
-                    companyId +
+                    companyCode +
                     '/' +
+                    folderType +
+                    '/' +
+                    subFolder +
+                    // '/' +
                     fileType +
                     '/' +
                     Date.now() +

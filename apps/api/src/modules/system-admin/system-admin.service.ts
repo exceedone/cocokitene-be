@@ -221,16 +221,6 @@ export class SystemAdminService {
     }
 
     async createPlan(createPlanDto: CreatePlanDto, systemAdminId: number) {
-        const planExited = await this.planService.getPlanByPlanName(
-            createPlanDto.planName,
-        )
-        if (planExited) {
-            throw new HttpException(
-                httpErrors.DUPLICATE_PLAN_NAME,
-                HttpStatus.BAD_REQUEST,
-            )
-        }
-
         const plan = await this.planService.createPlan(
             createPlanDto,
             systemAdminId,

@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { S3Service } from '@api/modules/s3/s3.service'
 import { GetPresignedUrlDto } from '@dtos/s3.dto'
 import { User } from '@entities/user.entity'
@@ -29,11 +30,13 @@ export class S3Controller {
         @Query() getPresignedUrlDto: GetPresignedUrlDto,
         @UserScope() user: User,
     ) {
-        const companyId = user.companyId
+        // const companyId = user.companyId
+        // @ts-ignore
+        const companyCode = user.companyCode
 
         const presignedUrl = await this.s3Service.getPresignedUrls(
             getPresignedUrlDto,
-            companyId,
+            companyCode,
         )
         return presignedUrl
     }

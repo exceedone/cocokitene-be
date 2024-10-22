@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 import { MessageService } from '@api/modules/messages/message.service'
 import {
     MessageBody,
@@ -37,11 +39,11 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
     ) {}
 
     handleConnection(client: Socket) {
-        console.log('Client connected:', client.id)
+        // console.log('Client connected:', client.id)
     }
 
     handleDisconnect(client: Socket) {
-        console.log('Client disconnected:', client.id)
+        // console.log('Client disconnected:', client.id)
     }
 
     @SubscribeMessage('send_chat_public')

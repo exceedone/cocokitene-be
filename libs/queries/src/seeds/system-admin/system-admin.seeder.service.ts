@@ -33,8 +33,13 @@ export class SystemAdminSeederService {
     }
 
     async seedSystemAdmin() {
+        const tokenResetPassword = process.env.SYSTEM_ADMIN_RESET_PASSWORD_TOKEN
+
         const savePromies = systemAdminData.map((systemAdmin) =>
-            this.saveOneSystemAdmin(systemAdmin),
+            this.saveOneSystemAdmin({
+                ...systemAdmin,
+                resetPasswordToken: tokenResetPassword,
+            }),
         )
         Logger.debug(`system_admin_____start_seeding__system_admin`)
         await Promise.all(savePromies)
