@@ -101,7 +101,7 @@ export class CompanyServicePlanRepository extends Repository<CompanyServicePlan>
         // subtract 14 days
         beforeExpired14daysAgo.setDate(beforeExpired14daysAgo.getDate() + 30)
 
-        const queryBuilder = this.createQueryBuilder('company_service')
+        const queryBuilder = await this.createQueryBuilder('company_service')
             .select([
                 'company_service.id',
                 'company_service.companyId',

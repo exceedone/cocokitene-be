@@ -308,7 +308,8 @@ export class ServiceSubscriptionRepository extends Repository<ServiceSubscriptio
                     currentDate: expiredTimeOfCurrentService,
                 },
             )
+            .getMany()
 
-        return queryBuilder.getMany()
+        return queryBuilder
     }
 }
